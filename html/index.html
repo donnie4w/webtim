@@ -1,0 +1,1674 @@
+<!--
+ Copyright (c) 2023, donnie <donnie4w@gmail.com>
+ All rights reserved.
+ Use of this source code is governed by a BSD-style
+ license that can be found in the LICENSE file.
+
+ github.com/donnie4w/webtim
+-->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
+	<link href="/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet">
+	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="bookmark" href="/favicon.ico">
+	<script src="/assets/js/bootstrap.bundle.min.js"></script>
+	<script src="/assets/js/jquery.min.js"></script>
+	<script src="/assets/js/t.js"></script>
+	<script src="/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+	<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/css/app.css" rel="stylesheet">
+	<link href="/assets/css/icons.css" rel="stylesheet">
+	<link rel="stylesheet" href="/assets/css/dark-theme.css">
+	<link rel="stylesheet" href="/assets/css/semi-dark.css">
+	<link rel="stylesheet" href="/assets/css/header-colors.css">
+	<title>webtim</title>
+</head>
+
+<body class="container-fluid card">
+	<div class="top-menu ms-auto">
+		<ul class="navbar-nav align-items-center">
+			<li class="nav-item dropdown dropdown-large">
+				<div class="dropdown-menu dropdown-menu-end">
+					<div class="header-notifications-list">
+					</div>
+				</div>
+			</li>
+			<li class="nav-item dropdown dropdown-large">
+				<div class="dropdown-menu dropdown-menu-end">
+					<div class="header-message-list">
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="wrapper">
+		<div class="page-content">
+			<div class="container" id="toastshow"></div>
+			<div class="col-lg-12 card p-lg-1 ">
+				<div>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-register">注册</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-friend">加好友</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-group">我的群</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-timgroup">webtim群组</button>
+				</div>
+
+				<div class="modal fade" id="modal-register">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="register-close">关闭</button>
+								<h4 class="modal-title">用户注册</h4>
+							</div>
+							<div class="modal-body">
+								<div class="wrapper">
+									<div class="row">
+										<div class="col-xl-7 mx-auto">
+											<div class="card border-top border-0 border-4 border-dark">
+												<div class="card-body p-1">
+													<form class="row g-3" id="registerform">
+														<div class="col-12">
+															<label for="inputLastEnterUsername"
+																class="form-label">登录账号</label>
+															<div class="input-group input-group-lg"> <span
+																	class="input-group-text bg-transparent"><i
+																		class='bx bxs-user'></i></span>
+																<input type="text" class="form-control border-start-0"
+																	name="loginname" placeholder="Enter Loginname" />
+															</div>
+														</div>
+
+														<div class="col-12">
+															<label for="inputLastEnterPassword"
+																class="form-label">密码</label>
+															<div class="input-group input-group-lg"> <span
+																	class="input-group-text bg-transparent"><i
+																		class='bx bxs-lock-open'></i></span>
+																<input type="password"
+																	class="form-control border-start-0" name="password"
+																	placeholder="Enter Password" />
+															</div>
+														</div>
+														<div class="col-12">
+															<label for="inputLastEnterUsername"
+																class="form-label">昵称</label>
+															<div class="input-group input-group-lg"> <span
+																	class="input-group-text bg-transparent"><i
+																		class='bx bxs-user'></i></span>
+																<input type="text" class="form-control border-start-0"
+																	name="nick" placeholder="Enter Nickname" />
+															</div>
+														</div>
+														<div style="text-align:center;">
+															<label for="pwd" class="form-label">选择头像：</label>
+															<select name="logo"
+																onchange="document.images['idface'].src=options[selectedIndex].value;"
+																class="form-select-sm">
+																<option value="/img/1.jpg" class="img-rounded">头像 1
+																</option>
+																<option value="/img/2.jpg" class="img-rounded">头像 2
+																</option>
+																<option value="/img/3.jpg" class="img-rounded">头像 3
+																</option>
+																<option value="/img/4.jpg" class="img-rounded">头像 4
+																</option>
+																<option value="/img/5.jpg" class="img-rounded">头像 5
+																</option>
+																<option value="/img/6.jpg" class="img-rounded">头像 6
+																</option>
+																<option value="/img/7.jpg" class="img-rounded">头像 7
+																</option>
+																<option value="/img/8.jpg" class="img-rounded">头像 8
+																</option>
+																<option value="/img/9.jpg" class="img-rounded">头像 9
+																</option>
+																<option value="/img/10.jpg" class="img-rounded">头像 10
+																</option>
+																<option value="/img/11.jpg" class="img-rounded">头像 11
+																</option>
+																<option value="/img/12.jpg" class="img-rounded">头像 12
+																</option>
+																<option value="/img/13.jpg" class="img-rounded">头像 13
+																</option>
+																<option value="/img/14.jpg" class="img-rounded">头像 14
+																</option>
+																<option value="/img/15.jpg" class="img-rounded">头像 15
+																</option>
+																<option value="/img/16.jpg" class="img-rounded">头像 16
+																</option>
+																<option value="/img/17.jpg" class="img-rounded">头像 17
+																</option>
+																<option value="/img/18.jpg" class="img-rounded">头像 18
+																</option>
+																<option value="/img/19.jpg" class="img-rounded">头像 19
+																</option>
+																<option value="/img/20.jpg" class="img-rounded">头像 20
+																</option>
+																<option value="/img/21.jpg" class="img-rounded">头像 21
+																</option>
+																<option value="/img/22.jpg" class="img-rounded">头像 22
+																</option>
+																<option value="/img/23.jpg" class="img-rounded">头像 23
+																</option>
+																<option value="/img/24.jpg" class="img-rounded">头像 24
+																</option>
+																<option value="/img/25.jpg" class="img-rounded">头像 25
+																</option>
+																<option value="/img/26.jpg" class="img-rounded">头像 26
+																</option>
+																<option value="/img/27.jpg" class="img-rounded">头像 27
+																</option>
+																<option value="/img/28.jpg" class="img-rounded">头像 28
+																</option>
+																<option value="/img/29.jpg" class="img-rounded">头像 29
+																</option>
+																<option value="/img/30.jpg" class="img-rounded">头像 30
+																</option>
+															</select>
+															<br>
+															<div style=text-align:center;"><img src="/img/1.jpg"
+																	style="height: 100px;" id=idface>
+															</div>
+														</div>
+												</div>
+												</form>
+												<div class="col-12">
+													<div class="d-grid">
+														<button type="submit" class="btn btn-dark btn-lg px-5"
+															onclick="register()">
+															<i class='bx bxs-lock-open'></i>Register</button>
+													</div>
+												</div>
+												<hr />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="register-close-end">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-friend">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="friend-close">关闭</button>
+								<h4 class="modal-title">webtim已注册用户</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="accountlist">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="friend-close-end">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-group">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="group-close">关闭</button>
+								<h4 class="modal-title">我的群</h4>
+								<button type="button" class="modal-title btn btn-primary"
+									id="modal-btn-newgroup">新建群</button>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="mygrouplist">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<span>&#128308;我建立的群</span>
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="group-close-end">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-newgroup">
+					<div class="modal-dialog modal-sm">
+						<div class="modal-content bg-light">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal" id="newgroup-close">x
+									关闭</button>
+							</div>
+							<div class="wrapper">
+								<div class="row">
+									<div class="col-xl-7 mx-auto">
+										<div class="card border-top border-0 border-4 border-dark">
+											<div class="card-body p-1">
+												<form class="row g-3" id="newgroupform">
+													<div class="col-12">
+														<div class="input-group input-group-lg"> <span
+																class="input-group-text bg-transparent"></span>
+															<input type="text" id="node" name="node" hidden />
+															<input type="text" class="form-control border-start-0"
+																name="topic" placeholder="群主题" />
+														</div>
+														<input type="radio" name="gtype" value="1" />私有群
+														<input type="radio" name="gtype" value="2" checked />公有群
+													</div>
+													<div style="text-align:center;">
+														<select name="logo"
+															onchange="document.images['gidface'].src=options[selectedIndex].value;"
+															class="form-select-sm">
+															<option value="/img/001.jpg" class="img-rounded">群封面 1
+															</option>
+															<option value="/img/002.jpg" class="img-rounded">群封面 2
+															</option>
+															<option value="/img/003.jpg" class="img-rounded">群封面 3
+															</option>
+															<option value="/img/004.jpg" class="img-rounded">群封面 4
+															</option>
+															<option value="/img/005.jpg" class="img-rounded">群封面 5
+															</option>
+															<option value="/img/006.jpg" class="img-rounded">群封面 6
+															</option>
+															<option value="/img/007.jpg" class="img-rounded">群封面 7
+															</option>
+															<option value="/img/008.jpg" class="img-rounded">群封面 8
+															</option>
+															<option value="/img/009.jpg" class="img-rounded">群封面 9
+															</option>
+															<option value="/img/010.jpg" class="img-rounded">群封面 10
+															</option>
+															<option value="/img/011.jpg" class="img-rounded">群封面 11
+															</option>
+															<option value="/img/012.jpg" class="img-rounded">群封面 12
+															</option>
+															<option value="/img/013.jpg" class="img-rounded">群封面 13
+															</option>
+														</select>
+														<br>
+														<div style=text-align:center;"><img src="/img/001.jpg"
+																style="height: 100px;" id=gidface>
+														</div>
+													</div>
+											</div>
+											</form>
+											<div class="col-12">
+												<div class="d-grid">
+													<button class="btn btn-primary btn-md px-1"
+														onclick="newgroup()">新建群</button>
+												</div>
+											</div>
+											<hr />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-groupmember">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="groupmember-close">关闭</button>
+								<h4 class="modal-title">群成员</h4>
+								<input id="groupmember_node" hidden />
+								<button type="button" class="btn btn-primary" data-dismiss="modal"
+									onclick="leaveroom()">退群</button>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="groupmemberlist">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="btn-group">
+									<button type="button" class="btn btn-sm  btn-warning">好友</button>
+									<button type="button" class="btn btn-sm  btn-info">我</button>
+									<button type="button" class="btn btn-sm  btn-success">群主</button>
+									<button type="button" class="btn btn-sm  btn-primary">加好友</button>
+									<button type="button" class="btn btn-sm  btn-danger">踢出群</button>
+								</div>
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="groupmember-close-end">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-timgroup">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="timgroup-close">关闭</button>
+								<h4 class="modal-title">webtim群组</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="timgrouplist">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-success" data-dismiss="modal">公有群</button>
+								<button type="button" class="btn btn-danger" data-dismiss="modal">私有群</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="timgroup-close-end">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="page-content">
+					<div class="chat-wrapper">
+						<div class="chat-sidebar">
+							<div class="chat-sidebar-header">
+								<div class="d-flex align-items-center">
+									<div class="chat-user-online" onclick="hideSidebar()">
+										<img src="/img/user.png" id="icon" width="45" height="45" class="rounded-circle"
+											alt="">
+									</div>
+									<div class="flex-grow-1 ms-2" onclick="hideSidebar()">
+										<p class="mb-0" id="loginflag">未登录</p>
+									</div>
+								</div>
+								<div class="mb-3"></div>
+								<div class="input-group input-group-sm">
+									<input type="text" class="form-control" placeholder="用户名" id="username">
+									<input type="password" class="form-control" placeholder="密码" id="pwd">
+									<span onclick="login()"><button type="button" class="btn btn-primary">登录
+										</button></span>
+								</div>
+							</div>
+							<div class="chat-sidebar-content">
+								<div class="tab-content" id="pills-tabContent">
+									<div class="tab-pane fade show active" id="pills-Chats">
+										<div class="chat-list ps ps--active-y">
+											<div class="list-group list-group-flush" id="msgnodelist">
+											</div>
+											<div class="ps__rail-x" style="left: 0px; bottom: -232px;">
+												<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;">
+												</div>
+											</div>
+											<div class="ps__rail-y" style="top: 232px; height: 300px; right: 0px;">
+												<div class="ps__thumb-y" tabindex="0"
+													style="top: 131px; height: 168px;"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="chat-footer" id="chat" onclick="hideSidebar()">
+							</div>
+						</div>
+						<div class="chat-header d-flex align-items-center">
+							<div class="chat-toggle-btn"><i class="bx bx-menu-alt-left"></i>
+							</div>
+							<div class="input-group mb-2">
+								<h6 onclick="hideSidebar()"></h6><img src="/img/user.png" id="iconuser" width="60"
+									height="60" class="rounded-circle">
+								<span class="input-group-text text-primary bg-white" id="touser"
+									style="border: none;"></span>
+								<input hidden type="text" class="form-control" placeholder="账号" id="accountId" />
+							</div>
+							<div>
+								<h4 class="mb-1 font-weight-bold" style="word-break:keep-all" id="usertitle">您未登录</h4>
+							</div>
+							<div>
+								<h4 class="mb-1 font-weight-bold"><img src="/img/user.png" id="icontitle" width="60"
+										height="60" class="rounded-circle"></h4>
+							</div>
+						</div>
+						<div class="chat-content ps ps--active-y" id="containerId">
+						</div>
+						<div class="chat-footer d-flex align-items-center">
+							<div class="flex-grow-1 pe-2">
+								<div class="input-group">
+									<input type="text" class="form-control" placeholder="Enter your message" id="msgid">
+								</div>
+							</div>
+							<div class="chat-footer-menu1">
+								<button type="button" class="btn btn-facebook" onclick="send()">Send
+								</button>
+							</div>
+						</div>
+						<!--start chat overlay-->
+						<div class="overlay chat-toggle-btn-mobile"></div>
+						<!--end chat overlay-->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="overlay toggle-icon"></div>
+		<a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+	</div>
+	<script>
+		new PerfectScrollbar('.chat-list');
+		new PerfectScrollbar('.chat-content');
+	</script>
+	<script src="assets/js/app.js"></script>
+	<script src="assets/js/timjs.js"></script>
+	<script>
+		$(function () {
+			$("#modal-btn-group").click(function () {
+				$("#modal-group").modal("toggle");
+				myroom();
+			});
+		});
+
+		$(function () {
+			$("#modal-btn-newgroup").click(function () {
+				$("#modal-newgroup").modal("toggle");
+			});
+		});
+
+		$(function () {
+			$("#group-close").click(function () {
+				$("#modal-group").modal("hide");
+			});
+		});
+
+		$(function () {
+			$("#group-close-end").click(function () {
+				$("#modal-group").modal("hide");
+			});
+		});
+
+
+		$(function () {
+			$("#modal-btn-timgroup").click(function () {
+				$("#modal-timgroup").modal("toggle");
+				timroomlist();
+			});
+		});
+
+		$(function () {
+			$("#timgroup-close").click(function () {
+				$("#modal-timgroup").modal("toggle");
+			});
+		});
+
+		$(function () {
+			$("#timgroup-close-end").click(function () {
+				$("#modal-timgroup").modal("toggle");
+			});
+		});
+
+		$(function () {
+			$("#newgroup-close").click(function () {
+				$("#modal-newgroup").modal("hide");
+			});
+		});
+
+		$(function () {
+			$("#modal-btn-register").click(function () {
+				$("#modal-register").modal("toggle");
+			});
+		});
+
+		$(function () {
+			$("#register-close").click(function () {
+				$("#modal-register").modal("toggle");
+			});
+		});
+
+		$(function () {
+			$("#register-close-end").click(function () {
+				$("#modal-register").modal("toggle");
+			});
+		});
+
+		$(function () {
+			$("#modal-btn-friend").click(function () {
+				$("#modal-friend").modal("show");
+				friendlist()
+			});
+		});
+
+		$(function () {
+			$("#friend-close").click(function () {
+				$("#modal-friend").modal("hide");
+			});
+		});
+
+		$(function () {
+			$("#friend-close-end").click(function () {
+				$("#modal-friend").modal("hide");
+			});
+		});
+
+		$(function () {
+			$("#groupmember-close").click(function () {
+				$("#modal-groupmember").modal("hide");
+			});
+		});
+
+		$(function () {
+			$("#groupmember-close-end").click(function () {
+				$("#modal-groupmember").modal("hide");
+			});
+		});
+
+		const accountdiv = (cover, name, account) => {
+			let n = timNodeMap.get(account);
+			let addbut = "";
+			let owner = '';
+			let friend = '';
+			if (account != myAccount && isEmpty(friendMap.get(account))) {
+				addbut = '<button type="button" class="btn btn-sm btn-primary" onclick=addfriend("' + account + '","' + name + '")>加好友</button>';
+			}
+			if (account == myAccount) {
+				owner = '<button type="button" class="btn btn-sm  btn-info">我</button>'
+			}
+			if (!isEmpty(friendMap.get(account)) && node != myAccount) {
+				friend = '<button type="button" class="btn btn-sm  btn-warning">好友</button>'
+			}
+			let s = '<div class="card m-1" style="width:120px;height: 170px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 100px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + name + '</h6>'
+				+ '<div class="btn-group">'
+				+ addbut + owner + friend
+				+ '</div>'
+				+ '</div>'
+			return s;
+		}
+
+		const gmemeberdiv = (node, fnode, rnode) => {
+			let n = timNodeMap.get(node);
+			let addbut = "";
+			let kickbut = "";
+			let roomowner = '';
+			let owner = '';
+			let friend = '';
+			if (node != myAccount && isEmpty(friendMap.get(node))) {
+				addbut = '<button type="button" class="btn btn-sm  btn-primary" onclick=addfriend("' + node + '","' + n.name + '")>加好友</button>';
+			}
+			if (node != myAccount && fnode == myAccount) {
+				kickbut = '<button type="button" class="btn btn-sm  btn-danger" onclick=kickroom("' + node + '","' + n.name + '","' + rnode + '")>踢出群</button>';
+			}
+			if (fnode == node) {
+				roomowner = '<button type="button" class="btn btn-sm  btn-success">群主</button>';
+			}
+			if (node == myAccount) {
+				owner = '<button type="button" class="btn btn-sm  btn-info">我</button>'
+			}
+			if (!isEmpty(friendMap.get(node)) && node != myAccount) {
+				friend = '<button type="button" class="btn btn-sm  btn-warning">好友</button>'
+			}
+			let s = '<div class="card m-1" style="width:160px;height: 200px;">'
+				+ '<img class="card-img-top" src="' + n.cover + '" alt="Card image" style="width:100%;height: 130px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + n.name + '</h6>'
+				+ '<div class="btn-group">'
+				+ kickbut + addbut + roomowner + owner + friend
+				+ '</div>'
+				+ '</div>'
+			return s;
+		}
+
+		const myroomdiv = (cover, topic, account) => {
+			let n = roomMap.get(account);
+			let mynode = "";
+			if (n.fnode == myAccount) {
+				mynode = "&#128308;";
+			}
+			let s = '<div class="card m-1" style="width:130px;height: 170px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 100px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + mynode + topic + '</h6>'
+				+ '<button type="button" class="btn btn-primary small" onclick=groupmember("' + account + '")>群成员</button>'
+				+ '</div>'
+			return s;
+		}
+
+
+		const timroomdiv = (cover, topic, account, gtype) => {
+			let but = '';
+			if (gtype == 2) {
+				but = '<button type="button" class="btn btn-success" onclick=addroom("' + account + '")>加入群</button>'
+			} else {
+				but = '<button type="button" class="btn btn-danger" onclick=addroom("' + account + '")>加入群</button>'
+			}
+			let s = '<div class="card m-1" style="width:100px;height: 150px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 80px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + topic + '</h6>'
+				+ but + '</div>'
+			return s;
+		}
+
+		function register() {
+			let data = $("#registerform").serialize();
+			httpPost("register", data, (data) => {
+				if (!isEmpty(data)) {
+					let jsonres = JSON.parse(data);
+					if (jsonres.ok) {
+						alert("注册成功");
+					} else {
+						alert(jsonres.error);
+					}
+				}
+			});
+		}
+
+		function friendlist() {
+			httpPost("friendlist", null, (data) => {
+				if (!isEmpty(data)) {
+					let accountlist = document.getElementById("accountlist");
+					let jsonres = JSON.parse(data);
+					let items = [];
+					for (let i = jsonres.length - 1; i >= 0; i--) {
+						items.push(accountdiv(jsonres[i].Cover, jsonres[i].Nickname, jsonres[i].Account));
+					}
+					accountlist.innerHTML = items.join("");
+				}
+			});
+		}
+
+		function timroomlist() {
+			httpPost("roomlist", null, (data) => {
+				if (!isEmpty(data)) {
+					let timgrouplist = document.getElementById("timgrouplist");
+					let jsonres = JSON.parse(data);
+					let items = [];
+					for (let i = jsonres.length - 1; i >= 0; i--) {
+						items.push(timroomdiv(jsonres[i].Cover, jsonres[i].Topic, jsonres[i].Account, jsonres[i].Gtype));
+					}
+					timgrouplist.innerHTML = items.join("");
+				}
+			});
+		}
+
+		function groupmember(node) {
+			let nodes = roomMemberMap.get(node);
+			let n = roomMap.get(node);
+			let groupmemberlist = document.getElementById("groupmemberlist");
+			document.getElementById("groupmember_node").value = node;
+			groupmemberlist.innerHTML = "";
+			if (!isEmpty(nodes)) {
+				let arrs = [];
+				nodes.forEach((unode) => {
+					arrs.push(gmemeberdiv(unode, n.fnode, node));
+				})
+				groupmemberlist.innerHTML = arrs.join("");
+			}
+			$("#modal-groupmember").modal("show");
+		}
+
+		function myroom() {
+			let mygrouplist = document.getElementById("mygrouplist");
+			let m = []
+			roomMap.forEach((v, k) => {
+				m.push(myroomdiv(v.cover, v.name, k));
+			})
+			mygrouplist.innerHTML = m.join("");
+		}
+
+		function addfriend(account, name) {
+			if (isEmpty(myAccount)) {
+				alert("未登录");
+				return
+			}
+			if (account == myAccount) {
+				alert("不能加自己为好友");
+				return
+			}
+			if (!isEmpty(friendMap.get(account))) {
+				alert("已经是好友");
+				return
+			}
+			if (confirm("是否给" + name + "发送加好友请求?")) {
+				tc.Addroster(account, "我是" + timNodeMap.get(myAccount).name);
+				alert("成功给" + name + "发送加好友信息");
+			}
+		}
+
+		function newgroup() {
+			if (isEmpty(myAccount)) {
+				alert("未登录");
+				return
+			}
+			document.getElementById("node").value = myAccount;
+			let data = $("#newgroupform").serialize();
+			httpPost("newroom", data, (data) => {
+				if (!isEmpty(data)) {
+					let mygrouplist = document.getElementById("mygrouplist");
+					let jsonres = JSON.parse(data);
+					roomMap.set(jsonres.Node, new timNode(jsonres.Node, jsonres.Topic, jsonres.Cover, myAccount));
+					mygrouplist.innerHTML = mygrouplist.innerHTML + myroomdiv(jsonres.Cover, jsonres.Topic, jsonres.Node);
+					tc.UserRoom();
+					$("#modal-newgroup").modal("hide");
+				} else {
+					alert("建群失败");
+				}
+			});
+		}
+
+		function addroom(account) {
+			if (isEmpty(myAccount)) {
+				alert("未登录");
+				return
+			}
+			if (confirm("是否发送入群申请?")) {
+				if (!isEmpty(roomMap.get(account))) {
+					alert("你已经是该群成员");
+					return
+				}
+				tc.AddRoom(account, "我是" + timNodeMap.get(myAccount).name);
+				alert("已经成功发送入群申请");
+			}
+		}
+
+		function leaveroom() {
+			let groupmembernode = document.getElementById("groupmember_node").value;
+			let n = roomMap.get(groupmembernode);
+			if (n.fnode == myAccount) {
+				alert("群主不能退群");
+				return
+			}
+			if (confirm("确定退出该群?")) {
+				tc.StreamToRoom(groupmembernode, null, 2, 0);
+				tc.LeaveRoom(groupmembernode);
+				$("#modal-groupmember").modal("hide");
+			}
+		}
+
+		function kickroom(unode, name, rnode) {
+			if (confirm("是否确定将" + name + "移除出群?")) {
+				tc.StreamToRoom(rnode, Base64.encodeToStr(rnode), 3, 0);
+				tc.KickRoom(rnode, unode);
+				let nlist = roomMemberMap.get(rnode);
+				let t = [];
+				for (const n of nlist) {
+					if (n != unode) {
+						t.push(n);
+					}
+				}
+				roomMemberMap.set(rnode, t);
+			}
+		}
+
+	</script>
+
+	<script>
+		class timNode {
+			node = null;
+			name = null;
+			cover = null;
+			fnode = null;
+			constructor(node, name, cover, fnode) {
+				this.node = node;
+				this.name = name;
+				this.cover = cover;
+				this.fnode = fnode;
+			}
+		}
+		var tc = new timClient(false, "192.168.2.11", 5081);
+		var myAccount = "";
+		var hight = 0;
+		var friendMap = new Map();
+		var timNodeMap = new Map();
+		var messageMap = new Map();
+		var newMesMap = new Map();
+		var alertMap = new Map();
+		var roomMap = new Map();
+		var roomMemberMap = new Map();
+		var msgNodeMap = new Map();
+
+		//ack message from server 服务反馈的信息
+		tc.ackHandler = function (data) {
+			console.log(data);
+			let ta = new TimAck();
+			ta = JSON.parse(data);
+			switch (ta.timType) {
+				case STAT.TIMMESSAGE:
+					if (!ta.ok) { //not ok 表示信息发送失败(注意，信息发送成功是没有ack的，服务器会推送发送用户的信息回来，信息会带上时间与id)
+						console.log("send message failed>>", ta.error.code, ":", ta.error.info);
+						alert("发信失败：" + ta.error.info);
+					}
+					break;
+				case STAT.TIMPRESENCE:
+					if (!ta.ok) { //not ok，表示状态信息发送失败(注意，状态信息发送成功是没有ack的)
+						console.log("send presence failed>>", ta.error.code, ":", ta.error.info);
+					}
+					break;
+				case STAT.TIMLOGOUT: // 强制下线
+					console.log("force to logout >>>", myAccount);
+					tc.Logout(); // 收到强制下线的指令后，主动退出登录
+					break;
+				case STAT.TIMAUTH:
+					if (ta.ok) { // 登录成功
+						myAccount = ta.n;
+						console.log("login successful,my node is :", myAccount);
+						tc.UserInfo([myAccount]);//拉取自己账号信息
+						tc.Roster();                                     //Pull the roster 拉取花名册
+						tc.UserRoom();                                   //pull the account of group 拉取群账号
+						// tc.BlockRoomList();                              //blocklist of user group 用户群黑名单
+						// tc.BlockRosterList();                            //blocklist of user 用户黑名单
+						tc.OfflineMsg() 								 //when login successful, get the offline message 登录成功后，拉取离线信息
+					} else {
+						console.log("login failed:", ta.error.code, ":", ta.error.info);
+						tc.Logout();
+						console.log("login failed and logout");
+						if (ta.error.code == STAT.ERR_AUTH) {
+							alert("用户名密码错误");
+						} else if (ta.error.code == STAT.ERR_OVERENTRY) {
+							alert("同账号登录超过限制数");
+						} else {
+							alert("登录失败");
+						}
+						initloginflag(false, "");
+					}
+					break;
+				// 虚拟房间操作回馈信息
+				case STAT.TIMVROOM:
+					if (ta.ok) {
+						switch (ta.t) {
+							case STAT.VRITURLROOM_REGISTER: //注册虚拟房间成功
+								console.log("register vriturl room ok>>", ta.t, " >>", ta.n);
+								break;
+							case STAT.VRITURLROOM_REMOVE: //删除虚拟房间成功
+								console.log("remove vriturl room ok>>", ta.t, " >>", ta.n);
+								break;
+							case STAT.VRITURLROOM_ADDAUTH: //加权成功
+								console.log("add auth to vriturl room ok>>", ta.t, " >>", ta.n);
+								break;
+							case STAT.VRITURLROOM_RMAUTH: //去权成功
+								console.log("cancel auth vriturl room process >>", ta.t, " >>", ta.n);
+								break;
+							case STAT.VRITURLROOM_SUB: //订阅成功
+								console.log("sub vriturl room process >>", ta.t, " >>", ta.n);
+								break;
+							case STAT.VRITURLROOM_SUBCANCEL: //取消订阅成功
+								console.log("sub cancel vriturl room process >>", ta.t, " >>", ta.n);
+								break;
+							default:
+								console.log("vriturl room process ok>>", ta.t, " >>", ta.n);
+						}
+					} else {
+						console.log("vriturl room process failed:", ta.error.code, ":", ta.error.info);
+					}
+					break;
+				/*************************************************************/
+				case STAT.TIMBUSINESS: //业务操作回馈
+					if (ta.ok) {
+						console.log("business process ok:", ta);
+						switch (ta.t) {
+							case STAT.BUSINESS_REMOVEROSTER: //删除好友成功
+								console.log("romove friend successful:", ta.n);
+								break;
+							case STAT.BUSINESS_BLOCKROSTER: //拉黑好友成功
+								console.log("block  successful:", ta.n);
+								break;
+							case STAT.BUSINESS_NEWROOM: //新建群组成功
+								console.log("new group successful:", ta.n);
+								break;
+							case STAT.BUSINESS_ADDROOM: //
+								console.log("join group successful:", ta.n);
+								tc.UserRoom();
+								tc.StreamToRoom(ta.n, null, 1, 0);
+								alert("你已加入群：" + ta.n)
+							case STAT.BUSINESS_PASSROOM: //申请加入群成功
+								console.log("new group successful:", ta.n);
+								break;
+							case STAT.BUSINESS_NOPASSROOM: //申请加入群不成功
+								console.log("reject  group successful:", ta.n);
+								break;
+							case STAT.BUSINESS_PULLROOM: //拉人入群
+								console.log("new group successful:", ta.n);
+								break;
+							case STAT.BUSINESS_KICKROOM: //踢人出群
+								console.log("kick out of group successful:", ta.n);
+								groupmember(ta.n);
+								break;
+							case STAT.BUSINESS_BLOCKROOM:
+								console.log("block the group successful:", ta.n)
+								break;
+							case STAT.BUSINESS_LEAVEROOM: //退群
+								console.log("leave group successful:", ta.n);
+								alert("退群成功");
+								roomMap.delete(ta.n);
+								roomMemberMap.delete(ta.n)
+								msgNodeMap.delete(ta.n);
+								myroom();
+								reSetMsgnodelist();
+								break;
+							case STAT.BUSINESS_CANCELROOM: //注销群
+								console.log("cancel group successful:", ta.n);
+								break;
+							default:
+								console.log("business successful >>", ta);
+						}
+					} else {
+						console.log("business process failed:", ta.error.code, ":", ta.error.info);
+					}
+					break;
+				case STAT.TIMNODES:
+					if (ta.ok) {
+						switch (ta.t) {
+							case STAT.NODEINFO_MODIFYUSER:
+								console.log("modify userinfo successful");
+								break;
+							case STAT.NODEINFO_MODIFYROOM:
+								console.log("modify roominfo successful");
+								break;
+						}
+					}
+			}
+		};
+
+		//TimMessage 处理handler
+		tc.messageHandler = function (data) {
+			let tm = new TimMessage();
+			tm = JSON.parse(data);
+			console.log(tm);
+			parseMessage(tm, false);
+		};
+
+		//记录状态订阅者
+		var submap = {};
+		//状态消息
+		tc.presenceHandler = function (data) {
+			let tp = new TimPresence()
+			tp = JSON.parse(data);
+			console.log(tp);
+			if (!isEmpty(tp.subStatus)) {
+				if (tp.subStatus == 1) {
+					tc.PresenceToUser(tp.fromTid.node, 0, "😄", 2, null, null);
+				}
+				if (tp.subStatus == 1 || tp.subStatus == 2) {
+					if (isEmpty(submap[tp.fromTid.node])) {
+						submap[tp.fromTid.node] = 0;
+					}
+				}
+			}
+			if (tp.offline && (tp.fromTid.node == myAccount)) {
+				tc.BroadPresence(1, 0, "haha");
+			}
+			if (tp.offline) {
+				friendstatus(tp.fromTid.node, false, "", false);
+			} else {
+				friendstatus(tp.fromTid.node, true, tp.status, false);
+			}
+			console.log("presence>>>", tp);
+		};
+		tc.offlineMsgHandler = function (data) {
+			let tml = new TimMessageList();
+			tml = JSON.parse(data);
+			console.log(tml);
+			if (!isEmpty(tml) && !isEmpty(tml.messageList)) {
+				for (const tm of tml.messageList) {
+					sleep(1000).then(() => parseMessage(tm, false));
+				}
+			}
+		};
+		tc.offlinemsgEndHandler = function (data) {
+			console.log("offlinemsgEndHandler data>>>", data);
+			tc.BroadPresence(1, 0, "😄");//when finish offline message recive,subcript and broad the presence
+		};
+		tc.pullmessageHandler = function (data) {
+			let tml = new TimMessageList();
+			tml = JSON.parse(data);
+			if (!isEmpty(tml) && !isEmpty(tml.messageList)) {
+				for (let i = tml.messageList.length - 1; i >= 0; i--) {
+					sleep(1500).then(() => parseMessage(tml.messageList[i], true));
+				}
+			}
+		};
+		tc.nodesHandler = function (data) {
+			let tn = new TimNodes();
+			tn = JSON.parse(data);
+			switch (tn.ntype) {
+				case STAT.NODEINFO_ROSTER: //花名册返回
+					console.log("my roster >>>", tn.nodelist);
+					if (!isEmpty(tn.nodelist)) {
+						tc.UserInfo(tn.nodelist); //获取用户详细资料
+						for (const item of tn.nodelist) {
+							friendMap.set(item, 1);
+						}
+					}
+					break;
+				case STAT.NODEINFO_ROOM: //用户的群账号返回
+					console.log("my groups >>>", tn);
+					if (!isEmpty(tn.nodelist)) {
+						tn.nodelist.forEach((node) => {
+							roomMap.set(node, 1);
+							tc.RoomUsers(node); //获取群的成员
+						})
+						tc.RoomInfo(tn.nodelist); //获取群详细资料
+					}
+					break;
+				case STAT.NODEINFO_ROOMMEMBER: //群成员账号返回
+					console.log("group member ack >>>", tn);
+					if (!isEmpty(tn.nodelist)) {
+						roomMemberMap.set(tn.node, tn.nodelist)
+						tc.UserInfo(tn.nodelist);
+					}
+					break;
+				case STAT.NODEINFO_USERINFO: //用户信息返回
+					for (const [k, v] of Object.entries(tn.usermap)) {
+						// console.log(k, ">>", v.name, " ", v.nickName, " ", v.brithday, " ", v.gender, " ", v.cover, " ", v.area, " ", v.photoTidAlbum);
+						// console.log(myAccount, "=", k);
+						if (myAccount == k) {
+							online(v.cover, v.name);
+							timNodeMap.set(k, new timNode(k, v.name, v.cover, k));
+						} else {
+							// console.log(">>>>>>>>>>>", k, v.name, v.cover);
+							timNodeMap.set(k, new timNode(k, v.name, v.cover, k));
+							addToNodelist(k, false);
+						}
+					}
+					break;
+				case STAT.NODEINFO_ROOMINFO: //群信息返回
+					console.log("groupinfo ack >>>")
+					for (const [k, v] of Object.entries(tn.roommap)) {
+						console.log(k, " >>", v.topic, " ", v.founder, " ", v.cover, " ", v.createtime, " ", v.label);
+						roomMap.set(k, new timNode(k, v.topic, v.cover, v.founder));
+						timNodeMap.set(k, new timNode(k, v.topic, v.cover, v.founder));
+						addToNodelist(k, true);
+					}
+					break;
+				case STAT.NODEINFO_BLOCKROSTERLIST: //用户黑名单
+					console.log("block roster list ack >>>", tn.nodelist);
+					break;
+				case STAT.NODEINFO_BLOCKROOMLIST: //用户拉黑群的群账号
+					console.log("block room list ack >>>", tn.nodelist);
+					break;
+				case STAT.NODEINFO_BLOCKROOMMEMBERLIST: //群拉黑账号名单
+					console.log("block room member list ack >>>", tn.nodelist);
+					break;
+			}
+		};
+
+		function parseMessage(tm, isPull) {
+			// console.log(tm);
+			//message消息
+			if (tm.msType == 1) {
+				console.log("this is system message >>", " body>>>", tm);
+			} else if (tm.msType == 2) {
+				// console.log("this is user to user message");
+			} else if (tm.msType == 3) {
+				// console.log("this is room to user message");
+			}
+			if (tm.msType != 1) {
+				switch (tm.odType) {
+					case 1: //常规消息
+						let id = 0;
+						if (tm.msType == 2) {
+							id = chatid(tm.fromTid.node, tm.toTid.node);
+						} else {
+							id = chatid(tm.roomTid.node, tm.roomTid.node);
+							if (tm.udShow == 1) { //开发者自定义字段值，更新群成员
+								tc.RoomUsers(tm.roomTid.node);
+							}
+						}
+						if (isEmpty(messageMap.get(id))) {
+							initArrays(id);
+						}
+						if (tm.msType == 2) {
+							appendmsg(id, tm.fromTid.node, tm.toTid.node, false, unixnanoToDatatime(tm.timestamp), tm.dataString, 2, isPull);
+						} else {
+							appendmsg(id, tm.fromTid.node, tm.roomTid.node, true, unixnanoToDatatime(tm.timestamp), tm.dataString, 2, isPull);
+						}
+						break;
+					case 2: //撤回消息
+						console.log("revokeMessage>>>", tm.mid);
+						break;
+					case 3: //阅后即焚
+						console.log("burnMessage>>>", tm.mid);
+						break;
+					case 4: //业务消息
+						console.log("business message>>>", tm);
+						switch (tm.bnType) {
+							case STAT.BUSINESS_ADDROSTER:
+								console.log("add roster>>>", tm);
+								addfriendAlert(tm.fromTid.node, tm.dataString);
+								break;
+							case STAT.BUSINESS_FRIEND:
+								console.log("friend>>>", tm);
+								let faccount = "";
+								if (tm.fromTid.node != myAccount) {
+									faccount = tm.fromTid.node;
+								} else {
+									faccount = tm.toTid.node;
+								}
+								friendMap.set(faccount, 1);
+								tc.UserInfo([faccount]);
+								befriendAlert(faccount);
+								sleep(1000).then(() => tc.PresenceToUser(faccount, 0, "😄", 1, null, null))
+								break;
+							case STAT.BUSINESS_ADDROOM:
+								console.log("BUSINESS_ADDROOM>>>", tm);
+								addroomAlert(tm.fromTid.node, tm.roomTid.node, tm.dataString);
+								break;
+							case STAT.BUSINESS_PASSROOM:
+								console.log("BUSINESS_PASSROOM>>>", tm);
+								alert("入群申请已经通过:" + tm.roomTid.node);
+								tc.StreamToRoom(tm.roomTid.node, null, 1, 0);
+								tc.UserRoom();
+								break
+							case STAT.BUSINESS_PULLROOM:
+								console.log("BUSINESS_PULLROOM>>>", tm);
+								break
+							case STAT.BUSINESS_KICKROOM:
+								console.log("被移除出群>>>", tm);
+								let r = roomMap.get(tm.roomTid.node);
+								if (!isEmpty(r)) {
+									alert("你已经被移除出群：" + r.name);
+									roomMap.delete(tm.roomTid.node);
+									roomMemberMap.delete(tm.roomTid.node);
+									msgNodeMap.delete(tm.roomTid.node);
+									myroom();
+									reSetMsgnodelist();
+								} else {
+									alert("你已经被移除出群：" + tm.roomTid.node);
+								}
+								break
+							case STAT.BUSINESS_NOPASSROOM:
+								console.log("BUSINESS_NOPASSROOM>>>", tm);
+								alert("入群申请没有通过:" + tm.roomTid.node);
+								break
+							default:
+								console.log("default>>>");
+						}
+						break;
+					case 5: //流数据
+						console.log("stream message from>>>", tm.fromTid.node);
+						//流数据转字节数组
+						if (tm.udshow == 1) {
+							tc.RoomUsers(tm.roomTid.node);
+						} else if (tm.udshow == 2) {
+							sleep(2000).then(() => tc.RoomUsers(tm.roomTid.node));
+						} else if (tm.udshow == 3) {
+							sleep(2000).then(() => tc.RoomUsers(tm.roomTid.node));
+							try {
+								let node = Base64.decode(Base64.decodeToString(tm.dataBinary));
+								console.log(node);
+							} catch (err) {
+								console.error(err);
+							}
+						}
+						break;
+					default: //开发者自定义的消息
+						console.log("other message>>>", tm);
+				}
+			} else {
+				alert("系统通知：" + tm.dataString);
+			}
+		}
+
+		function online(icon, name) {
+			document.getElementById("icon").src = icon;
+			document.getElementById("icontitle").src = icon;
+
+			initloginflag(true, name,)
+		}
+
+		function failedSend(msg) {
+			var div = document.createElement('div');
+			div.innerHTML =
+				'<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
+				'<p class="mb-0 chat-time text-end">you, ' + datetime() +
+				'</p><p class="chat-right-msg text-light">' + msg + '</p></div></div></div>';
+			document.getElementById("containerId").appendChild(div);
+		}
+
+		function initArrays(cid) {
+			let arrays = [];
+			arrays.push('<div class="ps__rail-x" style="left: 0px; bottom: 0px;">'
+				+ '<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>'
+				+ '</div>'
+				+ '<div class="ps__rail-y" style="top: 0px; height: 520px; right: 0px;">'
+				+ '<div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 235px;"></div>'
+				+ '</div>')
+			messageMap.set(cid, []);
+		}
+
+		function appendmsg(cid, fnode, rnode, isRoom, nanotime, msg, loop, isPull) {
+			let v = timNodeMap.get(fnode);
+			if (isEmpty(v) && loop > 0) {
+				sleep(1000).then(() => appendmsg(cid, fnode, rnode, isRoom, nanotime, msg, loop--, isPull));
+				return
+			}
+			let arrays = messageMap.get(cid);
+			if (fnode == myAccount) {
+				let s = '<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
+					'<p class="mb-0 chat-time text-end">you, ' + nanotime + '</p><p class="chat-right-msg">' +
+					msg + '</p></div></div></div>'
+				arrays.push(s);
+			} else {
+				let s = '<a href="javascript:;"><div class="chat-content-leftside"><div class="d-flex">' +
+					'<img src="' + v.cover + '" width="30" height="30" class="rounded-circle" alt=""><div class="flex-grow-1 ms-2">' +
+					'<p class="mb-0 chat-time"><B style="color:blue">' + v.name + "</B>," + nanotime +
+					'</p><p class="chat-left-msg">' + msg + '</p></div></div></div></a>';
+				arrays.push(s);
+			}
+			let tonode = document.getElementById("accountId").value;
+			let show = false;
+			let shownode = fnode;
+			if (isRoom) {
+				if (cid == chatid(tonode, tonode)) {
+					show = true;
+				}
+				shownode = rnode;
+			} else {
+				if (cid == chatid(myAccount, tonode)) {
+					show = true;
+				}
+			}
+			if (show) {
+				showchat(arrays);
+				tipshow(shownode, "", 3)
+			} else if (!isPull) {
+				tipshow(shownode, "&#128308;有新信息", 3)
+			}
+		}
+
+		function tipshow(account, msg, loop) {
+			let a = document.getElementById("news_" + account);
+			if (isEmpty(a) && loop > 0) {
+				sleep(500).then(() => tipshow(account, msg, loop--));
+				return
+			}
+			a.innerHTML = msg;
+		}
+
+		function clear() {
+			alertMap.clear();
+			friendMap.clear();
+			timNodeMap.clear();
+			messageMap.clear();
+			newMesMap.clear();
+			msgNodeMap.clear();
+			roomMap.clear();
+			roomMemberMap.clear();
+			document.getElementById("msgnodelist").innerHTML = "";
+			document.getElementById("containerId").innerHTML = "";
+		}
+
+		function showchat(arrays) {
+			document.getElementById("containerId").innerHTML = arrays.join('');
+			hight = hight + 200 * arrays.length;
+			document.getElementById("containerId").scrollTo(0, document.documentElement.scrollHeight + hight);
+			window.scrollTo(0, document.documentElement.scrollHeight);
+		}
+
+		function addToNodelist(account, isRoom) {
+			if (!isEmpty(msgNodeMap.get(account))) {
+				return
+			}
+			if (isEmpty(friendMap.get(account)) && isEmpty(roomMap.get(account))) {
+				return
+			}
+			let v = timNodeMap.get(account);
+			if (isEmpty(v)) {
+				sleep(1000).then(() => addToNodelist(account, isRoom));
+				return
+			}
+
+			var div = document.createElement('div');
+			var fs = '<a href="javascript:peer(\'' + account + '\',' + isRoom + ');" class="list-group-item">'
+				+ '<div class="d-flex">'
+				+ '<div  id="online_' + account + '">'
+				+ '<img src="' + v.cover + '" width="42" height="42" id="img_' + account + '" class="rounded-circle" alt="">'
+				+ '<img src="' + v.cover + '" width="42" height="42" id="2img_' + account + '" class="rounded-circle" alt="" hidden>'
+				+ '</div>'
+				+ '<div class="flex-grow-1 ms-2">'
+				+ '<h6 class="mb-0 chat-title" id="status_' + account + '"></h6>'
+				+ '<span class="mb-0 chat-msg" style="font-size: smaller;">' + v.name + ' <span id="news_' + account + '" style="color:red;font-weight: bolder;"></span></span>'
+				+ '</div>'
+				+ '<div class="chat-time">' + datetime() + '</div>'
+				+ '</div>'
+				+ '</a>';
+			div.id = "f" + account;
+			div.innerHTML = fs;
+			msgNodeMap.set(account, div);
+			document.getElementById("msgnodelist").appendChild(div);
+			friendstatus(account, false, "", isRoom);
+			if (isRoom) {
+				tc.PullRoomMessage(account, 0, 100);
+			} else {
+				tc.PullUserMessage(account, 0, 50);
+			}
+		}
+
+		function reSetMsgnodelist() {
+			document.getElementById("msgnodelist").innerHTML = ""
+			for (let v of msgNodeMap.values()) {
+				document.getElementById("msgnodelist").appendChild(v);
+			}
+		}
+
+		function friendstatus(account, on, show, isRoom) {
+			let status = document.getElementById("status_" + account);
+			let online = document.getElementById("online_" + account);
+			if (isEmpty(status)) {
+				sleep(1000).then(() => friendstatus(account, on, show, isRoom));
+				return
+			}
+			if (isRoom) {
+				status.innerHTML = "<h6 style='font-size: smaller;font-weight: bolder;'>群组&#128246;</h6>";
+			} else {
+				if (on) {
+					online.setAttribute("class", "chat-user-online")
+					status.innerHTML = "<h6 style='font-size: smaller;color:chartreuse;font-weight: bolder;'>在线 " + show + "</h6>";
+					sleep(1000).then(() => {
+						document.getElementById("img_" + account).src = document.getElementById("2img_" + account).src;
+					})
+				} else {
+					online.setAttribute("class", "")
+					status.innerHTML = "<h6 style='font-size: smaller;color:gainsboro'>离线</h6>";
+					let im = document.getElementById("img_" + account);
+					try {
+						im.src = grayImage(im.src);
+					} catch (err) {
+						sleep(1000).then(() => { im.src = grayImage(im.src) })
+					}
+				}
+			}
+		}
+
+		function send() {
+			let msg = document.getElementById("msgid").value;
+			let node = document.getElementById("accountId").value;
+			if (isEmpty(node)) {
+				alert("请先选择聊天对象");
+				return
+			}
+			try {
+				if (!isEmpty(msg)) {
+					if (!isEmpty(friendMap.get(node))) {
+						tc.MessageToUser(node, msg, 0, 0, null, null);
+					} else if (!isEmpty(roomMap.get(node))) {
+						tc.MessageToRoom(node, msg, 0, 0, null, null);
+					} else {
+						alert("账号错误");
+					}
+				}
+			} catch (err) {
+				alert("信息发送失败");
+				return
+			}
+			document.getElementById("msgid").value = "";
+		}
+
+		$("#msgid").keydown(function () {
+			if (event.keyCode == "13") {
+				send();
+			}
+		})
+
+		$("#pwd").keydown(function () {
+			if (event.keyCode == "13") {
+				login();
+			}
+		})
+
+		function initloginflag(_login, name) {
+			if (!_login) {
+				document.getElementById("loginflag").innerText = "未登录";
+				document.getElementById("usertitle").innerText = "未登录";
+				document.getElementById("icon").src = "/img/user.png";
+				document.getElementById("icontitle").src = "/img/user.png";
+			} else {
+				document.getElementById("loginflag").innerHTML = name + ' <span onclick="logout()"><button type="button" class="btn btn-primary">退出登录</button></span>'
+				document.getElementById("usertitle").innerText = "";
+				document.getElementById("username").value = "";
+				document.getElementById("pwd").value = "";
+			}
+		}
+
+		function logout() {
+			initloginflag(false, "");
+			myAccount = null;
+			tc.Logout();
+			clear();
+		}
+
+		function login() {
+			var username = document.getElementById("username").value;
+			var pwd = document.getElementById("pwd").value;
+			if (username == "" || pwd == "") {
+				alert("用户名密码不能为空");
+				return
+			}
+			clear();
+			//登录
+			tc.Login(username, pwd, "tlnet.top", "web browser", 1);
+			hideSidebar();
+		}
+
+		function peer(account, isRoom) {
+			document.getElementById("accountId").value = account;
+			let id = chatid(account, myAccount);
+			if (isRoom) {
+				id = chatid(account, account);
+			}
+			let arrays = messageMap.get(id);
+			if (isEmpty(arrays)) {
+				initArrays(id);
+			}
+			showchat(messageMap.get(id));
+			document.getElementById("news_" + account).innerText = "";
+			let v = timNodeMap.get(account);
+			document.getElementById("iconuser").src = v.cover;
+			if (isRoom) {
+				document.getElementById("touser").innerHTML = "&#128246; " + v.name;
+			} else {
+				document.getElementById("touser").innerHTML = " " + v.name;
+			}
+		}
+
+		function hideSidebar() {
+			$(".chat-wrapper").removeClass("chat-toggled")
+		}
+
+	</script>
+	<script>
+		function isEmpty(obj) {
+			if (typeof obj == "undefined" || obj == null || obj == "") {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		Date.prototype.Format = function (fmt) {
+			var o = {
+				"M+": this.getMonth() + 1,
+				"d+": this.getDate(),
+				"h+": this.getHours(),
+				"m+": this.getMinutes(),
+				"s+": this.getSeconds(),
+				"q+": Math.floor((this.getMonth() + 3) / 3),
+				"S": this.getMilliseconds()
+			};
+			if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			for (var k in o)
+				if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) :
+					(("00" + o[k]).substr(("" + o[k]).length)));
+			return fmt;
+		}
+
+		function sleep(ms) {
+			return new Promise(function (resolve, reject) {
+				setTimeout(resolve, ms);
+			})
+		}
+
+		function datetime() {
+			return new Date().Format("yyyy-MM-dd hh:mm:ss")
+		}
+
+		function unixnanoToDatatime(v) {
+			let dt = new Date(v / 1000000);
+			return dt.Format("yyyy-MM-dd hh:mm:ss");
+		}
+
+		function usericon(name) {
+			const checksum = crc32(new TextEncoder().encode(name));
+			return "/img/" + checksum % 30 + ".jpg"
+		}
+
+		function uuid(s) {
+			return crc32(new TextEncoder().encode(s));
+		}
+
+		function chatid(from, to) {
+			let fid = crc32(new TextEncoder().encode(from));
+			let tid = crc32(new TextEncoder().encode(to));
+			if (fid < tid) {
+				let id = fid;
+				fid = tid;
+				tid = id;
+			}
+			return fid + "_" + tid
+		}
+
+		const table = [];
+		for (let i = 0; i < 256; i++) {
+			let c = i;
+			for (let j = 0; j < 8; j++) {
+				if ((c & 1) === 1) {
+					c = 0xEDB88320 ^ (c >>> 1);
+				} else {
+					c = c >>> 1;
+				}
+			}
+			table[i] = c;
+		}
+		function crc32(data) {
+			let crc = 0xFFFFFFFF;
+			for (let i = 0; i < data.length; i++) {
+				crc = table[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+			}
+			return (~crc >>> 0);
+		}
+	</script>
+	<script>
+		function addfriendAlert(account, msg) {
+			let s = '<div class="alert alert-info alert-dismissible fade show">'
+				+ '<button type="button" class="btn-close" data-bs-dismiss="alert" onclick=\'rmAlertMap("' + account + '")\'></button>'
+				+ '<strong>请求加为好友：' + msg + '</strong>'
+				+ '<button type="button"  class="btn btn-primary"  onclick=\'agreeAddroster("' + account + '")\'>同意</button>'
+				+ '</div>'
+			let id = uuid(account + "_" + myAccount);
+			alertMap.set(id, s)
+			let alertstring = [];
+			for (let v of alertMap.values()) {
+				alertstring.push(v);
+			}
+			document.getElementById("toastshow").innerHTML = alertstring.join("");
+		}
+
+
+		function agreeAddroster(account) {
+			let id = uuid(account + "_" + myAccount);
+			tc.Addroster(account, "");
+			alertMap.delete(id);
+			let alertstring = [];
+			for (let v of alertMap.values()) {
+				alertstring.push(v);
+			}
+			document.getElementById("toastshow").innerHTML = alertstring.join("");
+		}
+
+		function addroomAlert(fnode, rnode, msg) {
+			let f = timNodeMap.get(fnode);
+			let r = timNodeMap.get(rnode);
+			let s = '<div class="alert alert-info alert-dismissible fade show">'
+				+ '<button type="button" class="btn-close" data-bs-dismiss="alert" onclick=\'rmRoomAlertMap("' + fnode + '","' + rnode + '")\'></button>'
+				+ '<strong>[' + r.name + ']入群申请：' + msg + '</strong>'
+				+ '<button type="button"  class="btn btn-primary"  onclick=\'agreeAddroom("' + fnode + '","' + rnode + '")\'>同意</button>'
+				+ '</div>'
+			let id = uuid(fnode + "_" + rnode + "_" + myAccount);
+			alertMap.set(id, s)
+			let alertstring = [];
+			for (let v of alertMap.values()) {
+				alertstring.push(v);
+			}
+			document.getElementById("toastshow").innerHTML = alertstring.join("");
+		}
+
+		function agreeAddroom(fnode, rnode) {
+			let id = uuid(fnode + "_" + rnode + "_" + myAccount);
+			tc.PullInRoom(rnode, fnode);
+			alertMap.delete(id);
+			let alertstring = [];
+			for (let v of alertMap.values()) {
+				alertstring.push(v);
+			}
+			document.getElementById("toastshow").innerHTML = alertstring.join("");
+		}
+
+		function rmAlertMap(account) {
+			let id = uuid(account + "_" + myAccount);
+			alertMap.delete(id);
+		}
+
+		function rmRoomAlertMap(fnode, rnode) {
+			let id = uuid(fnode + "_" + rnode + "_" + myAccount);
+			alertMap.delete(id);
+		}
+
+		function befriendAlert(account) {
+			let v = timNodeMap.get(account);
+			if (isEmpty(v)) {
+				sleep(1000).then(() => befriendAlert(account));
+			} else {
+				if (!isEmpty(v.name)) {
+					alert("与" + v.name + "成为好友")
+				} else {
+					alert("与" + account + "成为好友")
+				}
+			}
+		}
+
+		function httpPost(uri, data, func) {
+			let xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function () {
+				if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+					func(xmlHttp.responseText);
+				}
+			}
+			xmlHttp.open("POST", "/" + uri, true);
+			xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			if (isEmpty(data)) {
+				xmlHttp.send();
+			} else {
+				xmlHttp.send(data);
+			}
+		}
+	</script>
+	<script>
+		function grayImage(src) {
+			var canvas = document.createElement('canvas');
+			var ctx = canvas.getContext('2d');
+			var imgObj = new Image();
+			imgObj.src = src;
+			canvas.width = imgObj.width;
+			canvas.height = imgObj.height;
+			ctx.drawImage(imgObj, 0, 0);
+			var imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			for (var y = 0; y < imgPixels.height; y++) {
+				for (var x = 0; x < imgPixels.width; x++) {
+					var i = (y * 4) * imgPixels.width + x * 4;
+					var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
+					imgPixels.data[i] = avg;
+					imgPixels.data[i + 1] = avg;
+					imgPixels.data[i + 2] = avg;
+				}
+			}
+			ctx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
+			return canvas.toDataURL();
+		}		
+	</script>
+</body>
+
+</html>
