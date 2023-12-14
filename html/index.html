@@ -16,8 +16,9 @@
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="bookmark" href="/favicon.ico">
 	<script src="/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="/assets/js/jquery.min.js"></script>
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.7.1.min.js"></script>
 	<script src="/assets/js/t.js"></script>
+	<script src="/assets/js/pako.es5.js"></script>
 	<script src="/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
 	<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/assets/css/app.css" rel="stylesheet">
@@ -25,6 +26,7 @@
 	<link rel="stylesheet" href="/assets/css/dark-theme.css">
 	<link rel="stylesheet" href="/assets/css/semi-dark.css">
 	<link rel="stylesheet" href="/assets/css/header-colors.css">
+
 	<title>webtim</title>
 </head>
 
@@ -51,9 +53,12 @@
 			<div class="col-lg-12 card p-lg-1 ">
 				<div>
 					<button type="button" class="btn btn-light mt-1" id="modal-btn-register">注册</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-timself">我的</button>
 					<button type="button" class="btn btn-light mt-1" id="modal-btn-friend">加好友</button>
 					<button type="button" class="btn btn-light mt-1" id="modal-btn-group">我的群</button>
 					<button type="button" class="btn btn-light mt-1" id="modal-btn-timgroup">webtim群组</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-timmyfriend">我的好友</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-timlivestream">直播间</button>
 				</div>
 
 				<div class="modal fade" id="modal-register">
@@ -192,6 +197,27 @@
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal"
 									id="register-close-end">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-timself">
+					<div class="modal-dialog modal-md">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									onclick="timselfclose()">关闭</button>
+								<h4 class="modal-title">我的</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="timselflist">
+									建设中...📝📝📝
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									onclick="timselfclose()">关闭</button>
 							</div>
 						</div>
 					</div>
@@ -368,6 +394,70 @@
 					</div>
 				</div>
 
+
+				<div class="modal fade" id="modal-timmyfriend">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="modalmyfriend-close" onclick="timmyfriendclose()">关闭</button>
+								<h4 class="modal-title">我的好友</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="modalmyfriendlist">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="modalmyfriend-close-end" onclick="timmyfriendclose()">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-timlivestream">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="modalmyfriend-close" onclick="timlivestreamclose()">关闭</button>
+								<h4 class="modal-title">直播间</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="overflow: scroll;height: 400px;" id="modalmyfriendlist">
+									建设中...📝📝📝
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									id="modalmyfriend-close-end" onclick="timlivestreamclose()">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="modal-timvideo">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									onclick="timvideoclose()">关闭</button>
+								<h2 id="readylink" value="1"></h2>
+								<h4 class="modal-title">视频</h4>
+							</div>
+							<div class="modal-body" style="overflow: scroll;height: 400px;">
+								<div class="d-flex flex-column bg-light mb-1" id="timvideoview">
+									<video class="p-1" id="myvideo" autoplay style="width: 150px;height: auto;"></video>
+									<div class="p-1" id="videodiv"></div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal"
+									onclick="timvideoclose()">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="page-content">
 					<div class="chat-wrapper">
 						<div class="chat-sidebar">
@@ -558,6 +648,44 @@
 			});
 		});
 
+
+		$(function () {
+			$("#modal-btn-timself").click(function () {
+				$("#modal-timself").modal("show");
+
+			});
+		});
+		function timselfclose() {
+			$("#modal-timself").modal("hide");
+		}
+		$(function () {
+			$("#modal-btn-timmyfriend").click(function () {
+				$("#modal-timmyfriend").modal("show");
+				timmyfriendlist();
+			});
+		});
+
+		$(function () {
+			$("#modal-btn-timlivestream").click(function () {
+				$("#modal-timlivestream").modal("show");
+			});
+		});
+
+		function timmyfriendclose() {
+			$("#modal-timmyfriend").modal("hide");
+		}
+		function timlivestreamclose() {
+			$("#modal-timlivestream").modal("hide");
+		}
+
+		function timvideoshow() {
+			$("#modal-timvideo").modal("show");
+		}
+		function timvideoclose() {
+			$("#modal-timvideo").modal("hide");
+			mediaRecorderStop();
+		}
+
 		const accountdiv = (cover, name, account) => {
 			let n = timNodeMap.get(account);
 			let addbut = "";
@@ -628,6 +756,25 @@
 			return s;
 		}
 
+		const mytimfrienddiv = (account) => {
+			let n = timNodeMap.get(account);
+			let cover = "";
+			let name = "";
+			if (!isEmpty(n)) {
+				cover = n.cover;
+				name = n.name;
+			}
+			let s = '<div class="card m-1" style="width:170px;height: 200px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 130px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + name + '</h6>'
+				+ '<div class="btn-group">'
+				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=sendmsg("' + account + '")>聊天</button>'
+				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=deleteroster("' + account + '","' + name + '")>删除</button>'
+				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=sendTimvideo("' + account + '","' + name + '")>视频</button>'
+				+ '</div>'
+				+ '</div>'
+			return s;
+		}
 
 		const timroomdiv = (cover, topic, account, gtype) => {
 			let but = '';
@@ -683,6 +830,15 @@
 					timgrouplist.innerHTML = items.join("");
 				}
 			});
+		}
+
+
+		function timmyfriendlist() {
+			let modalmyfriendlist = document.getElementById("modalmyfriendlist");
+			modalmyfriendlist.innerHTML = "";
+			for (const node of friendMap.keys()) {
+				modalmyfriendlist.innerHTML = modalmyfriendlist.innerHTML + mytimfrienddiv(node)
+			}
 		}
 
 		function groupmember(node) {
@@ -781,7 +937,7 @@
 
 		function kickroom(unode, name, rnode) {
 			if (confirm("是否确定将" + name + "移除出群?")) {
-				tc.StreamToRoom(rnode, Base64.encodeToStr(rnode), 3, 0);
+				tc.StreamToRoom(rnode, rnode, 3, 0);
 				tc.KickRoom(rnode, unode);
 				let nlist = roomMemberMap.get(rnode);
 				let t = [];
@@ -791,6 +947,48 @@
 					}
 				}
 				roomMemberMap.set(rnode, t);
+			}
+		}
+
+		function sendmsg(account) {
+			timmyfriendclose()
+			peer(account, false);
+		}
+
+		function deleteroster(account, name) {
+			if (confirm("确定删除好友:" + name)) {
+				tc.Rmroster(account)
+				sleep(2000).then(() => timmyfriendlist());
+			}
+		}
+
+		function sendTimvideo(account, name) {
+			if (videoPhoneAccount != "") {
+				timvideoshow();
+			} else {
+				if (confirm("确定向好友" + name + "发送视频请求？")) {
+					document.getElementById("readylink").innerHTML = "<h2>连线中...<h2><h2></h2>"
+					rockonTime(account, 30);
+					timvideoshow();
+					videoPhoneAccount = account;
+					mediaRecorderStart();
+					tc.StreamToUser(account, null, 0, 1);
+				}
+			}
+		}
+
+		function rockonTime(account, count) {
+			if (count < 0) {
+				if (videoPhoneAccount == account) {
+					videoPhoneAccount = ""
+					document.getElementById("readylink").innerHTML = "超时无人接听";
+				}
+				return
+			}
+			let t = document.getElementById("readylink").children[1];
+			if (!isEmpty(t)) {
+				t.innerText = count + "秒"
+				sleep(1000).then(() => rockonTime(account, count - 1))
 			}
 		}
 
@@ -809,7 +1007,7 @@
 				this.fnode = fnode;
 			}
 		}
-		var tc = new timClient(false, "192.168.2.11", 5081);
+		var tc = new timClient(true, "192.168.2.11", 443);
 		var myAccount = "";
 		var hight = 0;
 		var friendMap = new Map();
@@ -902,6 +1100,10 @@
 						switch (ta.t) {
 							case STAT.BUSINESS_REMOVEROSTER: //删除好友成功
 								console.log("romove friend successful:", ta.n);
+								alert("你与" + ta.n + "已成功解除好友关系");
+								friendMap.delete(ta.n)
+								msgNodeMap.delete(ta.n);
+								reSetMsgnodelist();
 								break;
 							case STAT.BUSINESS_BLOCKROSTER: //拉黑好友成功
 								console.log("block  successful:", ta.n);
@@ -993,6 +1195,10 @@
 			}
 			if (tp.offline) {
 				friendstatus(tp.fromTid.node, false, "", false);
+				if (videoPhoneAccount == tp.fromTid.node) {
+					alert("对方掉线了");
+					mediaclear();
+				}
 			} else {
 				friendstatus(tp.fromTid.node, true, tp.status, false);
 			}
@@ -1021,6 +1227,39 @@
 				}
 			}
 		};
+
+		tc.bigStringHandler = (data) => {
+			let idx = data.indexOf(STAT.SEQ_STR);
+			let node = data.substring(0, idx);
+			let datastr = data.substring(idx + 1, data.length);
+			console.log("bigStringHandler datastr>>>", datastr.length);
+			console.log(data.length);
+			if (node == videoPhoneAccount) {
+				let ua = StringToUint8Array(datastr)
+				console.log("bigStringHandler ua>>>", ua.length);
+				setvideo(ua)
+			}
+		}
+
+		tc.bigBinaryHandler = (data) => {
+			let idx = 0;
+			for (let i = 0; i < data.length; i++) {
+				if (data[i] == STAT.SEQ_BIN) {
+					idx = i;
+					break
+				}
+			}
+			let node = uint8ArrayToString(data.slice(0, idx));
+			if (node == videoPhoneAccount) {
+				if (data.length < 1000) {
+					return
+				}
+				document.getElementById("readylink").innerText = "";
+				let databs = data.slice(idx + 1, data.length);
+				createVideoDom(storecount++, pako.ungzip(databs));
+			}
+		}
+
 		tc.nodesHandler = function (data) {
 			let tn = new TimNodes();
 			tn = JSON.parse(data);
@@ -1104,9 +1343,6 @@
 							id = chatid(tm.fromTid.node, tm.toTid.node);
 						} else {
 							id = chatid(tm.roomTid.node, tm.roomTid.node);
-							if (tm.udShow == 1) { //开发者自定义字段值，更新群成员
-								tc.RoomUsers(tm.roomTid.node);
-							}
 						}
 						if (isEmpty(messageMap.get(id))) {
 							initArrays(id);
@@ -1126,6 +1362,12 @@
 					case 4: //业务消息
 						console.log("business message>>>", tm);
 						switch (tm.bnType) {
+							case STAT.BUSINESS_REMOVEROSTER:
+								console.log("remove roster>>>", tm);
+								friendMap.delete(tm.fromTid.node)
+								msgNodeMap.delete(tm.fromTid.node);
+								reSetMsgnodelist();
+								break;
 							case STAT.BUSINESS_ADDROSTER:
 								console.log("add roster>>>", tm);
 								addfriendAlert(tm.fromTid.node, tm.dataString);
@@ -1140,8 +1382,8 @@
 								}
 								friendMap.set(faccount, 1);
 								tc.UserInfo([faccount]);
-								befriendAlert(faccount);
 								sleep(1000).then(() => tc.PresenceToUser(faccount, 0, "😄", 1, null, null))
+								befriendAlert(faccount);
 								break;
 							case STAT.BUSINESS_ADDROOM:
 								console.log("BUSINESS_ADDROOM>>>", tm);
@@ -1149,9 +1391,9 @@
 								break;
 							case STAT.BUSINESS_PASSROOM:
 								console.log("BUSINESS_PASSROOM>>>", tm);
-								alert("入群申请已经通过:" + tm.roomTid.node);
 								tc.StreamToRoom(tm.roomTid.node, null, 1, 0);
 								tc.UserRoom();
+								alert("入群申请已经通过:" + tm.roomTid.node);
 								break
 							case STAT.BUSINESS_PULLROOM:
 								console.log("BUSINESS_PULLROOM>>>", tm);
@@ -1188,10 +1430,68 @@
 						} else if (tm.udshow == 3) {
 							sleep(2000).then(() => tc.RoomUsers(tm.roomTid.node));
 							try {
-								let node = Base64.decode(Base64.decodeToString(tm.dataBinary));
+								let node = tm.dataString;
 								console.log(node);
 							} catch (err) {
 								console.error(err);
+							}
+						}
+
+						//视频电话处理
+						if (tm.udtype == 1) {
+							let n = timNodeMap.get(tm.fromTid.node);
+							let t = Date.now();
+							if (!isEmpty(n)) {
+								if (confirm("是否连接" + n.name + "的视频电话?")) {
+									if (Date.now() - t > 30000) {
+										alert("视频连接已经超时");
+										return;
+									}
+									if (isEmpty(videoPhoneAccount))
+										tc.StreamToUser(tm.fromTid.node, null, 0, 2);
+								} else {
+									tc.StreamToUser(tm.fromTid.node, null, 0, 7);
+								}
+							}
+						} else if (tm.udtype == 2) {
+							if (videoPhoneAccount == tm.fromTid.node) {
+								tc.StreamToUser(tm.fromTid.node, null, 0, 3);
+							} else {
+								tc.StreamToUser(tm.fromTid.node, null, 0, 6);
+							}
+						} else if (tm.udtype == 3) {
+							console.log(tm.udtype, ">>>", videoPhoneAccount)
+							if (isEmpty(videoPhoneAccount)) {
+								videoPhoneAccount = tm.fromTid.node;
+								tc.StreamToUser(tm.fromTid.node, null, 0, 4);
+								timvideoshow()
+								mediaRecorderStart();
+								sleep(1000).then(() => pushstream(true))
+							} else {
+								tc.StreamToUser(tm.fromTid.node, null, 0, 5);
+							}
+						} else if (tm.udtype == 4) {
+							if (tm.fromTid.node == videoPhoneAccount) {
+								mediaon = true;
+								pushstream(true);
+							}
+						} else if (tm.udtype == 5) {
+							if (tm.fromTid.node == videoPhoneAccount) {
+								videoPhoneAccount = "";
+								alert("对方通话中");
+							}
+						} else if (tm.udtype == 6) {
+							if (tm.fromTid.node == videoPhoneAccount) {
+								videoPhoneAccount = "";
+								mediaon = false;
+								mediaclear()
+								alert("对方已经断开视频连接");
+							}
+						} else if (tm.udtype == 7) {
+							if (tm.fromTid.node == videoPhoneAccount) {
+								videoPhoneAccount = "";
+								mediaclear();
+								alert("对方已取消了电话连接");
 							}
 						}
 						break;
@@ -1203,10 +1503,12 @@
 			}
 		}
 
+	</script>
+	<script>
+
 		function online(icon, name) {
 			document.getElementById("icon").src = icon;
 			document.getElementById("icontitle").src = icon;
-
 			initloginflag(true, name,)
 		}
 
@@ -1471,84 +1773,238 @@
 
 	</script>
 	<script>
-		function isEmpty(obj) {
-			if (typeof obj == "undefined" || obj == null || obj == "") {
-				return true;
+		const myvideo = document.getElementById("myvideo");
+		const videodiv = document.getElementById("videodiv");
+		let storecount = 1;
+		let videoPhoneAccount = "";
+		let mediaRecorder;
+		let mediaon = true;
+		let pushseqt = 300;
+		let currentnum = 1;
+		let vedioOff = true;
+		let delnum = 1;
+		const constraints = { video: true, audio: true };
+		function mediaDevices() {
+			if (!isEmpty(navigator.mediaDevices) && navigator.mediaDevices.getUserMedia) {
+				console.log("navigator.mediaDevices")
+				navigator.mediaDevices.getUserMedia(constraints)
+					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
+			} else if (navigator.webkitGetUserMedia) {
+				console.log("webkitGetUserMedia")
+				navigator.webkitGetUserMedia(constraints)
+					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
+			} else if (navigator.mozGetUserMedia) {
+				console.log("navigator.mozGetUserMedia")
+				navigator.mozGetUserMedia(constraints)
+					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
+			} else if (navigator.getUserMedia) {
+				console.log("navigator.getUserMedia")
+				navigator.getUserMedia(constraints)
+					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
 			} else {
-				return false;
+				alert("无法获取摄像头数据");
 			}
 		}
 
-		Date.prototype.Format = function (fmt) {
-			var o = {
-				"M+": this.getMonth() + 1,
-				"d+": this.getDate(),
-				"h+": this.getHours(),
-				"m+": this.getMinutes(),
-				"s+": this.getSeconds(),
-				"q+": Math.floor((this.getMonth() + 3) / 3),
-				"S": this.getMilliseconds()
-			};
-			if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-			for (var k in o)
-				if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) :
-					(("00" + o[k]).substr(("" + o[k]).length)));
-			return fmt;
-		}
-
-		function sleep(ms) {
-			return new Promise(function (resolve, reject) {
-				setTimeout(resolve, ms);
-			})
-		}
-
-		function datetime() {
-			return new Date().Format("yyyy-MM-dd hh:mm:ss")
-		}
-
-		function unixnanoToDatatime(v) {
-			let dt = new Date(v / 1000000);
-			return dt.Format("yyyy-MM-dd hh:mm:ss");
-		}
-
-		function usericon(name) {
-			const checksum = crc32(new TextEncoder().encode(name));
-			return "/img/" + checksum % 30 + ".jpg"
-		}
-
-		function uuid(s) {
-			return crc32(new TextEncoder().encode(s));
-		}
-
-		function chatid(from, to) {
-			let fid = crc32(new TextEncoder().encode(from));
-			let tid = crc32(new TextEncoder().encode(to));
-			if (fid < tid) {
-				let id = fid;
-				fid = tid;
-				tid = id;
+		function parseStream(stream) {
+			myvideo.srcObject = stream;
+			let data = stream;
+			try {
+				data = myvideo.captureStream()
+			} catch (err) {
+				data = stream;
 			}
-			return fid + "_" + tid
-		}
-
-		const table = [];
-		for (let i = 0; i < 256; i++) {
-			let c = i;
-			for (let j = 0; j < 8; j++) {
-				if ((c & 1) === 1) {
-					c = 0xEDB88320 ^ (c >>> 1);
-				} else {
-					c = c >>> 1;
+			mediaRecorder = new MediaRecorder(data, {
+				audioBitsPerSecond: 320000,
+				videoBitsPerSecond: 200000,
+			});
+			mediaRecorder.ondataavailable = event => {
+				if (!isEmpty(videoPhoneAccount)) {
+					event.data.arrayBuffer().then(buffer => {
+						sendVData(buffer, videoPhoneAccount)
+					})
 				}
-			}
-			table[i] = c;
+			};
+			mediaRecorder.onstop = () => {
+			};
 		}
-		function crc32(data) {
-			let crc = 0xFFFFFFFF;
-			for (let i = 0; i < data.length; i++) {
-				crc = table[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+
+		function mediaRecorderStart() {
+			mediaon = true;
+			mediaDevices();
+		}
+
+		function mediaRecorderStop() {
+			try {
+				if (!isEmpty(videoPhoneAccount)) {
+					tc.StreamToUser(videoPhoneAccount, null, 0, 6);
+				}
+				videoPhoneAccount = "";
+				mediaon = false;
+				if (mediaRecorder.state == 'active') {
+					mediaRecorder.stop();
+				}
+				myvideo.srcObject.getTracks().forEach((track) => track.stop());
+			} catch (err) {
+				console.log(err);
 			}
-			return (~crc >>> 0);
+			mediaclear();
+			myvideo.innerHTML = "";
+		}
+
+		function mediaclear() {
+			videoPhoneAccount = "";
+			currentnum = 1;
+			vedioOff = true;
+			storecount = 1;
+			delnum = 1;
+			videodiv.innerHTML = "";
+		}
+
+		function pushstream2() {
+			if (!mediaon && isEmpty(videoPhoneAccount)) {
+				return
+			}
+			if (on) {
+				if (isEmpty(mediaRecorder)) {
+					sleep(pushseqt).then(() => pushstream2(on))
+					return
+				}
+				try {
+					mediaRecorder.start();
+				} catch (err) {
+					console.error(err);
+				}
+				sleep(pushseqt).then(() => pushstream2(!on));
+			} else {
+				try {
+					mediaRecorder.stop();
+				} catch (err) {
+					console.error(err);
+				}
+				pushstream2(!on);
+			}
+		}
+
+		function pushstream(on) {
+			if (!mediaon && isEmpty(videoPhoneAccount)) {
+				return
+			}
+			if (on) {
+				if (isEmpty(mediaRecorder)) {
+					sleep(pushseqt).then(() => pushstream(on))
+					return
+				}
+				try {
+					mediaRecorder.start();
+				} catch (err) {
+					console.error(err);
+				}
+				sleep(pushseqt).then(() => pushstream(!on));
+			} else {
+				try {
+					mediaRecorder.stop();
+				} catch (err) {
+					console.error(err);
+				}
+				pushstream(!on);
+			}
+		}
+
+
+		function sendVData(buffer, tonode) {
+			tc.BigDataBinary(tonode, pako.gzip(new Uint8Array(buffer)))
+		}
+
+	</script>
+	<script>
+		function createVideoDom(count, data) {
+			var video = document.createElement("video");
+			video.setAttribute("id", "video" + count);
+			video.setAttribute("style", "width: 250px;height: auto;display:none");
+			video.src = URL.createObjectURL(new Blob([data], { type: 'audio/ogg;video/webm' }));
+			video.setAttribute("preload", "metadata");
+			videodiv.appendChild(video);
+			if ((count - currentnum) > 4) {
+				let rate = 1 + 0.2 * (count - currentnum);
+				if (rate > 16) {
+					rate = 16;
+				}
+				video.playbackRate = rate;
+				console.log(video.playbackRate);
+			} else {
+				video.playbackRate = 1;
+			}
+			video.addEventListener("ended", function (e) {
+				// console.log("ended>>>>", count)
+				video.pause()
+				callvideo(count + 1);
+			});
+			// video.addEventListener("canplay", function (e) {
+			// });
+			// video.addEventListener("play", function (e) {
+			// 	// rmvideo(count - 1);
+			// 	// hide(count)
+			// });
+			video.addEventListener("error", function (e) {
+				console.log("error>>>>", count, " :", e)
+				if (video.style.display == "inline") {
+					callvideo(count + 1);
+				}
+			});
+			if (vedioOff) {
+				callvideo(count);
+			}
+		}
+
+		function rmvideo(count, isone) {
+			if (isone) {
+				let bf = document.getElementById("video" + count);
+				if (!isEmpty(bf)) {
+					videodiv.removeChild(bf);
+				}
+			} else if (count >= delnum) {
+				for (let i = delnum; i <= count; i++) {
+					let bf = document.getElementById("video" + i);
+					if (!isEmpty(bf)) {
+						videodiv.removeChild(bf);
+					}
+				}
+				delnum = count;
+			}
+		}
+
+		function callvideo(count) {
+			currentnum = count
+			if (!mediaon) {
+				return
+			}
+			vedioOff = false
+			let v = document.getElementById("video" + count)
+			if (!isEmpty(v)) {
+				mvplay(v, count);
+			} else {
+				console.log(count, " not found");
+				vedioOff = true
+			}
+		}
+
+		function mvplay(mv, count) {
+			let play = mv.play();
+			if (play) {
+				play.then(() => {
+					// console.log("play success >>", count)
+					mv.style.display = "inline";
+					rmvideo(count - 1, false);
+				}).catch(error => {
+					rmvideo(count, true);
+					console.log("play failed >>", count)
+					vedioOff = true
+				});
+			} else {
+				console.log("play not exist >>", count)
+				vedioOff = true
+			}
 		}
 	</script>
 	<script>
@@ -1630,6 +2086,88 @@
 			}
 		}
 
+	</script>
+	<script>
+		function isEmpty(obj) {
+			if (typeof obj == "undefined" || obj == null || obj == "") {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		Date.prototype.Format = function (fmt) {
+			var o = {
+				"M+": this.getMonth() + 1,
+				"d+": this.getDate(),
+				"h+": this.getHours(),
+				"m+": this.getMinutes(),
+				"s+": this.getSeconds(),
+				"q+": Math.floor((this.getMonth() + 3) / 3),
+				"S": this.getMilliseconds()
+			};
+			if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			for (var k in o)
+				if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) :
+					(("00" + o[k]).substr(("" + o[k]).length)));
+			return fmt;
+		}
+
+		function sleep(ms) {
+			return new Promise(function (resolve, reject) {
+				setTimeout(resolve, ms);
+			})
+		}
+
+		function datetime() {
+			return new Date().Format("yyyy-MM-dd hh:mm:ss")
+		}
+
+		function unixnanoToDatatime(v) {
+			let dt = new Date(v / 1000000);
+			return dt.Format("yyyy-MM-dd hh:mm:ss");
+		}
+
+		function usericon(name) {
+			const checksum = crc32(new TextEncoder().encode(name));
+			return "/img/" + checksum % 30 + ".jpg"
+		}
+
+		function uuid(s) {
+			return crc32(new TextEncoder().encode(s));
+		}
+
+		function chatid(from, to) {
+			let fid = crc32(new TextEncoder().encode(from));
+			let tid = crc32(new TextEncoder().encode(to));
+			if (fid < tid) {
+				let id = fid;
+				fid = tid;
+				tid = id;
+			}
+			return fid + "_" + tid
+		}
+
+		const table = [];
+		for (let i = 0; i < 256; i++) {
+			let c = i;
+			for (let j = 0; j < 8; j++) {
+				if ((c & 1) === 1) {
+					c = 0xEDB88320 ^ (c >>> 1);
+				} else {
+					c = c >>> 1;
+				}
+			}
+			table[i] = c;
+		}
+		function crc32(data) {
+			let crc = 0xFFFFFFFF;
+			for (let i = 0; i < data.length; i++) {
+				crc = table[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+			}
+			return (~crc >>> 0);
+		}
+
 		function httpPost(uri, data, func) {
 			let xmlHttp = new XMLHttpRequest();
 			xmlHttp.onreadystatechange = function () {
@@ -1645,8 +2183,6 @@
 				xmlHttp.send(data);
 			}
 		}
-	</script>
-	<script>
 		function grayImage(src) {
 			var canvas = document.createElement('canvas');
 			var ctx = canvas.getContext('2d');
@@ -1667,7 +2203,24 @@
 			}
 			ctx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
 			return canvas.toDataURL();
-		}		
+		}
+
+		function Uint8ArrayToString(ua) {
+			var dataString = "";
+			for (var i = 0; i < ua.length; i++) {
+				dataString += String.fromCharCode(ua[i]);
+			}
+			return dataString
+		}
+
+		function StringToUint8Array(str) {
+			var arr = [];
+			for (var i = 0, j = str.length; i < j; ++i) {
+				arr.push(str.charCodeAt(i));
+			}
+			var tmpUint8Array = new Uint8Array(arr);
+			return tmpUint8Array
+		}
 	</script>
 </body>
 
