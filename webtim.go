@@ -37,6 +37,9 @@ func Start(addr string) {
 	tlnet.POST("/newroom", newgroup)
 	tlnet.POST("/roomlist", roomlist)
 	logging.Info("webtim start[", addr, "]")
+	// if err := tlnet.HttpStartTlsBytes(addr, []byte(keystore.ServerCrt), []byte(keystore.ServerKey)); err != nil {
+	// 	logging.Error("webtim start failed:", err)
+	// }
 	if err := tlnet.HttpStart(addr); err != nil {
 		logging.Error("webtim start failed:", err)
 	}
