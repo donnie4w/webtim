@@ -24,6 +24,8 @@ const STAT = {
     TIMREVOKEMESSAGE: 92,
     TIMBURNMESSAGE: 93,
     TIMSTREAM: 94,
+    TIMBIGSTRING: 95,
+    TIMBIGBINARY: 96,
 
     GROUP_PRIVATE: 1,
     GROUP_OPEN: 2,
@@ -84,6 +86,8 @@ const STAT = {
     ERR_OVERENTRY: 4111,
     ERR_MODIFYAUTH: 4112,
 
+    SEQ_STR: "|",
+    SEQ_BIN: new Uint8Array([131])[0],
 }
 
 class Tid {
@@ -295,10 +299,10 @@ class Tx {
         return this._message(STAT.TIMBURNMESSAGE, 2, 3, msg, to, null, udshow, udtype, msgId, null, null)
     }
 
-    stream(msgbs, to, room, udShow, udType) {
+    stream(dataBinary, to, room, udShow, udType, dataString) {
         let tm = new TimMessage(2, 5)
-        if (!isEmpty(msgbs)) {
-            tm.dataBinary = Base64.encodeToStr(msgbs);
+        if (!isEmpty(dataBinary)) {
+            tm.dataBinary = dataBinary;
         }
         if (!isEmpty(to)) {
             tm.toTid = new Tid(to)
@@ -306,8 +310,11 @@ class Tx {
         if (!isEmpty(room)) {
             tm.roomTid = new Tid(room);
             if (isEmpty(to)) {
-                tm.mstype = 3;
+                tm.msType = 3;
             }
+        }
+        if (!isEmpty(dataString)) {
+            tm.dataString = dataString
         }
         if (udShow > 0) {
             tm.udshow = udShow;
@@ -519,6 +526,14 @@ class Tx {
         return encodePk(STAT.TIMVROOM, jsonFmt(rt));
     }
 
+    bigstring(node, datastring) {
+        return encodeBigString(STAT.TIMBIGSTRING, node, datastring);
+    }
+
+    bigbinary(node, uint8data) {
+        return encodeBigBinary(STAT.TIMBIGBINARY, node, uint8data);
+    }
+
     pushstream(node, body, dtype) {
         let tm = new TimStream();
         tm.vNode = node;
@@ -545,6 +560,7 @@ class Tx {
 }
 
 class timClient {
+
     messageHandler = null;
     presenceHandler = null;
     streamHandler = null;
@@ -553,6 +569,9 @@ class timClient {
     pullmessageHandler = null;
     offlineMsgHandler = null;
     offlinemsgEndHandler = null;
+    bigStringHandler = null;
+    bigBinaryHandler = null;
+
     tx = new Tx();
 
     constructor(tls, ip, port) {
@@ -618,8 +637,7 @@ class timClient {
         } else {
             data = data.slice(1, data.byteLength);
         }
-        const decoderpj = new TextDecoder('utf-8');
-        const jdata = decoderpj.decode(data);
+        const jdata = uint8ArrayToString(data);
         this.pingNum = 0;
         switch (type & 0x7f) {
             case STAT.TIMACK:
@@ -635,6 +653,16 @@ class timClient {
             case STAT.TIMMESSAGE:
                 if (!isEmpty(this.messageHandler)) {
                     this.messageHandler(jdata);
+                }
+                break;
+            case STAT.TIMBIGSTRING:
+                if (!isEmpty(this.bigStringHandler)) {
+                    this.bigStringHandler(jdata);
+                }
+                break;
+            case STAT.TIMBIGBINARY:
+                if (!isEmpty(this.bigBinaryHandler)) {
+                    this.bigBinaryHandler(new Uint8Array(data));
                 }
                 break;
             case STAT.TIMPRESENCE:
@@ -798,12 +826,12 @@ class timClient {
 
     // send stream data to user
     StreamToUser(to, msg, udShow, udType) {
-        this.sendws(this.tx.stream(msg, to, null, udShow, udType))
+        this.sendws(this.tx.stream(null, to, null, udShow, udType, msg))
     }
 
     // send stream data to room
     StreamToRoom(room, msg, udShow, udType) {
-        this.sendws(this.tx.stream(msg, null, room, udShow, udType))
+        this.sendws(this.tx.stream(null, null, room, udShow, udType, msg))
     }
 
     // send presence to other user
@@ -948,6 +976,16 @@ class timClient {
         this.sendws(this.tx.blockroomMemberlist(node))
     }
 
+    //send big string
+    BigDataString(node, datastring) {
+        this.sendws(this.tx.bigstring(node, datastring))
+    }
+
+    //send big binary
+    BigDataBinary(node, uint8Array) {
+        this.sendws(this.tx.bigbinary(node, uint8Array))
+    }
+
     // creating a Virtual room
     // 创建虚拟房间
     VirtualroomRegister() {
@@ -1029,27 +1067,71 @@ function pause(milliseconds) {
 function encodePk(type, bs) {
     let pk = null;
     if (!isEmpty(bs)) {
-        pk = utf8Encode(bs)
+        pk = stringToUint8Array(bs)
     }
     return encodeBytePk(type, pk)
 }
 
 function encodeBytePk(type, bs) {
     const table = [];
-    let ts = new Uint8Array([type | 0x80]);
-    table[0] = ts[0];
+    let ts = new Uint8Array([(type | 0x80)]);
+    table.push(ts[0])
     if (!isEmpty(bs)) {
         for (let i = 0; i < bs.length; i++) {
-            table[1 + i] = bs[i]
+            table.push(bs[i])
         }
     }
     let arrayBuffer = new ArrayBuffer(table.length);
-    var arraybs = new Uint8Array(arrayBuffer);
+    let arraybs = new Uint8Array(arrayBuffer);
     for (let i = 0; i < table.length; i++) {
         arraybs[i] = table[i];
     }
     return arraybs;
 }
+
+
+function encodeBigString(type, node, datastring) {
+    return encodeBigData(type, node, stringToUint8Array(datastring), STAT.SEQ_STR)
+}
+
+function encodeBigBinary(type, node, uint8data) {
+    return encodeBigData(type, node, uint8data, STAT.SEQ_BIN)
+}
+
+function encodeBigData(type, node, uint8data, bigType) {
+    const table = [];
+    const nodeuint8 = stringToUint8Array(node);
+    const pklenBs = intToByte(1 + 4 + nodeuint8.length + 1 + uint8data.length, 4);
+    let ts = new Uint8Array([(type | 0x80)]);
+    table.push(ts[0]);
+    for (let i = 0; i < pklenBs.length; i++) {
+        table.push(pklenBs[i]);
+    }
+    for (let i = 0; i < nodeuint8.length; i++) {
+        table.push(nodeuint8[i]);
+    }
+    table.push(bigType)
+    for (let i = 0; i < uint8data.length; i++) {
+        table.push(uint8data[i]);
+    }
+    let arrayBuffer = new ArrayBuffer(table.length);
+    let arraybs = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < table.length; i++) {
+        arraybs[i] = table[i];
+    }
+    return arraybs;
+}
+
+const intToByte = (number, length) => {
+    let bytes = [];
+    let i = 0;
+    do {
+        bytes[length - 1 - i++] = number & (255);
+        number = number >> 8;
+    } while (i < length)
+    return bytes;
+}
+
 
 function isEmpty(obj) {
     if (typeof obj == "undefined" || obj == null || obj == "") {
@@ -1057,32 +1139,6 @@ function isEmpty(obj) {
     } else {
         return false;
     }
-}
-
-function utf8Encode(str) {
-    const codePoints = Array.from(str, c => c.codePointAt(0));
-    const buffer = new ArrayBuffer(codePoints.length * 4);
-    const uint8Array = new Uint8Array(buffer);
-    let offset = 0;
-    for (let i = 0; i < codePoints.length; i++) {
-        const codePoint = codePoints[i];
-        if (codePoint < 0x80) {
-            uint8Array[offset++] = codePoint;
-        } else if (codePoint < 0x800) {
-            uint8Array[offset++] = 0xC0 | (codePoint >> 6);
-            uint8Array[offset++] = 0x80 | (codePoint & 0x3F);
-        } else if (codePoint < 0x10000) {
-            uint8Array[offset++] = 0xE0 | (codePoint >> 12);
-            uint8Array[offset++] = 0x80 | ((codePoint >> 6) & 0x3F);
-            uint8Array[offset++] = 0x80 | (codePoint & 0x3F);
-        } else {
-            uint8Array[offset++] = 0xF0 | (codePoint >> 18);
-            uint8Array[offset++] = 0x80 | ((codePoint >> 12) & 0x3F);
-            uint8Array[offset++] = 0x80 | ((codePoint >> 6) & 0x3F);
-            uint8Array[offset++] = 0x80 | (codePoint & 0x3F);
-        }
-    }
-    return uint8Array.subarray(0, offset);
 }
 
 const jsonFmt = (o) => {
@@ -1093,106 +1149,14 @@ const jsonParse = (s) => {
     return JSON.parse(s)
 }
 
+//ISO-8859-1 utf-8
 function uint8ArrayToString(bs) {
     const decoder = new TextDecoder("utf-8");
     const str = decoder.decode(bs);
     return str;
 }
 
-const Base64 = {
-    keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
-
-    //string to base64 string
-    encodeToStr(input) {
-        let output = '';
-        let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-        let i = 0;
-        input = uint8ArrayToString(utf8Encode(input));
-        while (i < input.length) {
-            chr1 = input.charCodeAt(i++);
-            chr2 = input.charCodeAt(i++);
-            chr3 = input.charCodeAt(i++);
-            enc1 = chr1 >> 2;
-            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-            enc4 = chr3 & 63;
-            if (isNaN(chr2)) {
-                enc3 = enc4 = 64;
-            } else if (isNaN(chr3)) {
-                enc4 = 64;
-            }
-            output = output +
-                Base64.keyStr.charAt(enc1) + Base64.keyStr.charAt(enc2) +
-                Base64.keyStr.charAt(enc3) + Base64.keyStr.charAt(enc4);
-        }
-        return output;
-    },
-
-    // base64 string to string
-    decode(input) {
-        let output = '';
-        let chr1, chr2, chr3;
-        let enc1, enc2, enc3, enc4;
-        let i = 0;
-        input = input.replace(/[^A-Za-z0-9+/=]/g, '');
-        while (i < input.length) {
-            enc1 = Base64.keyStr.indexOf(input.charAt(i++));
-            enc2 = Base64.keyStr.indexOf(input.charAt(i++));
-            enc3 = Base64.keyStr.indexOf(input.charAt(i++));
-            enc4 = Base64.keyStr.indexOf(input.charAt(i++));
-            chr1 = (enc1 << 2) | (enc2 >> 4);
-            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-            chr3 = ((enc3 & 3) << 6) | enc4;
-            output = output + String.fromCharCode(chr1);
-            if (enc3 !== 64) {
-                output = output + String.fromCharCode(chr2);
-            }
-            if (enc4 !== 64) {
-                output = output + String.fromCharCode(chr3);
-            }
-        }
-        return output;
-    },
-
-    decodeToString(input) {
-        let output = this.decode(input);
-        return utf8Decode(output);
-    },
-
-    decodeToByteArray(input) {
-        let text = this.decode(input);
-        const bytes = new Uint8Array(text.length);
-        for (let i = 0; i < text.length; i++) {
-            bytes[i] = text.charCodeAt(i);
-        }
-        return bytes;
-    }
-
-};
-
-function utf8Decode(inputStr) {
-    var outputStr = "";
-    var code1, code2, code3, code4;
-    for (var i = 0; i < inputStr.length; i++) {
-        code1 = inputStr.charCodeAt(i);
-        if (code1 < 128) {
-            outputStr += String.fromCharCode(code1);
-        }
-        else if (code1 < 224) {
-            code2 = inputStr.charCodeAt(++i);
-            outputStr += String.fromCharCode(((code1 & 31) << 6) | (code2 & 63));
-        }
-        else if (code1 < 240) {
-            code2 = inputStr.charCodeAt(++i);
-            code3 = inputStr.charCodeAt(++i);
-            outputStr += String.fromCharCode(((code1 & 15) << 12) | ((code2 & 63) << 6) | (code3 & 63));
-        }
-        else {
-            code2 = inputStr.charCodeAt(++i);
-            code3 = inputStr.charCodeAt(++i);
-            code4 = inputStr.charCodeAt(++i);
-            outputStr += String.fromCharCode(((code1 & 7) << 18) | ((code2 & 63) << 12) | ((code3 & 63) << 6) | (code4 & 63));
-        }
-    }
-    return outputStr;
+function stringToUint8Array(string) {
+    const encoder = new TextEncoder("utf-8");
+    return encoder.encode(string);
 }
