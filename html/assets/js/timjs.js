@@ -26,6 +26,7 @@ const STAT = {
     TIMSTREAM: 94,
     TIMBIGSTRING: 95,
     TIMBIGBINARY: 96,
+    TIMBIGBINARYSTREAM: 97,
 
     GROUP_PRIVATE: 1,
     GROUP_OPEN: 2,
@@ -72,7 +73,6 @@ const STAT = {
     VRITURLROOM_SUB: 5,
     VRITURLROOM_SUBCANCEL: 6,
 
-    ERR_OVERENTRY: 4111,
     ERR_HASEXIST: 4101,
     ERR_NOPASS: 4102,
     ERR_EXPIREOP: 4103,
@@ -85,6 +85,9 @@ const STAT = {
     ERR_BLOCK: 4110,
     ERR_OVERENTRY: 4111,
     ERR_MODIFYAUTH: 4112,
+    ERR_FORMAT: 4113,
+    ERR_BIGDATA: 4114,
+    ERR_TOKEN: 4115,
 
     SEQ_STR: "|",
     SEQ_BIN: new Uint8Array([131])[0],
@@ -106,6 +109,8 @@ class TimAck {
     error = null;
     t = null;
     n = null;
+    t2 = null;
+    n2 = null;
 }
 
 class TimAuth {
@@ -192,6 +197,7 @@ class TimRoomBean {
     topic = null;
     label = null;
     gtype = null;
+    kind = null;
     createtime = null;
     extend = null;
     extra = null;
@@ -218,19 +224,19 @@ class TimMessageList {
 class Tx {
     ta = new TimAuth();
     ping() {
-        return encodePk(STAT.TIMPING, null);
+        return timutil.encodePk(STAT.TIMPING, null);
     }
     register(username, pwd, domain) {
         this.ta.name = username;
         this.ta.pwd = pwd;
         this.ta.domain = domain;
-        return encodePk(STAT.TIMREGISTER | 0x80, jsonFmt(this.ta));
+        return timutil.encodePk(STAT.TIMREGISTER | 0x80, timutil.jsonFmt(this.ta));
     }
     token(username, pwd, domain) {
         this.ta.name = username;
         this.ta.pwd = pwd;
         this.ta.domain = domain;
-        return encodePk(STAT.TIMTOKEN, jsonFmt(this.ta));
+        return timutil.encodePk(STAT.TIMTOKEN, timutil.jsonFmt(this.ta));
     }
     loginByAccount(username, pwd, domain, resource, termtyp) {
         this.ta.name = username;
@@ -238,49 +244,49 @@ class Tx {
         this.ta.domain = domain;
         this.ta.resource = resource;
         this.ta.termtyp = termtyp;
-        return encodePk(STAT.TIMAUTH, jsonFmt(this.ta));
+        return timutil.encodePk(STAT.TIMAUTH, timutil.jsonFmt(this.ta));
     }
     loginByToken(token, resource, termtyp) {
         this.ta.token = token;
         this.ta.resource = resource;
         this.ta.termtyp = termtyp;
-        return encodePk(STAT.TIMAUTH, jsonFmt(this.ta));
+        return timutil.encodePk(STAT.TIMAUTH, timutil.jsonFmt(this.ta));
     }
 
     login() {
-        return encodePk(STAT.TIMAUTH, jsonFmt(this.ta));
+        return timutil.encodePk(STAT.TIMAUTH, timutil.jsonFmt(this.ta));
     }
 
     _message(timtype, mstype, odtype, msg, to, roomId, udshow, udtype, msgId, extend, extra) {
         let tm = new TimMessage(mstype, odtype);
-        if (!isEmpty(msg)) {
+        if (!timutil.isEmpty(msg)) {
             tm.dataString = msg;
         }
         if (udshow > 0) {
             tm.udshow = udshow;
         }
         if (udtype > 0) {
-            this.udtype = udtype;
+            tm.udtype = udtype;
         }
         if (msgId > 0) {
-            this.mid = msgId;
+            tm.mid = msgId;
         }
-        if (!isEmpty(to)) {
+        if (!timutil.isEmpty(to)) {
             tm.toTid = new Tid(to)
         }
-        if (!isEmpty(roomId)) {
+        if (!timutil.isEmpty(roomId)) {
             tm.roomTid = new Tid(roomId);
-            if (isEmpty(to)) {
+            if (timutil.isEmpty(to)) {
                 tm.msType = 3;
             }
         }
-        if (!isEmpty(extend)) {
+        if (!timutil.isEmpty(extend)) {
             tm.extend = extend;
         }
-        if (!isEmpty(extra)) {
+        if (!timutil.isEmpty(extra)) {
             tm.extra = extra;
         }
-        return encodePk(timtype, jsonFmt(tm));
+        return timutil.encodePk(timtype, timutil.jsonFmt(tm));
     }
 
     message2Friend(msg, to, udshow, udtype, extend, extra) {
@@ -301,19 +307,19 @@ class Tx {
 
     stream(dataBinary, to, room, udShow, udType, dataString) {
         let tm = new TimMessage(2, 5)
-        if (!isEmpty(dataBinary)) {
+        if (!timutil.isEmpty(dataBinary)) {
             tm.dataBinary = dataBinary;
         }
-        if (!isEmpty(to)) {
+        if (!timutil.isEmpty(to)) {
             tm.toTid = new Tid(to)
         }
-        if (!isEmpty(room)) {
+        if (!timutil.isEmpty(room)) {
             tm.roomTid = new Tid(room);
-            if (isEmpty(to)) {
+            if (timutil.isEmpty(to)) {
                 tm.msType = 3;
             }
         }
-        if (!isEmpty(dataString)) {
+        if (!timutil.isEmpty(dataString)) {
             tm.dataString = dataString
         }
         if (udShow > 0) {
@@ -322,33 +328,33 @@ class Tx {
         if (udType > 0) {
             tm.udtype = udType;
         }
-        return encodePk(STAT.TIMMESSAGE, jsonFmt(tm));
+        return timutil.encodePk(STAT.TIMMESSAGE, timutil.jsonFmt(tm));
     }
 
     _presence(timtype, to, show, status, toList, subStatus, extend, extra) {
         let tp = new TimPresence();
-        if (!isEmpty(to)) {
+        if (!timutil.isEmpty(to)) {
             tp.toTid = new Tid(to)
         }
         if (show > 0) {
             tp.show = show;
         }
-        if (!isEmpty(status)) {
+        if (!timutil.isEmpty(status)) {
             tp.status = status;
         }
-        if (!isEmpty(toList)) {
+        if (!timutil.isEmpty(toList)) {
             tp.toList = toList;
         }
         if (subStatus > 0) {
             tp.subStatus = subStatus
         }
-        if (!isEmpty(extend)) {
+        if (!timutil.isEmpty(extend)) {
             tm.extend = extend;
         }
-        if (!isEmpty(extra)) {
+        if (!timutil.isEmpty(extra)) {
             tm.extra = extra;
         }
-        return encodePk(timtype, jsonFmt(tp));
+        return timutil.encodePk(timtype, timutil.jsonFmt(tp));
     }
 
     presence(to, show, status, subStatus, extend, extra) {
@@ -369,11 +375,11 @@ class Tx {
         rt.node = to;
         rt.reqInt = mid;
         rt.reqInt2 = limit;
-        return encodePk(STAT.TIMPULLMESSAGE, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMPULLMESSAGE, timutil.jsonFmt(rt));
     }
 
     offlinemsg() {
-        return encodePk(STAT.TIMOFFLINEMSG, null);
+        return timutil.encodePk(STAT.TIMOFFLINEMSG, null);
     }
 
     addroster(node, msg) {
@@ -381,40 +387,40 @@ class Tx {
         rt.rtype = STAT.BUSINESS_ADDROSTER;
         rt.node = node;
         rt.reqStr = msg;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     rmroster(node) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_REMOVEROSTER;
         rt.node = node;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     blockroster(node) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_BLOCKROSTER;
         rt.node = node;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     roster() {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_ROSTER;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     userroom() {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_USERROOM;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     roomusers(node) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_ROOMUSERS;
         rt.node = node;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     newroom(gtype, roomname) {
@@ -422,7 +428,7 @@ class Tx {
         rt.rtype = STAT.BUSINESS_NEWROOM;
         rt.reqInt = gtype;
         rt.node = roomname;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     addroom(gnode, msg) {
@@ -430,7 +436,7 @@ class Tx {
         rt.rtype = STAT.BUSINESS_ADDROOM;
         rt.reqStr = msg;
         rt.node = gnode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     pullroom(rnode, unode) {
@@ -438,7 +444,7 @@ class Tx {
         rt.rtype = STAT.BUSINESS_PULLROOM;
         rt.node = rnode;
         rt.node2 = unode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     nopassroom(rnode, unode, msg) {
@@ -447,7 +453,7 @@ class Tx {
         rt.node = rnode;
         rt.node2 = unode;
         rt.reqStr = msg;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     kickroom(rnode, unode) {
@@ -455,28 +461,28 @@ class Tx {
         rt.rtype = STAT.BUSINESS_KICKROOM;
         rt.node = rnode;
         rt.node2 = unode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     leaveroom(gnode) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_LEAVEROOM;
         rt.node = gnode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     cancelroom(gnode) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_CANCELROOM;
         rt.node = gnode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     blockroom(gnode) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_BLOCKROOM;
         rt.node = gnode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     blockroomMember(gnode, tonode) {
@@ -484,26 +490,26 @@ class Tx {
         rt.rtype = STAT.BUSINESS_BLOCKROOMMEMBER;
         rt.node = gnode;
         rt.node2 = tonode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     blockrosterlist() {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_BLOCKROSTERLIST;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     blockroomlist() {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_BLOCKROOMLIST;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     blockroomMemberlist(gnode) {
         let rt = new TimReq();
         rt.rtype = STAT.BUSINESS_BLOCKROOMMEMBERLIST;
         rt.node = gnode;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
     modify(oldpwd, newpwd) {
@@ -511,27 +517,34 @@ class Tx {
         rt.rtype = STAT.BUSINESS_MODIFYAUTH;
         rt.reqStr = oldpwd;
         rt.reqStr2 = newpwd;
-        return encodePk(STAT.TIMBUSINESS, jsonFmt(rt));
+        return timutil.encodePk(STAT.TIMBUSINESS, timutil.jsonFmt(rt));
     }
 
-    virtualroom(rtype, vnode, unode) {
+    virtualroom(rtype, vnode, unode, i) {
         let rt = new TimReq();
         rt.rtype = rtype;
-        if (!isEmpty(vnode)) {
+        if (!timutil.isEmpty(vnode)) {
             rt.node = vnode;
         }
-        if (!isEmpty(unode)) {
+        if (!timutil.isEmpty(unode)) {
             rt.node2 = unode;
         }
-        return encodePk(STAT.TIMVROOM, jsonFmt(rt));
+        if (i > 0) {
+            rt.reqInt = i;
+        }
+        return timutil.encodePk(STAT.TIMVROOM, timutil.jsonFmt(rt));
     }
 
     bigstring(node, datastring) {
-        return encodeBigString(STAT.TIMBIGSTRING, node, datastring);
+        return timutil.encodeBigString(STAT.TIMBIGSTRING, node, datastring);
     }
 
     bigbinary(node, uint8data) {
-        return encodeBigBinary(STAT.TIMBIGBINARY, node, uint8data);
+        return timutil.encodeBigBinary(STAT.TIMBIGBINARY, node, uint8data);
+    }
+
+    bigbinarySteam(node, uint8data) {
+        return timutil.encodeBigBinary(STAT.TIMBIGBINARYSTREAM, node, uint8data);
     }
 
     pushstream(node, body, dtype) {
@@ -541,21 +554,21 @@ class Tx {
         if (dtype != 0) {
             tm.dtype = dtype;
         }
-        return encodePk(STAT.TIMSTREAM, jsonFmt(tm));
+        return timutil.encodePk(STAT.TIMSTREAM, timutil.jsonFmt(tm));
     }
 
     nodeinfo(ntype, nodelist, usermap, roommap) {
         let tn = new TimNodes(ntype);
-        if (!isEmpty(nodelist)) {
+        if (!timutil.isEmpty(nodelist)) {
             tn.nodelist = nodelist;
         }
-        if (!isEmpty(usermap)) {
+        if (!timutil.isEmpty(usermap)) {
             tn.usermap = usermap;
         }
-        if (!isEmpty(roommap)) {
+        if (!timutil.isEmpty(roommap)) {
             tn.roommap = roommap;
         }
-        return encodePk(STAT.TIMNODES, jsonFmt(tn));
+        return timutil.encodePk(STAT.TIMNODES, timutil.jsonFmt(tn));
     }
 }
 
@@ -571,6 +584,7 @@ class timClient {
     offlinemsgEndHandler = null;
     bigStringHandler = null;
     bigBinaryHandler = null;
+    bigBinaryStreamHandler = null;
 
     tx = new Tx();
 
@@ -584,36 +598,45 @@ class timClient {
     }
 
     connect() {
-        if (!isEmpty(this.url)) {
+        if (!timutil.isEmpty(this.url)) {
             this.websocket = new WebSocket(this.url);
             this.isLogout = false;
-            let father = this;
-            this.websocket.onopen = function (evt) {
-                father.pingNum = 0;
-                father.v++;
-                father.login();
-                father.watch(father.v);
+            this.websocket.onopen = (evt) => {
+                this.pingNum = 0;
+                this.v++;
+                this.login();
+                this.watch(this.v);
             };
-            this.websocket.onclose = function (evt) {
+            this.websocket.onclose = (evt) => {
                 console.warn("onclose");
-                father.close();
-                father.websocket = null;
-                father.v++;
-                pause(2000);
-                if (!father.isLogout) {
-                    father.connect()
+                this.close();
+                this.websocket = null;
+                this.v++;
+                // await timutil.sleep(2000);
+                // if (!this.isLogout) {
+                //     this.connect()
+                // }
+                if (!this.isLogout) {
+                    this.reconnet()
                 }
             };
-            this.websocket.onerror = function (evt, e) { console.warn("onerror"); };
-            this.websocket.onmessage = function (evt) {
+            this.websocket.onerror = (evt, e) => { console.warn("onerror"); };
+            this.websocket.onmessage = (evt) => {
                 if (evt.data instanceof Blob) {
                     var reader = new FileReader();
                     reader.readAsArrayBuffer(evt.data);
-                    reader.onload = function () {
-                        father.prase(this.result);
+                    reader.onload = () => {
+                        this.prase(reader.result);
                     }
                 }
             }
+        }
+    }
+
+    async reconnet() {
+        await timutil.sleep(2000);
+        if (!this.isLogout) {
+            this.connect()
         }
     }
 
@@ -632,16 +655,16 @@ class timClient {
     prase(data) {
         let type = new Uint8Array(data.slice(0, 1))[0];
         if ((type & 0x80) == 0x80) {
-            this.sendws(encodeBytePk(STAT.TIMACK, new Uint8Array(data.slice(1, 5))))
+            this.sendws(timutil.encodeBytePk(STAT.TIMACK, new Uint8Array(data.slice(1, 5))))
             data = data.slice(5, data.byteLength);
         } else {
             data = data.slice(1, data.byteLength);
         }
-        const jdata = uint8ArrayToString(data);
+        const jdata = timutil.uint8ArrayToString(data);
         this.pingNum = 0;
         switch (type & 0x7f) {
             case STAT.TIMACK:
-                if (!isEmpty(this.ackHandler)) {
+                if (!timutil.isEmpty(this.ackHandler)) {
                     this.ackHandler(jdata);
                 }
                 break;
@@ -651,47 +674,52 @@ class timClient {
                 }
                 break;
             case STAT.TIMMESSAGE:
-                if (!isEmpty(this.messageHandler)) {
+                if (!timutil.isEmpty(this.messageHandler)) {
                     this.messageHandler(jdata);
                 }
                 break;
             case STAT.TIMBIGSTRING:
-                if (!isEmpty(this.bigStringHandler)) {
+                if (!timutil.isEmpty(this.bigStringHandler)) {
                     this.bigStringHandler(jdata);
                 }
                 break;
             case STAT.TIMBIGBINARY:
-                if (!isEmpty(this.bigBinaryHandler)) {
+                if (!timutil.isEmpty(this.bigBinaryHandler)) {
                     this.bigBinaryHandler(new Uint8Array(data));
                 }
                 break;
+            case STAT.TIMBIGBINARYSTREAM:
+                if (!timutil.isEmpty(this.bigBinaryStreamHandler)) {
+                    this.bigBinaryStreamHandler(new Uint8Array(data));
+                }
+                break;
             case STAT.TIMPRESENCE:
-                if (!isEmpty(this.presenceHandler)) {
+                if (!timutil.isEmpty(this.presenceHandler)) {
                     this.presenceHandler(jdata);
                 }
                 break;
             case STAT.TIMNODES:
-                if (!isEmpty(this.nodesHandler)) {
+                if (!timutil.isEmpty(this.nodesHandler)) {
                     this.nodesHandler(jdata);
                 }
                 break;
             case STAT.TIMPULLMESSAGE:
-                if (!isEmpty(this.pullmessageHandler)) {
+                if (!timutil.isEmpty(this.pullmessageHandler)) {
                     this.pullmessageHandler(jdata);
                 }
                 break;
             case STAT.TIMOFFLINEMSG:
-                if (!isEmpty(this.offlineMsgHandler)) {
+                if (!timutil.isEmpty(this.offlineMsgHandler)) {
                     this.offlineMsgHandler(jdata);
                 }
                 break;
             case STAT.TIMOFFLINEMSGEND:
-                if (!isEmpty(this.offlinemsgEndHandler)) {
+                if (!timutil.isEmpty(this.offlinemsgEndHandler)) {
                     this.offlinemsgEndHandler(jdata);
                 }
                 break;
             case STAT.TIMSTREAM:
-                if (!isEmpty(this.streamHandler)) {
+                if (!timutil.isEmpty(this.streamHandler)) {
                     this.streamHandler(jdata);
                 }
                 break;
@@ -704,9 +732,9 @@ class timClient {
         if (v != this.v) {
             return
         }
-        if (!isEmpty(this.websocket) && this.url != "" && this.pingNum > 5 && !this.isLogout) {
+        if (!timutil.isEmpty(this.websocket) && this.url != "" && this.pingNum > 5 && !this.isLogout) {
             this.close();
-        } else if (!isEmpty(this.websocket)) {
+        } else if (!timutil.isEmpty(this.websocket)) {
             try {
                 this.pingNum++;
                 this.ping();
@@ -738,7 +766,7 @@ class timClient {
     }
 
     login() {
-        if (!isEmpty(this.websocket)) {
+        if (!timutil.isEmpty(this.websocket)) {
             this.sendws(this.tx.login());
         }
         return
@@ -746,7 +774,7 @@ class timClient {
 
     close() {
         try {
-            if (!isEmpty(this.websocket)) {
+            if (!timutil.isEmpty(this.websocket)) {
                 this.websocket.close();
             }
         } catch (err) {
@@ -769,15 +797,15 @@ class timClient {
     Login(name, pwd, domain, resource, termtyp) {
         this.close()
         this.tx.loginByAccount(name, pwd, domain, resource, termtyp)
-        if (isEmpty(this.websocket)) {
+        if (timutil.isEmpty(this.websocket)) {
             this.connect()
         }
     }
 
     LoginByToken(token, resource, termtyp) {
         this.close()
-        this.Tx.loginByToken(token, resource, termtyp)
-        if (isEmpty(this.websocket)) {
+        this.tx.loginByToken(token, resource, termtyp)
+        if (timutil.isEmpty(this.websocket)) {
             this.connect()
         }
     }
@@ -989,37 +1017,43 @@ class timClient {
     // creating a Virtual room
     // 创建虚拟房间
     VirtualroomRegister() {
-        this.sendws(this.tx.virtualroom(1, "", ""))
+        this.sendws(this.tx.virtualroom(1, "", "", 0))
     }
 
     // creating a Virtual room
     // 销毁虚拟房间
     VirtualroomRemove(roomNode) {
-        this.sendws(this.tx.virtualroom(2, roomNode, ""))
+        this.sendws(this.tx.virtualroom(2, roomNode, "", 0))
     }
 
     // Add push stream data permissions for virtual rooms to a account
     // 给账户添加向虚拟房间推送流数据的权限
     VirtualroomAddAuth(roomNode, tonode) {
-        this.sendws(this.tx.virtualroom(3, roomNode, tonode))
+        this.sendws(this.tx.virtualroom(3, roomNode, tonode, 0))
     }
 
     // delete the push stream data permissions for virtual rooms to a account
     // 删除用户向虚拟房间推送流数据的权限
     VirtualroomDelAuth(roomNode, tonode) {
-        this.sendws(this.tx.virtualroom(4, roomNode, tonode))
+        this.sendws(this.tx.virtualroom(4, roomNode, tonode, 0))
     }
 
     // Subscribe the stream data of the virtual room
     // 向虚拟房间订阅流数据
     VirtualroomSub(roomNode) {
-        this.sendws(this.tx.virtualroom(5, roomNode, ""))
+        this.sendws(this.tx.virtualroom(5, roomNode, "", 0))
+    }
+
+    // Subscribe the stream data of the virtual room
+    // 向虚拟房间订阅流数据
+    VirtualroomSubBinary(roomNode) {
+        this.sendws(this.tx.virtualroom(5, roomNode, "", 1))
     }
 
     // cancel subscribe the stream data of the virtual room
     // 取消订阅虚拟房间数据
     VirtualroomSubCancel(roomNode) {
-        this.sendws(this.tx.virtualroom(6, roomNode, ""))
+        this.sendws(this.tx.virtualroom(6, roomNode, "", 0))
     }
 
     // push the stream data to the virtual room
@@ -1030,6 +1064,12 @@ class timClient {
     // dtype：dtype 是开发者自定义的数据类型，若不需要，可以设置为0
     PushStream(virtualroom, body, dtype) {
         this.sendws(this.tx.pushstream(virtualroom, body, dtype))
+    }
+
+    //push stream by big binary
+    //使用big binary 推送流数据到虚拟房间
+    PushBigDataStream(node, uint8Array) {
+        this.sendws(this.tx.bigbinarySteam(node, uint8Array))
     }
 
     // get user information
@@ -1058,105 +1098,97 @@ class timClient {
 
 }
 
-function pause(milliseconds) {
-    var dt = new Date();
-    let i = 0;
-    while ((new Date()) - dt <= milliseconds) { i++ }
-}
 
-function encodePk(type, bs) {
-    let pk = null;
-    if (!isEmpty(bs)) {
-        pk = stringToUint8Array(bs)
-    }
-    return encodeBytePk(type, pk)
-}
-
-function encodeBytePk(type, bs) {
-    const table = [];
-    let ts = new Uint8Array([(type | 0x80)]);
-    table.push(ts[0])
-    if (!isEmpty(bs)) {
-        for (let i = 0; i < bs.length; i++) {
-            table.push(bs[i])
+const timutil = {
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    encodePk(type, bs) {
+        let pk = null;
+        if (!this.isEmpty(bs)) {
+            pk = this.stringToUint8Array(bs)
         }
+        return this.encodeBytePk(type, pk)
+    },
+    encodeBytePk(type, bs) {
+        const table = [];
+        let ts = new Uint8Array([(type | 0x80)]);
+        table.push(ts[0])
+        if (!this.isEmpty(bs)) {
+            for (let i = 0; i < bs.length; i++) {
+                table.push(bs[i])
+            }
+        }
+        let arrayBuffer = new ArrayBuffer(table.length);
+        let arraybs = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < table.length; i++) {
+            arraybs[i] = table[i];
+        }
+        return arraybs;
+    },
+
+    encodeBigString(type, node, datastring) {
+        return this.encodeBigData(type, node, this.stringToUint8Array(datastring), STAT.SEQ_STR)
+    },
+
+    encodeBigBinary(type, node, uint8data) {
+        return this.encodeBigData(type, node, uint8data, STAT.SEQ_BIN)
+    },
+
+    encodeBigData(type, node, uint8data, bigType) {
+        const table = [];
+        const nodeuint8 = this.stringToUint8Array(node);
+        const pklenBs = this.intToByte(1 + 4 + nodeuint8.length + 1 + uint8data.length, 4);
+        let ts = new Uint8Array([(type | 0x80)]);
+        table.push(ts[0]);
+        for (let i = 0; i < pklenBs.length; i++) {
+            table.push(pklenBs[i]);
+        }
+        for (let i = 0; i < nodeuint8.length; i++) {
+            table.push(nodeuint8[i]);
+        }
+        table.push(bigType)
+        for (let i = 0; i < uint8data.length; i++) {
+            table.push(uint8data[i]);
+        }
+        let arrayBuffer = new ArrayBuffer(table.length);
+        let arraybs = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < table.length; i++) {
+            arraybs[i] = table[i];
+        }
+        return arraybs;
+    },
+
+    intToByte(number, length) {
+        let bytes = [];
+        let i = 0;
+        do {
+            bytes[length - 1 - i++] = number & (255);
+            number = number >> 8;
+        } while (i < length)
+        return bytes;
+    },
+
+    isEmpty(obj) {
+        if (typeof obj == "undefined" || obj == null || obj == "") {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    jsonFmt(o) {
+        return JSON.stringify(o)
+    },
+    jsonParse(s) {
+        return JSON.parse(s)
+    },
+    uint8ArrayToString(bs) {
+        const decoder = new TextDecoder("utf-8");
+        const str = decoder.decode(bs);
+        return str;
+    },
+    stringToUint8Array(string) {
+        const encoder = new TextEncoder("utf-8");
+        return encoder.encode(string);
     }
-    let arrayBuffer = new ArrayBuffer(table.length);
-    let arraybs = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < table.length; i++) {
-        arraybs[i] = table[i];
-    }
-    return arraybs;
-}
-
-
-function encodeBigString(type, node, datastring) {
-    return encodeBigData(type, node, stringToUint8Array(datastring), STAT.SEQ_STR)
-}
-
-function encodeBigBinary(type, node, uint8data) {
-    return encodeBigData(type, node, uint8data, STAT.SEQ_BIN)
-}
-
-function encodeBigData(type, node, uint8data, bigType) {
-    const table = [];
-    const nodeuint8 = stringToUint8Array(node);
-    const pklenBs = intToByte(1 + 4 + nodeuint8.length + 1 + uint8data.length, 4);
-    let ts = new Uint8Array([(type | 0x80)]);
-    table.push(ts[0]);
-    for (let i = 0; i < pklenBs.length; i++) {
-        table.push(pklenBs[i]);
-    }
-    for (let i = 0; i < nodeuint8.length; i++) {
-        table.push(nodeuint8[i]);
-    }
-    table.push(bigType)
-    for (let i = 0; i < uint8data.length; i++) {
-        table.push(uint8data[i]);
-    }
-    let arrayBuffer = new ArrayBuffer(table.length);
-    let arraybs = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < table.length; i++) {
-        arraybs[i] = table[i];
-    }
-    return arraybs;
-}
-
-const intToByte = (number, length) => {
-    let bytes = [];
-    let i = 0;
-    do {
-        bytes[length - 1 - i++] = number & (255);
-        number = number >> 8;
-    } while (i < length)
-    return bytes;
-}
-
-
-function isEmpty(obj) {
-    if (typeof obj == "undefined" || obj == null || obj == "") {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-const jsonFmt = (o) => {
-    return JSON.stringify(o)
-}
-
-const jsonParse = (s) => {
-    return JSON.parse(s)
-}
-
-//ISO-8859-1 utf-8
-function uint8ArrayToString(bs) {
-    const decoder = new TextDecoder("utf-8");
-    const str = decoder.decode(bs);
-    return str;
-}
-
-function stringToUint8Array(string) {
-    const encoder = new TextEncoder("utf-8");
-    return encoder.encode(string);
 }
