@@ -1,10 +1,15 @@
 <!--
  Copyright (c) 2023, donnie <donnie4w@gmail.com>
  All rights reserved.
- Use of this source code is governed by a BSD-style
- license that can be found in the LICENSE file.
+ Use of this source code is governed by The GNU Affero General Public License
+ that can be found in the LICENSE file.
 
- github.com/donnie4w/webtim
+ https://github.com/donnie4w/tim
+ https://github.com/donnie4w/webtim
+ https://tlnet.top/tim
+ https://tlnet.top/webtim
+ 
+ 该项目用于学习tim的相关用法，请勿将项目或相关代码作商用
 -->
 <html lang="en">
 
@@ -15,18 +20,22 @@
 	<link href="/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet">
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="bookmark" href="/favicon.ico">
+	<script src="/assets/js/jquery-3.7.1.min.js"></script>
 	<script src="/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.7.1.min.js"></script>
 	<script src="/assets/js/t.js"></script>
 	<script src="/assets/js/pako.es5.js"></script>
 	<script src="/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
 	<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/assets/css/app.css" rel="stylesheet">
 	<link href="/assets/css/icons.css" rel="stylesheet">
+	<script src="/assets/js/util.js"></script>
+	<script src="/assets/js/app.js"></script>
+	<script src="/assets/js/timjs.js"></script>
+	<script src="/assets/js/RecordRTC.js"></script>
+	<script src="/assets/js/videojoin.js"></script>
 	<link rel="stylesheet" href="/assets/css/dark-theme.css">
 	<link rel="stylesheet" href="/assets/css/semi-dark.css">
 	<link rel="stylesheet" href="/assets/css/header-colors.css">
-
 	<title>webtim</title>
 </head>
 
@@ -47,507 +56,934 @@
 			</li>
 		</ul>
 	</div>
-	<div class="wrapper">
-		<div class="page-content">
-			<div class="container" id="toastshow"></div>
-			<div class="col-lg-12 card p-lg-1 ">
-				<div>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-register">注册</button>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-timself">我的</button>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-friend">加好友</button>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-group">我的群</button>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-timgroup">webtim群组</button>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-timmyfriend">我的好友</button>
-					<button type="button" class="btn btn-light mt-1" id="modal-btn-timlivestream">直播间</button>
+	<div>
+		<div class="container" id="toastshow"></div>
+		<div class="col-lg-12 card p-lg-1 rounded-0">
+			<div>
+				&nbsp;<img src="/img/user.png" id="loginicon" width="30" height="30" onclick="modaltimselfshow()"
+					class="rounded-circle" alt="">
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-control" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="控制面板" data-bs-placement="bottom"
+					style="font-size: 20px;">&#128187;</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-group" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="我的群" data-bs-placement="bottom"
+					style="font-size: 20px;">&#128246;</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-webtimuser" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="加好友" data-bs-placement="bottom"
+					style="font-size: 20px;">&#10133;</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-timgroup" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="群组" data-bs-placement="bottom"
+					style="font-size: 20px;">&#128101;</button>
+				<button type="button" class="btn btn-light mt-1" onclick="timmyfriendshow()" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="我的好友" data-bs-placement="bottom"
+					style="font-size: 20px;">&#128100;</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-timlivestream" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="直播间" data-bs-placement="bottom"
+					style="font-size: 20px;">&#127910;</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-timliveroomstream"
+					data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="多人实时对话" data-bs-placement="bottom"
+					style="font-size: 20px;">&#127760;</button>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="modal-login">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4>tim通讯平台</h4>
+					<button type="button" class="modal-title btn btn-light" onclick="modalregister()">注册账号</button>
 				</div>
 
-				<div class="modal fade" id="modal-register">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="register-close">关闭</button>
-								<h4 class="modal-title">用户注册</h4>
+				<div class="modal-body">
+					<form class="row g-3" id="loginform">
+						<div class="col-12">
+							<label for="inputLastEnterUsername" class="form-label">登录账号</label>
+							<div class="input-group input-group-lg"> <span
+									class="input-group-text bg-transparent">&#128221;</span>
+								<input type="text" class="form-control border-start-0" id="username" name="username"
+									placeholder="输入登录账号" />
 							</div>
-							<div class="modal-body">
-								<div class="wrapper">
-									<div class="row">
-										<div class="col-xl-7 mx-auto">
-											<div class="card border-top border-0 border-4 border-dark">
-												<div class="card-body p-1">
-													<form class="row g-3" id="registerform">
-														<div class="col-12">
-															<label for="inputLastEnterUsername"
-																class="form-label">登录账号</label>
-															<div class="input-group input-group-lg"> <span
-																	class="input-group-text bg-transparent"><i
-																		class='bx bxs-user'></i></span>
-																<input type="text" class="form-control border-start-0"
-																	name="loginname" placeholder="Enter Loginname" />
-															</div>
-														</div>
+						</div>
 
-														<div class="col-12">
-															<label for="inputLastEnterPassword"
-																class="form-label">密码</label>
-															<div class="input-group input-group-lg"> <span
-																	class="input-group-text bg-transparent"><i
-																		class='bx bxs-lock-open'></i></span>
-																<input type="password"
-																	class="form-control border-start-0" name="password"
-																	placeholder="Enter Password" />
-															</div>
-														</div>
-														<div class="col-12">
-															<label for="inputLastEnterUsername"
-																class="form-label">昵称</label>
-															<div class="input-group input-group-lg"> <span
-																	class="input-group-text bg-transparent"><i
-																		class='bx bxs-user'></i></span>
-																<input type="text" class="form-control border-start-0"
-																	name="nick" placeholder="Enter Nickname" />
-															</div>
-														</div>
-														<div style="text-align:center;">
-															<label for="pwd" class="form-label">选择头像：</label>
-															<select name="logo"
-																onchange="document.images['idface'].src=options[selectedIndex].value;"
-																class="form-select-sm">
-																<option value="/img/1.jpg" class="img-rounded">头像 1
-																</option>
-																<option value="/img/2.jpg" class="img-rounded">头像 2
-																</option>
-																<option value="/img/3.jpg" class="img-rounded">头像 3
-																</option>
-																<option value="/img/4.jpg" class="img-rounded">头像 4
-																</option>
-																<option value="/img/5.jpg" class="img-rounded">头像 5
-																</option>
-																<option value="/img/6.jpg" class="img-rounded">头像 6
-																</option>
-																<option value="/img/7.jpg" class="img-rounded">头像 7
-																</option>
-																<option value="/img/8.jpg" class="img-rounded">头像 8
-																</option>
-																<option value="/img/9.jpg" class="img-rounded">头像 9
-																</option>
-																<option value="/img/10.jpg" class="img-rounded">头像 10
-																</option>
-																<option value="/img/11.jpg" class="img-rounded">头像 11
-																</option>
-																<option value="/img/12.jpg" class="img-rounded">头像 12
-																</option>
-																<option value="/img/13.jpg" class="img-rounded">头像 13
-																</option>
-																<option value="/img/14.jpg" class="img-rounded">头像 14
-																</option>
-																<option value="/img/15.jpg" class="img-rounded">头像 15
-																</option>
-																<option value="/img/16.jpg" class="img-rounded">头像 16
-																</option>
-																<option value="/img/17.jpg" class="img-rounded">头像 17
-																</option>
-																<option value="/img/18.jpg" class="img-rounded">头像 18
-																</option>
-																<option value="/img/19.jpg" class="img-rounded">头像 19
-																</option>
-																<option value="/img/20.jpg" class="img-rounded">头像 20
-																</option>
-																<option value="/img/21.jpg" class="img-rounded">头像 21
-																</option>
-																<option value="/img/22.jpg" class="img-rounded">头像 22
-																</option>
-																<option value="/img/23.jpg" class="img-rounded">头像 23
-																</option>
-																<option value="/img/24.jpg" class="img-rounded">头像 24
-																</option>
-																<option value="/img/25.jpg" class="img-rounded">头像 25
-																</option>
-																<option value="/img/26.jpg" class="img-rounded">头像 26
-																</option>
-																<option value="/img/27.jpg" class="img-rounded">头像 27
-																</option>
-																<option value="/img/28.jpg" class="img-rounded">头像 28
-																</option>
-																<option value="/img/29.jpg" class="img-rounded">头像 29
-																</option>
-																<option value="/img/30.jpg" class="img-rounded">头像 30
-																</option>
-															</select>
-															<br>
-															<div style=text-align:center;"><img src="/img/1.jpg"
-																	style="height: 100px;" id=idface>
-															</div>
-														</div>
-												</div>
-												</form>
-												<div class="col-12">
-													<div class="d-grid">
-														<button type="submit" class="btn btn-dark btn-lg px-5"
-															onclick="register()">
-															<i class='bx bxs-lock-open'></i>Register</button>
-													</div>
-												</div>
-												<hr />
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="register-close-end">关闭</button>
+						<div class="col-12">
+							<label for="inputLastEnterPassword" class="form-label">密码</label>
+							<div class="input-group input-group-lg"> <span
+									class="input-group-text bg-transparent">&#128271;</span>
+								<input type="password" class="form-control border-start-0" id="password" name="password"
+									placeholder="登录密码" />
 							</div>
 						</div>
-					</div>
-				</div>
+					</form>
 
-				<div class="modal fade" id="modal-timself">
-					<div class="modal-dialog modal-md">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									onclick="timselfclose()">关闭</button>
-								<h4 class="modal-title">我的</h4>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="timselflist">
-									建设中...📝📝📝
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									onclick="timselfclose()">关闭</button>
-							</div>
+					<div class="col-12">
+						<div class="d-grid p-2">
+							<button class="btn btn-dark btn-lg px-5" onclick="login()">&#127759;登录</button>
 						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-friend">
-					<div class="modal-dialog modal-xl">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="friend-close">关闭</button>
-								<h4 class="modal-title">webtim已注册用户</h4>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="accountlist">
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="friend-close-end">关闭</button>
-							</div>
+						<div class="text-center">
+							<a href="javascript:;" onclick="technologyshow()">webtim技术说明</a>
 						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-group">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="group-close">关闭</button>
-								<h4 class="modal-title">我的群</h4>
-								<button type="button" class="modal-title btn btn-primary"
-									id="modal-btn-newgroup">新建群</button>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="mygrouplist">
-								</div>
-							</div>
-							<div class="modal-footer">
-								<span>&#128308;我建立的群</span>
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="group-close-end">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-newgroup">
-					<div class="modal-dialog modal-sm">
-						<div class="modal-content bg-light">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal" id="newgroup-close">x
-									关闭</button>
-							</div>
-							<div class="wrapper">
-								<div class="row">
-									<div class="col-xl-7 mx-auto">
-										<div class="card border-top border-0 border-4 border-dark">
-											<div class="card-body p-1">
-												<form class="row g-3" id="newgroupform">
-													<div class="col-12">
-														<div class="input-group input-group-lg"> <span
-																class="input-group-text bg-transparent"></span>
-															<input type="text" id="node" name="node" hidden />
-															<input type="text" class="form-control border-start-0"
-																name="topic" placeholder="群主题" />
-														</div>
-														<input type="radio" name="gtype" value="1" />私有群
-														<input type="radio" name="gtype" value="2" checked />公有群
-													</div>
-													<div style="text-align:center;">
-														<select name="logo"
-															onchange="document.images['gidface'].src=options[selectedIndex].value;"
-															class="form-select-sm">
-															<option value="/img/001.jpg" class="img-rounded">群封面 1
-															</option>
-															<option value="/img/002.jpg" class="img-rounded">群封面 2
-															</option>
-															<option value="/img/003.jpg" class="img-rounded">群封面 3
-															</option>
-															<option value="/img/004.jpg" class="img-rounded">群封面 4
-															</option>
-															<option value="/img/005.jpg" class="img-rounded">群封面 5
-															</option>
-															<option value="/img/006.jpg" class="img-rounded">群封面 6
-															</option>
-															<option value="/img/007.jpg" class="img-rounded">群封面 7
-															</option>
-															<option value="/img/008.jpg" class="img-rounded">群封面 8
-															</option>
-															<option value="/img/009.jpg" class="img-rounded">群封面 9
-															</option>
-															<option value="/img/010.jpg" class="img-rounded">群封面 10
-															</option>
-															<option value="/img/011.jpg" class="img-rounded">群封面 11
-															</option>
-															<option value="/img/012.jpg" class="img-rounded">群封面 12
-															</option>
-															<option value="/img/013.jpg" class="img-rounded">群封面 13
-															</option>
-														</select>
-														<br>
-														<div style=text-align:center;"><img src="/img/001.jpg"
-																style="height: 100px;" id=gidface>
-														</div>
-													</div>
-											</div>
-											</form>
-											<div class="col-12">
-												<div class="d-grid">
-													<button class="btn btn-primary btn-md px-1"
-														onclick="newgroup()">新建群</button>
-												</div>
-											</div>
-											<hr />
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-groupmember">
-					<div class="modal-dialog modal-xl">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="groupmember-close">关闭</button>
-								<h4 class="modal-title">群成员</h4>
-								<input id="groupmember_node" hidden />
-								<button type="button" class="btn btn-primary" data-dismiss="modal"
-									onclick="leaveroom()">退群</button>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="groupmemberlist">
-								</div>
-							</div>
-							<div class="modal-footer">
-								<div class="btn-group">
-									<button type="button" class="btn btn-sm  btn-warning">好友</button>
-									<button type="button" class="btn btn-sm  btn-info">我</button>
-									<button type="button" class="btn btn-sm  btn-success">群主</button>
-									<button type="button" class="btn btn-sm  btn-primary">加好友</button>
-									<button type="button" class="btn btn-sm  btn-danger">踢出群</button>
-								</div>
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="groupmember-close-end">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-timgroup">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="timgroup-close">关闭</button>
-								<h4 class="modal-title">webtim群组</h4>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="timgrouplist">
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-success" data-dismiss="modal">公有群</button>
-								<button type="button" class="btn btn-danger" data-dismiss="modal">私有群</button>
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="timgroup-close-end">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
-				<div class="modal fade" id="modal-timmyfriend">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="modalmyfriend-close" onclick="timmyfriendclose()">关闭</button>
-								<h4 class="modal-title">我的好友</h4>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="modalmyfriendlist">
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="modalmyfriend-close-end" onclick="timmyfriendclose()">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-timlivestream">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="modalmyfriend-close" onclick="timlivestreamclose()">关闭</button>
-								<h4 class="modal-title">直播间</h4>
-							</div>
-							<div class="modal-body">
-								<div class="row" style="overflow: scroll;height: 400px;" id="modalmyfriendlist">
-									建设中...📝📝📝
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									id="modalmyfriend-close-end" onclick="timlivestreamclose()">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="modal-timvideo">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									onclick="timvideoclose()">关闭</button>
-								<h2 id="readylink" value="1"></h2>
-								<h4 class="modal-title">视频</h4>
-							</div>
-							<div class="modal-body" style="overflow: scroll;height: 400px;">
-								<div class="d-flex flex-column bg-light mb-1" id="timvideoview">
-									<video class="p-1" id="myvideo" autoplay style="width: 150px;height: auto;"></video>
-									<div class="p-1" id="videodiv"></div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal"
-									onclick="timvideoclose()">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="page-content">
-					<div class="chat-wrapper">
-						<div class="chat-sidebar">
-							<div class="chat-sidebar-header">
-								<div class="d-flex align-items-center">
-									<div class="chat-user-online" onclick="hideSidebar()">
-										<img src="/img/user.png" id="icon" width="45" height="45" class="rounded-circle"
-											alt="">
-									</div>
-									<div class="flex-grow-1 ms-2" onclick="hideSidebar()">
-										<p class="mb-0" id="loginflag">未登录</p>
-									</div>
-								</div>
-								<div class="mb-3"></div>
-								<div class="input-group input-group-sm">
-									<input type="text" class="form-control" placeholder="用户名" id="username">
-									<input type="password" class="form-control" placeholder="密码" id="pwd">
-									<span onclick="login()"><button type="button" class="btn btn-primary">登录
-										</button></span>
-								</div>
-							</div>
-							<div class="chat-sidebar-content">
-								<div class="tab-content" id="pills-tabContent">
-									<div class="tab-pane fade show active" id="pills-Chats">
-										<div class="chat-list ps ps--active-y">
-											<div class="list-group list-group-flush" id="msgnodelist">
-											</div>
-											<div class="ps__rail-x" style="left: 0px; bottom: -232px;">
-												<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;">
-												</div>
-											</div>
-											<div class="ps__rail-y" style="top: 232px; height: 300px; right: 0px;">
-												<div class="ps__thumb-y" tabindex="0"
-													style="top: 131px; height: 168px;"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="chat-footer" id="chat" onclick="hideSidebar()">
-							</div>
-						</div>
-						<div class="chat-header d-flex align-items-center">
-							<div class="chat-toggle-btn"><i class="bx bx-menu-alt-left"></i>
-							</div>
-							<div class="input-group mb-2">
-								<h6 onclick="hideSidebar()"></h6><img src="/img/user.png" id="iconuser" width="60"
-									height="60" class="rounded-circle">
-								<span class="input-group-text text-primary bg-white" id="touser"
-									style="border: none;"></span>
-								<input hidden type="text" class="form-control" placeholder="账号" id="accountId" />
-							</div>
-							<div>
-								<h4 class="mb-1 font-weight-bold" style="word-break:keep-all" id="usertitle">您未登录</h4>
-							</div>
-							<div>
-								<h4 class="mb-1 font-weight-bold"><img src="/img/user.png" id="icontitle" width="60"
-										height="60" class="rounded-circle"></h4>
-							</div>
-						</div>
-						<div class="chat-content ps ps--active-y" id="containerId">
-						</div>
-						<div class="chat-footer d-flex align-items-center">
-							<div class="flex-grow-1 pe-2">
-								<div class="input-group">
-									<input type="text" class="form-control" placeholder="Enter your message" id="msgid">
-								</div>
-							</div>
-							<div class="chat-footer-menu1">
-								<button type="button" class="btn btn-facebook" onclick="send()">Send
-								</button>
-							</div>
-						</div>
-						<!--start chat overlay-->
-						<div class="overlay chat-toggle-btn-mobile"></div>
-						<!--end chat overlay-->
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="overlay toggle-icon"></div>
-		<a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 	</div>
+
+	<div class="modal fade" id="modal-control">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="controlclose();">关闭</button>
+					<h4 class="modal-title">&#128187;控制面板</h4>
+					<button type="button" class="modal-title btn btn-primary" onclick="logout()" id="logoutId"
+						style="display: none;">退出登录</button>
+				</div>
+				<div class="modal-body">
+					<button type="button" class="btn btn-light mt-1" onclick="technologyshow()">&#128221;技术说明</button>
+					<button type="button" class="btn btn-light mt-1" onclick="modaltimselfshow()">&#127748;个人资料</button>
+					<button type="button" class="btn btn-light mt-1" id="modal-btn-register">&#127381;注册新账户</button>
+					<button type="button" class="btn btn-light mt-1" onclick="timmyfriendshow()">&#128100;我的好友</button>
+					<button type="button" class="btn btn-light mt-1"
+						onclick="modalmutlivideoshow()">&#127760;多人实时对话</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="controlclose();">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-technology">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="technologyclose();">关闭</button>
+					<h4 class="modal-title">webtim技术说明</h4>
+				</div>
+				<div class="modal-body  bg-white">
+					<div class="col-lg-12" style="height: calc(100vh - 4rem);">
+						<iframe src="https://tlnet.top/blogs/modal_control" style="width: 100%;height: 100%;"></iframe>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="technologyclose();">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-timself">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="timselfclose()">关闭</button>
+					<h4 class="modal-title">我的</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row" id="timselflist">
+						<h3>未登录</h3>
+					</div>
+					<div class="p-1" id="modifyPwdcard" style="display: none;">
+						<hr />
+						<form id="modifyPwdForm">
+							<div class="col-12">
+								<label for="inputLastEnterUsername" class="form-label">原密码</label>
+								<div class="input-group input-group-lg"> <span
+										class="input-group-text bg-transparent">&#128272;</span>
+									<input type="password" class="form-control border-start-0" id="oldpassword"
+										placeholder="旧密码" />
+								</div>
+							</div>
+							<div class="col-12">
+								<label for="inputLastEnterPassword" class="form-label">新密码</label>
+								<div class="input-group input-group-lg"> <span
+										class="input-group-text bg-transparent">&#128271;</span>
+									<input type="password" class="form-control border-start-0" id="newpassword"
+										placeholder="新密码" />
+								</div>
+							</div>
+						</form>
+						<div class="col-12">
+							<div class="btn-group">
+								<button type="button" class="btn btn-primary" onclick="unmodifyPwd()">
+									取消</button>&nbsp;
+								<button type="button" class="btn btn-primary" onclick="modifyPwd()">
+									确定修改</button>
+							</div>
+						</div>
+					</div>
+					<div class="p-1" id="modifyUserinfocard" style="display: none;">
+						<hr />
+						<form class="row g-3" id="modifyuserinfoform">
+							<div class="col-12">
+								<input type="text" id="modifytoken" name="token" hidden />
+								<label for="inputLastEnterUsername" class="form-label">昵称</label>
+								<div class="input-group input-group-lg"> <span
+										class="input-group-text bg-transparent">&#127875;</span>
+									<input type="text" class="form-control border-start-0" id="modifynick" name="nick"
+										placeholder="昵称" />
+								</div>
+							</div>
+							<div class="d-flex">
+								<div>
+									<b>[头像]</b><img src="/img/1.jpg" id="headcover" width="100px" height="100px">
+								</div>
+								<div>
+									<input type="text" value="/img/1.jpg" id="headcover2" name="logo" hidden />
+								</div>
+								<div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+								<div width="100px" height="100px">
+									<input style="opacity: 0;" width="100px" height="100px" type="file" id="coverinputs"
+										name="coverfile" />
+									<span class="row text-center" id="updateSelfcover">
+										<svg class="bi bi-person-circle" width="2em" height="2em" viewBox="0 0 16 16"
+											fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+											<path
+												d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z" />
+											<path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+											<path fill-rule="evenodd"
+												d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
+										</svg>
+										<h6 id='upcover' style="font-size: small;color: rgb(34, 95, 249);">[上传头像]
+										</h6>
+									</span>
+								</div>
+							</div>
+							<div class="col-12" id="headcoverlist">
+							</div>
+						</form>
+						<div class="col-12">
+							<div class="btn-group">
+								<button type="button" class="btn btn-primary" onclick="unmodifyUserinfo()">
+									取消</button>&nbsp;
+								<button type="button" class="btn btn-primary" onclick="modifyUserinfo()">
+									确定修改</button>
+							</div>
+						</div>
+					</div>
+					<hr />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-webtimuser">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="friend-close">关闭</button>
+					<h4 class="modal-title">&#10133;webtim已注册用户</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 400px;" id="accountlist">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="friend-close-end">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-group">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="group-close">关闭</button>
+					<h4 class="modal-title">我的群</h4>
+					<button type="button" class="modal-title btn btn-primary" id="modal-btn-newgroup">新建群</button>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 400px;" id="mygrouplist">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<span>&#128308;我建立的群</span>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="group-close-end">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-timgroup">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="timgroup-close">关闭</button>
+					<h4 class="modal-title">webtim群组</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 400px;" id="timgrouplist">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" data-dismiss="modal">公有群</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">私有群</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						id="timgroup-close-end">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-mutlivideo">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="modalmutlivideoclose()">关闭</button>
+					<h4 class="modal-title fs-normal">实时音视频</h4>
+					<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
+						onclick="mutlivideoroomshow()">新建</button>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 400px;" id="mygrouplist_v">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="modalmutlivideoclose()">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="modal-mutlivideostream">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-light" data-dismiss="modal"
+						onclick="mutlivideostreamhide()">&#10134;</button>
+					<h4 id="videoroomname"></h4>
+					<button type="button" class="btn btn-danger" data-dismiss="modal"
+						onclick="mutlivideostreamclose()">退出</button>
+				</div>
+				<div class="modal-body">
+					<input type="text" id="mutlivideostreamid" hidden />
+					<div class="row p-1 bg-light" id="mutlivideostreamlist"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-light" data-dismiss="modal"
+						onclick="switchovervideo()">&#127909;视频</button>
+					<button type="button" class="btn btn-light" data-dismiss="modal"
+						onclick="switchoveraudio()">&#128222;语音</button>
+					<button type="button" class="btn btn-light" data-dismiss="modal"
+						onclick="mutlivideostreamhide()">&#10134;最小化</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-timmyfriend">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="modalmyfriend-close"
+						onclick="timmyfriendclose()">关闭</button>
+					<h4 class="modal-title">我的好友</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 400px;" id="modalmyfriendlist">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="modalmyfriend-close-end"
+						onclick="timmyfriendclose()">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-register">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="register-close">关闭</button>
+					<h4 class="modal-title">新用户注册</h4>
+				</div>
+				<div class="modal-body">
+					<div class="wrapper">
+						<div class="row">
+							<div class="col-xl-11 mx-auto">
+								<div class="card border-top border-0 border-4 border-dark">
+									<div class="card-body p-1">
+										<form class="row g-3" id="registerform">
+											<div class="col-12">
+												<label for="inputLastEnterUsername" class="form-label">登录账号</label>
+												<div class="input-group input-group-lg"> <span
+														class="input-group-text bg-transparent">&#128221;</span>
+													<input type="text" class="form-control border-start-0"
+														id="registername" name="loginname" placeholder="输入登录账号" />
+												</div>
+											</div>
+
+											<div class="col-12">
+												<label for="inputLastEnterPassword" class="form-label">密码</label>
+												<div class="input-group input-group-lg"> <span
+														class="input-group-text bg-transparent">&#128271;</span>
+													<input type="password" class="form-control border-start-0"
+														id="registerpwd" name="password" placeholder="登录密码" />
+												</div>
+											</div>
+											<div class="col-12">
+												<label for="inputLastEnterUsername" class="form-label">昵称</label>
+												<div class="input-group input-group-lg"> <span
+														class="input-group-text bg-transparent">&#127875;</span>
+													<input type="text" class="form-control border-start-0" name="nick"
+														id="registerNick" placeholder="昵称" />
+												</div>
+											</div>
+											<div class="col-12">
+												<b>[头像]</b><img src="/img/1.jpg" id="rheadcover" width="100px"
+													height="100px">
+												<input type="text" value="/img/1.jpg" id="rheadcover2" name="logo"
+													hidden />
+											</div>
+											<div class="col-12" id="rheadcoverlist">
+											</div>
+										</form>
+									</div>
+									<div class="col-12">
+										<div class="d-grid">
+											<button class="btn btn-dark btn-lg px-5" onclick="register()">
+												确定注册</button>
+										</div>
+									</div>
+									<hr />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						id="register-close-end">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-newgroup">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content bg-light">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="newgroup-close">x
+						关闭</button>
+				</div>
+				<div class="wrapper">
+					<div class="col-xl-11 mx-auto">
+						<div class="card border-top border-0 border-4 border-dark">
+							<div class="card-body p-1">
+								<form class="row g-3" id="newgroupform">
+									<div class="col-12">
+										<div class="input-group input-group-lg"> <span
+												class="input-group-text bg-transparent">&#128246;</span>
+											<input type="text" id="newgrouptoken" name="token" hidden />
+											<input type="text" class="form-control border-start-0" name="topic"
+												placeholder="群主题" id="grouptopic" />
+										</div>
+										<input type="radio" name="gtype" value="1" />私有群
+										<input type="radio" name="gtype" value="2" checked />公有群
+									</div>
+									<div class="col-12">
+										<b>[群封面]</b><img src="/img/001.jpg" id="groupcover" width="100px"
+											height="100px">
+										<input type="text" value="/img/001.jpg" id="groupcover2" name="logo" hidden />
+									</div>
+									<div class="col-12" id="groupcoverlist">
+									</div>
+							</div>
+							</form>
+							<div class="col-12">
+								<div class="d-grid">
+									<button class="btn btn-primary btn-md px-1" onclick="newgroup()">新建群</button>
+								</div>
+							</div>
+							<hr />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-groupmember">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						id="groupmember-close">关闭</button>
+					<h4 class="modal-title" id="roomid"></h4>
+					<input id="groupmember_node" hidden />
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="leaveroom()">退群</button>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 400px;" id="groupmemberlist">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="button" class="btn btn-sm  btn-warning">好友</button>
+						<button type="button" class="btn btn-sm  btn-info">我</button>
+						<button type="button" class="btn btn-sm  btn-success">群主</button>
+						<button type="button" class="btn btn-sm  btn-primary">加好友</button>
+						<button type="button" class="btn btn-sm  btn-danger">踢出群</button>
+					</div>
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						id="groupmember-close-end">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-timlivestream">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="modalmyfriend-close"
+						onclick="timlivestreamclose()">&#10060;关闭</button>
+					<!-- <h4 class="modal-title">&#127910;</h4> -->
+					<span>
+						<button type="button" class="btn btn-default btn-sm" onclick="flushnewlive()"
+							style="font-size:x-large;">
+							<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+								class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+								<path fill-rule="evenodd"
+									d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+								<path
+									d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+							</svg>刷新
+						</button>
+						<button type="button" class="modal-title btn btn-primary" data-dismiss="modal"
+							onclick="opennewlive()">我要直播</button>
+					</span>
+				</div>
+				<div class="modal-body">
+					<div class="row" style="overflow: scroll;height: 450px;" id="modalvideolivelist">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<h6>&#128309;个人视频直播</h6>
+					<h6>&#128308;播放视频直播</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-timvideo">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="timvideoclose()">关闭</button>
+					<h2 id="readylink" value="1"></h2>
+					<h4 class="modal-title">视频</h4>
+				</div>
+				<div class="modal-body" style="overflow: scroll;height: 400px;">
+					<div class="d-flex flex-column bg-light mb-1" id="timvideoview">
+						<video class="p-1" id="myvideo" autoplay style="width: 150px;height: auto;" muted>
+						</video>
+						<div class="p-1" id="videophone"></div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="timvideoclose()">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-newlive">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content bg-light">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="closenewlive()">x关闭</button>
+				</div>
+				<div class="modal-body" style="display: inline;" id="videowindow1">
+					<div class="card border-top border-0 border-4 border-dark">
+						<div class="card-body p-1">
+							<form class="row g-3" id="newliveform">
+								<div class="col-12">
+									<div class="input-group input-group-lg"> <span
+											class="input-group-text bg-transparent">&#127751;</span>
+										<input type="text" id="livestreamform_node" name="node" hidden />
+										<input type="text" id="livestreamform_vnode" name="vnode" hidden />
+										<input type="text" id="livestreamform_token" name="token" hidden />
+										<input type="text" id="livestreamform_cover" name="cover" hidden />
+										<input type="text" id="livestreamform_opera" name="opera" hidden />
+										<input type="text" id="livestreamform_topic" class="form-control border-start-0"
+											name="topic" placeholder="直播主题" />
+									</div>
+									<input type="radio" id="livetype" name="ltype" onchange="selectfile(this)" value="1"
+										checked />个人视频直播
+									<input type="radio" id="livetypefile" name="ltype" onchange="selectfile(this)"
+										value="2" id="" />播放视频直播
+								</div>
+								<div class="col-12">
+									<h6><b>说明：</b></h6>
+									<p>[个人视频直播]将调用设备摄像头与麦克风进行现场直播</p>
+									<p>[播放视频直播]将选择系统视频文件播放并直播播放视频流</p>
+								</div>
+							</form>
+							<div class="col-12" id="videofilediv" hidden>
+								<span>
+									<input type="checkbox" id="fileloop" />&#128257;<input type="file" id="videofile"
+										onchange="selectvideofile()" />
+								</span>
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="d-grid">
+								<button class="btn btn-primary btn-md px-1" onclick="newlivestart()">开始直播</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="wrapper" style="display: none;" id="videowindow2">
+					<div class="card d-flex ratio ratio-21x9" id="playvideowindow">
+					</div>
+					<div class="modal-footer">
+						<div class="col-12">
+							<div class="d-grid">
+								<div class="btn-group">
+									<button class="btn btn-primary btn-md px-1" onclick="livefullscreen()">最大化</button>
+									<button class="btn btn-primary btn-md px-1" onclick="livestop()">关闭直播</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-videostream">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="videostreamtitle"></h5>
+				</div>
+				<div class="modal-body">
+					<div class="flex ratio ratio-21x9" id="videostreamdiv">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="col-12">
+						<div class="d-grid">
+							<div class="btn-group">
+								<button class="btn btn-primary btn-md" onclick="videostreamfullscreen()">最大化</button>
+								<button class="btn btn-primary btn-md px-1" onclick="videostreamclose()">关闭</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-newvideogroup">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content bg-light">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="mutlivideoroomclose()">x
+						关闭</button>
+					<h4>多人实时对话群</h4>
+				</div>
+				<div class="wrapper">
+					<div class="col-xl-11 mx-auto">
+						<div class="card border-top border-0 border-4 border-dark">
+							<div class="card-body p-1">
+								<form class="row g-3" id="newgroupform_v">
+									<div class="col-12">
+										<div class="input-group input-group-lg"> <span
+												class="input-group-text bg-transparent">&#9210;</span>
+											<input type="text" id="newgrouptoken_v" name="token" hidden />
+											<input type="text" name="mode" value="1" hidden />
+											<input type="text" class="form-control border-start-0" name="topic"
+												placeholder="群主题" id="grouptopic_v" />
+										</div>
+									</div>
+									<div class="col-12">
+										<b>[群封面]</b><img src="/img/101.jpg" id="groupcover_v" width="100px"
+											height="100px">
+										<input type="text" value="/img/101.jpg" id="groupcover2_v" name="logo" hidden />
+									</div>
+									<div class="col-12" id="groupcoverlist_v"></div>
+							</div>
+							</form>
+							<div class="col-12">
+								<div class="d-grid">
+									<button class="btn btn-primary btn-md px-1" onclick="newvideogroup()">新建群</button>
+								</div>
+							</div>
+							<hr />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-sendfile">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-light" data-dismiss="modal"
+						onclick="sendfileclose()">x关闭</button>
+					<img src="/img/user.png" class="rounded-circle" width="40" height="40" id="sendfilehead" />
+					<input type="text" id="recvnode" hidden>
+					<input type="text" id="vnode" hidden>
+					<h4 class="modal-title">传文件</h4>
+				</div>
+				<div class="modal-body" height="300px" width="500px">
+					<input type="file" id="transfileId">
+
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" onclick="showsendToast()">提示框</button>
+					<button class="btn btn-primary" onclick="sendfile()">发送</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-userinfo">
+		<div class="modal-dialog modal-md">
+			<form id="userinfo_form">
+				<input type="text" id="userinfo_token" name="token" />
+			</form>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-videopullmember">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="modalvideopullmemberclose()">x关闭</button>
+					<h4 class="modal-title">添加群成员</h4>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="submitpullmember()">确定</button>
+				</div>
+				<div class="modal-body">
+					<input type="text" id="videopullmemberAccount" hidden />
+					<div class="row" style="overflow: scroll;height: 400px;" id="modvideopullmemberlist"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="modalvideopullmemberclose()">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card rounded-0">
+		<div class="chat-wrapper">
+			<div class="chat-sidebar">
+				<div class="chat-sidebar-header">
+					<div class="d-flex align-items-center">
+						<div class="chat-user-online" onclick="hideSidebar()">
+							<img src="/img/user.png" id="icon" width="45" height="45" class="rounded-circle" alt="">
+						</div>
+						<div class="flex-grow-1 ms-2">
+							<p class="mb-0" id="loginflag">未登录</p>
+						</div>
+					</div>
+					<div class="mb-3"></div>
+				</div>
+				<div class="chat-sidebar-content">
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade show active" id="pills-Chats">
+							<div class="chat-list ps ps--active-y">
+								<div class="list-group list-group-flush" id="msgnodelist">
+								</div>
+								<div class="ps__rail-x" style="left: 0px; bottom: -232px;">
+									<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;">
+									</div>
+								</div>
+								<div class="ps__rail-y" style="top: 232px; height: 300px; right: 0px;">
+									<div class="ps__thumb-y" tabindex="0" style="top: 131px; height: 168px;">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="chat-footer" id="chat" onclick="hideSidebar()">
+					<div class="chat-toggle-btn">&lt;</div>
+				</div>
+			</div>
+			<div class="chat-header d-flex align-items-center">
+				<div class="chat-toggle-btn">&gt;</div>
+				<div class="input-group mb-2">
+					<h6 onclick="hideSidebar()"></h6>
+					<!-- <img src="/img/user.png" id="iconuser" width="60" height="60"
+							class="rounded-circle">
+						<span class="input-group-text text-primary bg-white" id="touser" style="border: none;"></span> -->
+					<input hidden type="text" class="form-control" placeholder="账号" id="accountId" />
+				</div>
+				<div>
+					<span class="input-group-text text-primary bg-white" id="touser" style="border: none;"></span>
+				</div>
+				<div>
+					<h4 class="mb-1 font-weight-bold"><img src="/img/user.png" id="iconuser" width="60" height="60"
+							class="rounded-circle"></h4>
+				</div>
+				<div style="position: absolute; top: 1%;right: 1%;max-width: 200px;">
+					<div id="sendfiletoast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+						data-bs-autohide="false">
+						<div class="toast-header">
+							<strong class="me-auto">文件传输</strong>
+							<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+						</div>
+						<div class="toast-body col-12">
+							<span>
+								<h6 id="rateid"></h6>
+							</span>
+							<span id="sendfileshow"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="chat-content ps ps--active-y" id="containerId">
+			</div>
+
+			<div style="position: absolute; bottom: 15%;right: 10%;max-width: 300px;">
+				<div id="attachtoast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+					<div class="toast-header">
+						<strong class="me-auto"></strong>
+						<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+					</div>
+					<div class="toast-body col-12">
+						<button type="button" class="btn btn-sm  btn-primary small"
+							onclick="sendTimvideo()">视频电话</button>
+						<button type="button" class="btn btn-sm  btn-primary small" onclick="sendfilemod()">传文件</button>
+					</div>
+				</div>
+			</div>
+			<div style="position: absolute; bottom: 15%;right: 10%;max-width: 300px;">
+				<div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+					data-bs-autohide="false">
+					<div class="toast-header">
+						<strong class="me-auto">添加表情</strong>
+						<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+					</div>
+					<div class="toast-body col-12" id="emoji">
+					</div>
+				</div>
+			</div>
+
+			<div class="chat-footer d-flex align-items-center">
+				<div class="flex-grow-1 pe-2">
+					<div class="input-group">
+						<input type="button" class="input-group-text" onclick="showAttachtoast()" value="&#10133;" />
+						<input type="button" class="input-group-text" onclick="showToast()" value="&#128522;" />
+						<input type="text" class="form-control" placeholder="输入消息..." id="msgid">
+					</div>
+				</div>
+				<div class="chat-footer-menu1">
+					<button type="button" class="btn btn-facebook" onclick="send()">
+						<svg class="bi bi-cursor" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103zM2.25 8.184l3.897 1.67a.5.5 0 0 1 .262.263l1.67 3.897L12.743 3.52 2.25 8.184z" />
+						</svg>
+					</button>
+				</div>
+			</div>
+			<!--start chat overlay-->
+			<div class="overlay chat-toggle-btn-mobile"></div>
+			<!--end chat overlay-->
+		</div>
+	</div>
+
+	<!-- <div class="overlay toggle-icon"></div>
+	<a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+	</div> -->
+	<script>
+		const audio = {
+			volume: 1,
+			sampleRate: 48000,
+			sampleSize: 16,
+			echoCancellation: true,
+			autoGainControl: true,
+			noiseSuppression: true,
+			latency: 0.3,
+			channelCount: 2,
+			deviceId: "",
+		}
+		const video = {
+			// width: { min: 250, ideal: 400, max: 720 },
+			// width: { min: 250, ideal: 400, max: 720 },
+			facingMode: "user",
+			deviceId: "",
+			resizeMode: false,
+		}
+	</script>
 	<script>
 		new PerfectScrollbar('.chat-list');
 		new PerfectScrollbar('.chat-content');
+		function showToast() {
+			const toast = new bootstrap.Toast(document.getElementById('toast'));
+			toast.show();
+		}
+		function showClose() {
+			const toast = new bootstrap.Toast(document.getElementById('toast'));
+			toast.hide();
+		}
+		function showAttachtoast() {
+			const toast = new bootstrap.Toast(document.getElementById('attachtoast'));
+			toast.show();
+			showClose();
+		}
+		function showsendToast() {
+			const toast = new bootstrap.Toast(document.getElementById('sendfiletoast'));
+			toast.show();
+		}
+		function addemoji(t) {
+			let v = document.getElementById("msgid");
+			v.value = v.value + t.innerHTML;
+		}
 	</script>
-	<script src="assets/js/app.js"></script>
-	<script src="assets/js/timjs.js"></script>
+
 	<script>
+		function mutlivideoroomshow() {
+			$("#modal-newvideogroup").modal("show");
+		}
+		function mutlivideoroomclose() {
+			$("#modal-newvideogroup").modal("hide");
+		}
+	</script>
+
+	<script>
+		$(function () {
+			$("#modal-btn-control").click(function () {
+				$("#modal-control").modal("toggle");
+			});
+		});
+
+		function controlclose() {
+			$("#modal-control").modal("hide");
+		}
+
+		function technologyshow() {
+			$("#modal-technology").modal("show");
+		}
+
+
+		function technologyclose() {
+			$("#modal-technology").modal("hide");
+		}
+
 		$(function () {
 			$("#modal-btn-group").click(function () {
 				$("#modal-group").modal("toggle");
@@ -605,6 +1041,10 @@
 			});
 		});
 
+		function modalregister() {
+			$("#modal-register").modal("show");
+		}
+
 		$(function () {
 			$("#register-close").click(function () {
 				$("#modal-register").modal("toggle");
@@ -618,21 +1058,21 @@
 		});
 
 		$(function () {
-			$("#modal-btn-friend").click(function () {
-				$("#modal-friend").modal("show");
-				friendlist()
+			$("#modal-btn-webtimuser").click(function () {
+				$("#modal-webtimuser").modal("show");
+				webtimuserlist()
 			});
 		});
 
 		$(function () {
 			$("#friend-close").click(function () {
-				$("#modal-friend").modal("hide");
+				$("#modal-webtimuser").modal("hide");
 			});
 		});
 
 		$(function () {
 			$("#friend-close-end").click(function () {
-				$("#modal-friend").modal("hide");
+				$("#modal-webtimuser").modal("hide");
 			});
 		});
 
@@ -649,15 +1089,20 @@
 		});
 
 
-		$(function () {
-			$("#modal-btn-timself").click(function () {
-				$("#modal-timself").modal("show");
+		function modaltimselfshow() {
+			$("#modal-timself").modal("show");
+			selfdiv();
+		}
 
-			});
-		});
 		function timselfclose() {
 			$("#modal-timself").modal("hide");
+			if (isEmpty(myAccount)) {
+				document.getElementById("timselflist").innerHTML = "<h3>未登录</h3>";
+			} else {
+				document.getElementById("timselflist").innerHTML = "";
+			}
 		}
+
 		$(function () {
 			$("#modal-btn-timmyfriend").click(function () {
 				$("#modal-timmyfriend").modal("show");
@@ -665,44 +1110,466 @@
 			});
 		});
 
-		$(function () {
-			$("#modal-btn-timlivestream").click(function () {
-				$("#modal-timlivestream").modal("show");
-			});
-		});
+		function timmyfriendshow() {
+			$("#modal-timmyfriend").modal("show");
+			timmyfriendlist();
+		}
 
 		function timmyfriendclose() {
 			$("#modal-timmyfriend").modal("hide");
 		}
-		function timlivestreamclose() {
-			$("#modal-timlivestream").modal("hide");
+
+		function fullscreen(e) {
+			if (e.requestFullscreen) {
+				e.requestFullscreen();
+			} else if (e.mozRequestFullScreen) {
+				e.mozRequestFullScreen();
+			} else if (e.webkitRequestFullscreen) {
+				e.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
 		}
+
+		function videostreamfullscreen() {
+			let e = document.getElementById("videostreamdiv");
+			fullscreen(e);
+		}
+
+		function livefullscreen() {
+			let e = document.getElementById("playvideowindow");
+			fullscreen(e);
+		}
+
+	</script>
+
+	<script>
+		var mutlivideostreamid = document.getElementById("mutlivideostreamid")
+		function modalmutlivideoshow() {
+			if (isEmpty(mutlivideostreamid.value)) {
+				$("#modal-mutlivideo").modal("show");
+				videoroomlist();
+			} else {
+				mutlivideostreamshow();
+			}
+		}
+
+		function modalmutlivideoclose() {
+			$("#modal-mutlivideo").modal("hide");
+		}
+
+		function videoroomlist() {
+			let mygrouplist = document.getElementById("mygrouplist_v");
+			mygrouplist.innerHTML = "";
+			videoroomMap.forEach((v, k) => {
+				mygrouplist.innerHTML = mygrouplist.innerHTML + myvideoroomdiv(v.cover, v.name, v.node);
+			})
+		}
+
+		const pullmemberdiv = (account) => {
+			let n = timNodeMap.get(account);
+			let cover = "";
+			let name = "";
+			if (!isEmpty(n)) {
+				cover = n.cover;
+				name = n.name;
+			}
+			let s = '<div class="card m-1" style="width:90px;height: 120px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 70px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:90px;font-size:smaller;">' + name + '</h6>'
+				+ '<div class="form-check">'
+				+ '<label class="form-check-label">选择</label>'
+				+ '<input class="form-check-input" type="checkbox" id="pullbox" name="pullbox" value="' + account + '">'
+				+ '</div>'
+				+ '</div>'
+			return s;
+		}
+
+		function modalvideopullmembershow(account) {
+			$("#modal-videopullmember").modal("show");
+			document.getElementById("videopullmemberAccount").value = account;
+			let modvideopullmemberlist = document.getElementById("modvideopullmemberlist");
+			modvideopullmemberlist.innerHTML = "";
+			let alist = roomMemberMap.get(account);
+			let alm = new Map();
+			if (!isEmpty(alist)) {
+				alist.forEach((v) => {
+					alm.set(v, 1)
+				})
+			}
+			friendMap.forEach((v, k) => {
+				if (!alm.has(k)) {
+					modvideopullmemberlist.innerHTML = modvideopullmemberlist.innerHTML + pullmemberdiv(k);
+				}
+			})
+			if (isEmpty(modvideopullmemberlist.innerHTML)) {
+				modvideopullmemberlist.innerHTML = "<h4>所有好友均已是该群成员</h4>"
+			}
+		}
+
+		function modalvideopullmemberclose() {
+			$("#modal-videopullmember").modal("hide");
+			document.getElementById("modvideopullmemberlist").innerHTML = "";
+		}
+
+		const pullmember = (account) => {
+			modalvideopullmembershow(account);
+		}
+
+		const submitpullmember = () => {
+			let pullboxs = document.getElementsByName("pullbox");
+			let rnode = document.getElementById("videopullmemberAccount").value
+			pullboxs.forEach((b) => {
+				if (b.checked) {
+					tc.PullInRoom(rnode, b.value);
+				}
+			})
+			modalvideopullmemberclose();
+		}
+
+		const mutlivideostreamshow = () => {
+			$("#modal-mutlivideostream").modal("show");
+		}
+
+		const mutlivideostreamhide = () => {
+			$("#modal-mutlivideostream").modal("hide");
+		}
+
+		const mutlivideostreamclose = () => {
+			if (confirm("确定退出实时群聊天？")) {
+				mulMediaroommap.forEach((v, k) => {
+					tc.VirtualroomSubCancel(k)
+				})
+				mulMediaroommap.clear();
+				liveroommediaStop();
+				mutlivideostreamlist.innerHTML = "";
+				$("#modal-mutlivideostream").modal("hide");
+			}
+		}
+
+		const roomvideoopen = (account) => {
+			if (!confirm("🎥开始多人实时视频?")) {
+				return
+			}
+			roomvideostart(account)
+		}
+
+		let mutlivideostreamlist = document.getElementById("mutlivideostreamlist")
+
+		const roomvideostart = (account) => {
+			if (isEmpty(mutlivideostreamid.value)) {
+				document.getElementById("userinfo_token").value = webtimToken;
+				let vdata = $("#userinfo_form").serialize();
+				httpPost("vregister", vdata, (data) => {
+					if (!isEmpty(data)) {
+						if (data == "0") {
+							alert("视频启动失败")
+						} else {
+							let jsonres = JSON.parse(data);
+							if (jsonres.ok) {
+								webtimVnode = jsonres.n;
+								document.getElementById("videoroomname").innerText = roomMap.get(account).name;
+								let vs = createVideoroomDiv("我")
+								let video = document.createElement("video");
+								vs.appendChild(video)
+								video.style = "max-width:250px;max-height: 250px;"
+								video.setAttribute('muted', '');
+								video.autoplay = true;
+								if (mutlivideostreamlist.children.length > 0) {
+									let firstdiv = mutlivideostreamlist.querySelector(':scope > div:first-child')
+									if (firstdiv) {
+										mutlivideostreamlist.replaceChild(vs,firstdiv)
+									}
+								} else {
+									mutlivideostreamlist.appendChild(vs);
+								}
+								mutlivideostreamid.value = account;
+								liveroommediaStart(video);
+								return
+							}
+							alert("视频启动失败");
+						}
+					}
+				});
+			}
+		}
+
+
+
+
+		var liveroomvideo = null;
+		async function liveroommediaStart(videoliveObject) {
+			try {
+				liveroomvideo = new MediaRTC(videoliveObject, { video: video, audio: audio });
+				liveroomvideo.recorderHz = 600;
+				liveroomvideo.audioBitsPerSecond = 320000;
+				liveroomvideo.videoBitsPerSecond = 500000;
+				await liveroomvideo.MediaDevices();
+				liveroomvideo.sendStream = pushLiveVideoStream
+				liveroomvideo.Pushstream(true);
+				modalmutlivideoclose()
+				mutlivideostreamshow();
+				let account = mutlivideostreamid.value
+				tc.StreamToRoom(account, webtimVnode, 0, 21);
+				notifyroom.send(account, webtimVnode)
+			} catch (err) {
+				mulMediaroommap.forEach((v, k) => {
+					tc.VirtualroomSubCancel(k)
+				})
+				mulMediaroommap.clear();
+				liveroommediaStop();
+				mutlivideostreamlist.innerHTML = "";
+				$("#modal-mutlivideostream").modal("hide");
+				alert("未获得麦克风或摄像头权限")
+			}
+		}
+
+
+
+		function liveroommediaStop() {
+			if (!isEmpty(liveroomvideo)) {
+				liveroomvideo.MediaRecorderStop();
+			}
+			if (!isEmpty(liveroomAudio)) {
+				liveroomAudio.MediaRecorderStop();
+			}
+			liveroomvideo = null;
+			liveroomAudio = null;
+			webtimVnode = null;
+			mutlivideostreamid.value = "";
+
+			notifyroom.stop()
+		}
+
+		function pushLiveVideoStream(buffer) {
+			if (!isEmpty(webtimVnode)) {
+				sendLiveStream(buffer, webtimVnode)
+			}
+		}
+
+		const roomAudioOpen = (account) => {
+			if (!confirm("📞开始多人实时语音?")) {
+				return
+			}
+			roomAudiostart(account)
+		}
+		async function roomAudiostart(account) {
+			if (isEmpty(mutlivideostreamid.value)) {				
+				document.getElementById("userinfo_token").value = webtimToken;
+				let vdata = $("#userinfo_form").serialize();
+				httpPost("vregister", vdata, (data) => {
+					if (!isEmpty(data)) {
+						if (data == "0") {
+							alert("语音启动失败")
+						} else {
+							let jsonres = JSON.parse(data);
+							if (jsonres.ok) {
+								webtimVnode = jsonres.n;
+								document.getElementById("videoroomname").innerText = roomMap.get(account).name;
+								let sc = createImgroomDiv("我", timNodeMap.get(myAccount).cover)
+								if (mutlivideostreamlist.children.length > 0) {
+									let firstdiv = mutlivideostreamlist.querySelector(':scope > div:first-child')
+									if (firstdiv) {
+										mutlivideostreamlist.replaceChild(sc, firstdiv)
+									}
+								} else {
+									mutlivideostreamlist.appendChild(sc)
+								}
+								mutlivideostreamid.value = account;
+								liveroomAudioStart();
+								return
+							}
+							alert("语音启动失败");
+						}
+					}
+				});
+			}
+		}
+
+		var liveroomAudio = null;
+		async function liveroomAudioStart() {
+			liveroomAudio = new AudioRTC({ audio: audio });
+			liveroomAudio.recorderHz = 600;
+			try {
+				await liveroomAudio.MediaDevices()
+				liveroomAudio.sendStream = pushLiveVideoStream
+				liveroomAudio.Pushstream(true);
+				modalmutlivideoclose()
+				mutlivideostreamshow();
+				let account = mutlivideostreamid.value
+				tc.StreamToRoom(account, webtimVnode, 0, 31);
+				notifyroom.send(account, webtimVnode)
+			} catch (err) {
+				mulMediaroommap.forEach((v, k) => {
+					tc.VirtualroomSubCancel(k)
+				})
+				mulMediaroommap.clear();
+				liveroommediaStop();
+				mutlivideostreamlist.innerHTML = "";
+				$("#modal-mutlivideostream").modal("hide");
+				alert("未获得麦克风权限");
+			}
+		}
+
+		const switchovervideo = () => {
+			if (!isEmpty(liveroomAudio)) {
+				let account = mutlivideostreamid.value;
+				mutlivideostreamid.value = "";
+				let vnode = webtimVnode
+				liveroommediaStop()
+				tc.StreamToRoom(account, vnode, 0, 33);
+				roomvideostart(account)
+			}
+		}
+
+		const switchoveraudio = () => {
+			if (!isEmpty(liveroomvideo)) {
+				let account = mutlivideostreamid.value;
+				mutlivideostreamid.value = "";
+				let vnode = webtimVnode
+				liveroommediaStop()
+				tc.StreamToRoom(account, vnode, 0, 33);
+				roomAudiostart(account)
+			}
+		}
+
+
+
+	</script>
+	<script>
+		const livelistDiv = (cover, topic, nick, vnode, ltype, node) => {
+			let open = '<button type="button" class="btn btn-sm btn-primary" onclick=openlivevideo("' + vnode + '","' + node + '","' + topic + '")>打开</button>';
+			if (ltype == 2) {
+				open = '<button type="button" class="btn btn-sm btn-danger" onclick=openlivevideo("' + vnode + '","' + node + '","' + topic + '")>打开</button>';
+			}
+			let s = '<div class="card m-1" style="width:200px;height: 240px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 150px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:180px;"><B>' + topic + '</B></h6>'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:180px;font-size:15px;">[直播者:' + nick + ']</h6>'
+				+ '<div class="btn-group">'
+				+ open
+				+ '</div>'
+				+ '</div>'
+			return s;
+		}
+
+		function timlivelist() {
+			document.getElementById("modalvideolivelist").innerHTML = "";
+			httpPost("livelist", null, (data) => {
+				if (!isEmpty(data)) {
+					let modalvideolivelist = document.getElementById("modalvideolivelist");
+					let jsonres = JSON.parse(data);
+					let items = [];
+					for (let i = jsonres.length - 1; i >= 0; i--) {
+						items.push(livelistDiv(jsonres[i].Cover, replace(jsonres[i].Topic), replace(jsonres[i].Nick), jsonres[i].Vnode, jsonres[i].LiveType, jsonres[i].Node));
+					}
+					modalvideolivelist.innerHTML = items.join("");
+				}
+			});
+		}
+
+	</script>
+	<script>
+		var myAccount = "";
+		var initcount = 1;
+		function modalLogin() {
+			try {
+				if (isEmpty(myAccount)) {
+					$("#modal-login").modal({ backdrop: 'static', keyboard: false });
+					$("#modal-login").modal("show");
+				}
+			} catch (err) {
+				sleep(5).then(() => modalLogin())
+			}
+		}
+
+		$("#modal-login").on('hide.bs.modal', function () {
+			sleep(500).then(() => modalLogin())
+		});
+
 
 		function timvideoshow() {
 			$("#modal-timvideo").modal("show");
 		}
+
 		function timvideoclose() {
+			if (!isEmpty(videoPhoneAccount)) {
+				if (!confirm("确定结束视频电话?")) {
+					return
+				}
+			}
 			$("#modal-timvideo").modal("hide");
-			mediaRecorderStop();
+			videophoneStop();
 		}
 
-		const accountdiv = (cover, name, account) => {
+		$(function () {
+			$("#modal-btn-timlivestream").click(function () {
+				$("#modal-timlivestream").modal("show");
+				timlivelist();
+			});
+		});
+		$(function () {
+			$("#modal-btn-timliveroomstream").click(function () {
+				modalmutlivideoshow();
+			});
+		});
+
+		function flushnewlive() {
+			timlivelist();
+		}
+
+
+		function timlivestreamclose() {
+			$("#modal-timlivestream").modal("hide");
+		}
+
+		let vjoin4videostream = null;
+		let subVnode = null;
+		function openlivevideo(vnode, node, topic) {
+			if (isEmpty(myAccount)) {
+				alert("未登录");
+				return
+			}
+			$("#modal-videostream").modal({ backdrop: 'static', keyboard: false });
+			$("#modal-videostream").modal("show");
+			vjoin4videostream = new VideoJoin(document.getElementById("videostreamdiv"));
+			vjoin4videostream.modeRealtime = false;
+			vjoin4videostream.modeSpeedRateup = true;
+			newlivecheck(vnode, node)
+			document.getElementById("videostreamtitle").innerText = topic;
+		}
+
+		function videostreamclose() {
+			$("#modal-videostream").modal("hide");
+			if (!isEmpty(myAccount)) {
+				tc.VirtualroomSubCancel(subVnode)
+				subVnode = null;
+				vjoin4videostream.Clear();
+				document.getElementById("videostreamdiv").innerHTML = "";
+			}
+		}
+
+	</script>
+	<script>
+		const accountdiv = (cover, name, account, active) => {
 			let n = timNodeMap.get(account);
 			let addbut = "";
 			let owner = '';
 			let friend = '';
+			let activestat = "&#127774;";
+			if (!active) {
+				activestat = "";
+			}
 			if (account != myAccount && isEmpty(friendMap.get(account))) {
 				addbut = '<button type="button" class="btn btn-sm btn-primary" onclick=addfriend("' + account + '","' + name + '")>加好友</button>';
 			}
 			if (account == myAccount) {
 				owner = '<button type="button" class="btn btn-sm  btn-info">我</button>'
 			}
-			if (!isEmpty(friendMap.get(account)) && node != myAccount) {
+			if (!isEmpty(friendMap.get(account)) && account != myAccount) {
 				friend = '<button type="button" class="btn btn-sm  btn-warning">好友</button>'
 			}
 			let s = '<div class="card m-1" style="width:120px;height: 170px;">'
 				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 100px;" />'
-				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + name + '</h6>'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + activestat + name + '</h6>'
 				+ '<div class="btn-group">'
 				+ addbut + owner + friend
 				+ '</div>'
@@ -748,10 +1615,34 @@
 			if (n.fnode == myAccount) {
 				mynode = "&#128308;";
 			}
-			let s = '<div class="card m-1" style="width:130px;height: 170px;">'
-				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 100px;" />'
-				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + mynode + topic + '</h6>'
-				+ '<button type="button" class="btn btn-primary small" onclick=groupmember("' + account + '")>群成员</button>'
+			let s = '<div class="card m-1" style="width:130px;height: 150px;">'
+				+ '<img class="card-img-top m-1" src="' + cover + '" alt="Card image" style="width:100%;height: 100px;" />'
+				// + '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + mynode + topic + '</h6>'
+				+ '<button type="button" class="btn btn-primary btn-sm" onclick=groupmember("' + account + '") style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:110px;">' + mynode + topic + '</button>'
+				+ '</div>'
+			return s;
+		}
+
+		const myvideoroomdiv = (cover, topic, account) => {
+			let n = videoroomMap.get(account);
+			let mynode = "";
+
+			let memberbtn = '<button type="button" class="btn btn-primary btn-sm" onclick=groupmember("' + account + '")>成员</button>'
+			let pullmemberbtn = '<button type="button" class="btn btn-danger btn-sm" onclick=pullmember("' + account + '")>添加</button>'
+			let audiobtn = '<button type="button" class="btn btn-success btn-sm" onclick=roomAudioOpen("' + account + '")>语音</button>'
+			let videobtn = '<button type="button" class="btn btn-info btn-sm" onclick=roomvideoopen("' + account + '")>视频</button>'
+
+			if (n.fnode == myAccount) {
+				mynode = "&#128308;";
+			} else {
+				pullmemberbtn = ""
+			}
+			let s = '<div class="card m-1" style="width:220px;height: 200px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 140px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:200px;">' + mynode + topic + '</h6>'
+				+ '<div class="btn-group">'
+				+ memberbtn + pullmemberbtn + audiobtn + videobtn
+				+ '</div>'
 				+ '</div>'
 			return s;
 		}
@@ -764,13 +1655,12 @@
 				cover = n.cover;
 				name = n.name;
 			}
-			let s = '<div class="card m-1" style="width:170px;height: 200px;">'
-				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 130px;" />'
+			let s = '<div class="card m-1" style="width:180px;height: 200px;">'
+				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 140px;" />'
 				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + name + '</h6>'
 				+ '<div class="btn-group">'
 				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=sendmsg("' + account + '")>聊天</button>'
-				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=deleteroster("' + account + '","' + name + '")>删除</button>'
-				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=sendTimvideo("' + account + '","' + name + '")>视频</button>'
+				+ '<button type="button" class="btn btn-sm  btn-primary small" onclick=deleteroster("' + account + '")>删除</button>'
 				+ '</div>'
 				+ '</div>'
 			return s;
@@ -779,39 +1669,166 @@
 		const timroomdiv = (cover, topic, account, gtype) => {
 			let but = '';
 			if (gtype == 2) {
-				but = '<button type="button" class="btn btn-success" onclick=addroom("' + account + '")>加入群</button>'
+				but = '<button type="button" class="btn btn-success btn-sm" onclick=addroom("' + account + '")>加入群</button>'
 			} else {
-				but = '<button type="button" class="btn btn-danger" onclick=addroom("' + account + '")>加入群</button>'
+				but = '<button type="button" class="btn btn-danger btn-sm" onclick=addroom("' + account + '")>加入群</button>'
 			}
-			let s = '<div class="card m-1" style="width:100px;height: 150px;">'
+			let s = '<div class="card m-1" style="width:100px;height: 140px;">'
 				+ '<img class="card-img-top" src="' + cover + '" alt="Card image" style="width:100%;height: 80px;" />'
-				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:120px;">' + topic + '</h6>'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:100px;">' + topic + '</h6>'
 				+ but + '</div>'
 			return s;
 		}
 
+		const selfdiv = () => {
+			if (isEmpty(myAccount)) {
+				return
+			}
+			let node = timNodeMap.get(myAccount);
+			if (isEmpty(node)) {
+				return
+			}
+			let timselflist = document.getElementById("timselflist");
+			let buts = '<div class="btn-group">'
+				+ '<button type="button" class="btn btn-primary" onclick="openmodifyPwdcard()">修改密码</button>&nbsp;'
+				+ '<button type="button" class="btn btn-primary" onclick="openmodifyUserinfocard()">修改资料</button>'
+				+ '</div>'
+
+			let s = '<div class="card m-1" style="width:250px;height: 300px;">'
+				+ '<img class="card-img-top" src="' + node.cover + '" alt="Card image" style="width:100%;height: 230px;" />'
+				+ '<h6 class="card-title" style="text-overflow:ellipsis; white-space:nowrap; overflow:hidden;width:230px;">' + node.name + '</h6>'
+				+ buts + '</div>'
+			timselflist.innerHTML = s;
+		}
+
+		function openmodifyPwdcard() {
+			unmodifyUserinfo();
+			if (document.getElementById("modifyPwdcard").style.display != "inline") {
+				document.getElementById("modifyPwdcard").style.display = "inline";
+			} else {
+				document.getElementById("modifyPwdcard").style.display = "none";
+			}
+		}
+
+		function openmodifyUserinfocard() {
+			unmodifyPwd();
+			if (document.getElementById("modifyUserinfocard").style.display != "inline") {
+				document.getElementById("modifynick").value = timNodeMap.get(myAccount).name;
+				document.getElementById("modifyUserinfocard").style.display = "inline";
+				document.getElementById("headcover").src = timNodeMap.get(myAccount).cover;
+				document.getElementById("headcover2").value = timNodeMap.get(myAccount).cover;
+			} else {
+				document.getElementById("modifyUserinfocard").style.display = "none";
+			}
+		}
+		function unmodifyPwd() {
+			document.getElementById("oldpassword").value = "";
+			document.getElementById("newpassword").value = "";
+			document.getElementById("modifyPwdcard").style.display = "none";
+		}
+		function unmodifyUserinfo() {
+			document.getElementById("modifyUserinfocard").style.display = "none";
+		}
+
+		function modifyPwd() {
+			let oldpassword = document.getElementById("oldpassword").value;
+			let newpassword = document.getElementById("newpassword").value;
+			if (oldpassword == newpassword) {
+				alert("密码没有变化");
+				return
+			}
+			tc.Modify(oldpassword, newpassword);
+		}
+
+
+		function modifyUserinfo() {
+			const coverfile = document.getElementById("coverinputs")
+			if (coverfile.files.length > 0) {
+				const file = coverfile.files[0]
+				const formDate = new FormData()
+				formDate.append("coverfile", file)
+				httpPostBinary("upcover", formDate, (data) => {
+					if (data != "0") {
+						modifyUserinfo2(data)
+					} else {
+						alert("修改资料失败");
+					}
+				})
+			} else {
+				modifyUserinfo2(null)
+			}
+		}
+
+		function modifyUserinfo2(cover) {
+			document.getElementById("modifytoken").value = webtimToken;
+			let modifynick = document.getElementById("modifynick");
+			if (modifynick.value.length > 16) {
+				alert("昵称长度超过限制");
+				return
+			}
+			if (modifynick.value.length == 0) {
+				alert("昵称为空");
+				return
+			}
+			if (!isEmpty(cover)) {
+				document.getElementById("headcover2").value = cover;
+			}
+			let data = $("#modifyuserinfoform").serialize();
+			httpPost("modifyuserinfo", data, (data) => {
+				try {
+					if (!isEmpty(data)) {
+						let jsonres = JSON.parse(data);
+						if (jsonres.ok) {
+							tc.UserInfo([myAccount])
+							unmodifyUserinfo();
+							alert("修改资料成功");
+							sleep(1000).then(() => selfdiv());
+							tc.BroadPresence(3, 0, null);
+						} else {
+							alert("修改资料失败");
+						}
+					}
+				} catch (err) {
+					alert("修改资料失败");
+				}
+			});
+		}
+
+
 		function register() {
-			let data = $("#registerform").serialize();
-			httpPost("register", data, (data) => {
+			if (document.getElementById("registerNick").value.length > 16) {
+				alert("昵称长度超过限制");
+				return
+			}
+			if (document.getElementById("registername").value.length == 0 ||
+				document.getElementById("registerpwd").value.length == 0 ||
+				document.getElementById("registerNick").value.length == 0
+			) {
+				alert("注册信息不完整")
+				return
+			}
+			let fdata = $("#registerform").serialize();
+			httpPost("register", fdata, (data) => {
 				if (!isEmpty(data)) {
 					let jsonres = JSON.parse(data);
 					if (jsonres.ok) {
 						alert("注册成功");
+						$("#modal-register").modal("hide");
 					} else {
-						alert(jsonres.error);
+						alert("注册失败:" + jsonres.error);
 					}
 				}
 			});
 		}
 
-		function friendlist() {
-			httpPost("friendlist", null, (data) => {
+		function webtimuserlist() {
+			httpPost("userslist", null, (data) => {
 				if (!isEmpty(data)) {
 					let accountlist = document.getElementById("accountlist");
 					let jsonres = JSON.parse(data);
 					let items = [];
-					for (let i = jsonres.length - 1; i >= 0; i--) {
-						items.push(accountdiv(jsonres[i].Cover, jsonres[i].Nickname, jsonres[i].Account));
+					for (let i = 0; i < jsonres.length; i++) {
+						items.push(accountdiv(jsonres[i].Cover, replace(jsonres[i].Nickname), jsonres[i].Account, jsonres[i].Active));
 					}
 					accountlist.innerHTML = items.join("");
 				}
@@ -825,13 +1842,12 @@
 					let jsonres = JSON.parse(data);
 					let items = [];
 					for (let i = jsonres.length - 1; i >= 0; i--) {
-						items.push(timroomdiv(jsonres[i].Cover, jsonres[i].Topic, jsonres[i].Account, jsonres[i].Gtype));
+						items.push(timroomdiv(jsonres[i].Cover, replace(jsonres[i].Topic), jsonres[i].Account, jsonres[i].Gtype));
 					}
 					timgrouplist.innerHTML = items.join("");
 				}
 			});
 		}
-
 
 		function timmyfriendlist() {
 			let modalmyfriendlist = document.getElementById("modalmyfriendlist");
@@ -854,6 +1870,7 @@
 				})
 				groupmemberlist.innerHTML = arrs.join("");
 			}
+			document.getElementById("roomid").innerHTML = "<h5>&#128246;" + n.name + "</h5>"
 			$("#modal-groupmember").modal("show");
 		}
 
@@ -879,9 +1896,9 @@
 				alert("已经是好友");
 				return
 			}
-			if (confirm("是否给" + name + "发送加好友请求?")) {
+			if (confirm("确定向[" + name + "]发送加好友请求?")) {
 				tc.Addroster(account, "我是" + timNodeMap.get(myAccount).name);
-				alert("成功给" + name + "发送加好友信息");
+				alert("已成功向[" + name + "]发送加好友信息");
 			}
 		}
 
@@ -890,16 +1907,48 @@
 				alert("未登录");
 				return
 			}
-			document.getElementById("node").value = myAccount;
-			let data = $("#newgroupform").serialize();
-			httpPost("newroom", data, (data) => {
+			if (isEmpty(document.getElementById("grouptopic").value)) {
+				alert("请填写群主题")
+				return
+			}
+			document.getElementById("newgrouptoken").value = webtimToken;
+			let vdata = $("#newgroupform").serialize();
+			httpPost("newroom", vdata, (data) => {
 				if (!isEmpty(data)) {
 					let mygrouplist = document.getElementById("mygrouplist");
 					let jsonres = JSON.parse(data);
 					roomMap.set(jsonres.Node, new timNode(jsonres.Node, jsonres.Topic, jsonres.Cover, myAccount));
 					mygrouplist.innerHTML = mygrouplist.innerHTML + myroomdiv(jsonres.Cover, jsonres.Topic, jsonres.Node);
-					tc.UserRoom();
+					// tc.UserRoom();
+					tc.RoomInfo([jsonres.Node]);
+					tc.RoomUsers(jsonres.Node);
 					$("#modal-newgroup").modal("hide");
+				} else {
+					alert("建群失败");
+				}
+			});
+		}
+
+		function newvideogroup() {
+			if (isEmpty(myAccount)) {
+				alert("未登录");
+				return
+			}
+			if (isEmpty(document.getElementById("grouptopic_v").value)) {
+				alert("请填写群主题")
+				return
+			}
+			document.getElementById("newgrouptoken_v").value = webtimToken;
+			let vdata = $("#newgroupform_v").serialize();
+			httpPost("newroom", vdata, (data) => {
+				if (!isEmpty(data)) {
+					let mygrouplist = document.getElementById("mygrouplist_v");
+					let jsonres = JSON.parse(data);
+					videoroomMap.set(jsonres.Node, new timNode(jsonres.Node, jsonres.Topic, jsonres.Cover, myAccount));
+					mygrouplist.innerHTML = mygrouplist.innerHTML + myvideoroomdiv(jsonres.Cover, jsonres.Topic, jsonres.Node);
+					tc.RoomInfo([jsonres.Node]);
+					tc.RoomUsers(jsonres.Node);
+					mutlivideoroomclose();
 				} else {
 					alert("建群失败");
 				}
@@ -911,7 +1960,7 @@
 				alert("未登录");
 				return
 			}
-			if (confirm("是否发送入群申请?")) {
+			if (confirm("确定发送入群申请?")) {
 				if (!isEmpty(roomMap.get(account))) {
 					alert("你已经是该群成员");
 					return
@@ -936,7 +1985,7 @@
 		}
 
 		function kickroom(unode, name, rnode) {
-			if (confirm("是否确定将" + name + "移除出群?")) {
+			if (confirm("确定将[" + name + "]移除出群?")) {
 				tc.StreamToRoom(rnode, rnode, 3, 0);
 				tc.KickRoom(rnode, unode);
 				let nlist = roomMemberMap.get(rnode);
@@ -955,23 +2004,34 @@
 			peer(account, false);
 		}
 
-		function deleteroster(account, name) {
-			if (confirm("确定删除好友:" + name)) {
+		function deleteroster(account) {
+			if (confirm("确定删除好友[" + timNodeMap.get(account).name + "]")) {
 				tc.Rmroster(account)
 				sleep(2000).then(() => timmyfriendlist());
 			}
 		}
 
-		function sendTimvideo(account, name) {
+		function sendTimvideo(account) {
+			if (isEmpty(account)) {
+				account = document.getElementById("accountId").value
+				if (isEmpty(account)) {
+					alert("未选择好友")
+					return
+				}
+				if (!friendMap.has(account)) {
+					alert("只能与好友视频")
+					return
+				}
+			}
 			if (videoPhoneAccount != "") {
 				timvideoshow();
 			} else {
-				if (confirm("确定向好友" + name + "发送视频请求？")) {
+				if (confirm("确定向好友[" + timNodeMap.get(account).name + "]发送视频请求？")) {
 					document.getElementById("readylink").innerHTML = "<h2>连线中...<h2><h2></h2>"
 					rockonTime(account, 30);
 					timvideoshow();
 					videoPhoneAccount = account;
-					mediaRecorderStart();
+					videophoneStart();
 					tc.StreamToUser(account, null, 0, 1);
 				}
 			}
@@ -991,8 +2051,314 @@
 				sleep(1000).then(() => rockonTime(account, count - 1))
 			}
 		}
+	</script>
+	<script>
+		var MB = 1000000;
+		var KB = 1000;
+		var HKB = 100 * KB;
+		function sendfileshow() {
+			$("#modal-sendfile").modal("show");
+		}
+		function sendfileclose() {
+			$("#modal-sendfile").modal("hide");
+		}
+		function sendfilemod(account) {
+			if (isEmpty(account)) {
+				account = document.getElementById("accountId").value
+				if (isEmpty(account)) {
+					alert("未选择好友")
+					return
+				}
+				if (!friendMap.has(account)) {
+					alert("只能向好友传文件")
+					return
+				}
+			}
+			sendfileshow();
+			document.getElementById("recvnode").value = account
+			document.getElementById("sendfilehead").src = timNodeMap.get(account).cover;
+			document.getElementById("transfileId").value = "";
+		}
+
+		function sendfile() {
+			let recvnode = document.getElementById("recvnode").value
+			let files = document.getElementById("transfileId").files
+			if (files.length == 1) {
+				document.getElementById("userinfo_token").value = webtimToken;
+				let vdata = $("#userinfo_form").serialize();
+				httpPost("vregister", vdata, (data) => {
+					if (!isEmpty(data)) {
+						if (data == "0") {
+							alert("发送失败")
+						} else {
+							let jsonres = JSON.parse(data);
+							if (jsonres.ok) {
+								sendfileMap.set(jsonres.n, new sendFileBean(files[0], jsonres.n, recvnode))
+								let s = { "name": files[0].name, "size": files[0].size, "vnode": jsonres.n }
+								tc.StreamToUser(recvnode, JSON.stringify(s), 0, 11);
+								showsendToast();
+								document.getElementById("sendfileshow").innerHTML = "<h6>等待对方接收中...</h6>"
+								sendfileclose();
+							} else {
+								alert("发送失败，请重试");
+							}
+						}
+					}
+				});
+			} else {
+				alert("请选择传输文件")
+				return
+			}
+		}
+
+		function sendfilestart(vnode) {
+			let sfb = sendfileMap.get(vnode)
+			readfile(sfb.file, (data) => {
+				let size = data.length;
+				let a = Math.floor(size / HKB);
+				showsendToast()
+				let t = document.getElementById("sendfileshow");
+				let rateid = document.getElementById("rateid");
+				let bt = '<button class="btn btn-light" onclick="cancelsendfile(\'' + vnode + '\',true)">取消发送</button>'
+				if (a > 0) {
+					rateid.innerHTML = bt
+					let i = 0
+					sendfileLoop(vnode, data, 0, a, (d) => {
+						i = i + d
+						let r = i / size
+						if (r > 1) {
+							r = 1
+						}
+						t.innerHTML = "<h6 style='font-size:smaller;'>" + sfb.file.name + "已经发送:" + Math.floor(100 * r) + "%</h6>";
+					})
+				} else {
+					tc.PushBigDataStream(vnode, gzip(data))
+					sleep(100).then(() => tc.PushBigDataStream(vnode, new Uint8Array([0])));
+					t.innerHTML = "<h6 style='font-size:smaller;'>" + sfb.file.name + "已经发送:100%</h6>";
+					sendfileMap.delete(vnode)
+				}
+			});
+		}
+
+		function sendfileLoop(vnode, data, stat, count, showfunc) {
+			if (!sendfileMap.has(vnode)) {
+				return
+			}
+			tc.PushBigDataStream(vnode, gzip(data.slice(stat * HKB, (stat + 1) * HKB)))
+			showfunc(HKB)
+			if (stat < count) {
+				sleep(100).then(() => sendfileLoop(vnode, data, stat + 1, count, showfunc))
+			} else {
+				sleep(100).then(() => tc.PushBigDataStream(vnode, new Uint8Array([0])))
+				sendfileMap.delete(vnode)
+			}
+		}
+
+		function finishSendfile() {
+			document.getElementById("vnode").value = "";
+			document.getElementById("recvnode").value = "";
+		}
+
+		function cancelsendfile(vnode, initiative) {
+			if (sendfileMap.has(vnode)) {
+				let n = sendfileMap.get(vnode)
+				if (initiative) {
+					tc.StreamToUser(n.tnode, vnode, 0, 14);
+				}
+				sendfileMap.delete(vnode)
+				document.getElementById("sendfileshow").innerHTML = ""
+				document.getElementById("rateid").innerHTML = ""
+			}
+		}
+	</script>
+
+	<script>
+		function opennewlive() {
+			if (isEmpty(myAccount)) {
+				alert("未登录");
+				return
+			}
+			$("#modal-newlive").modal({ backdrop: 'static', keyboard: false });
+			$("#modal-newlive").modal("show");
+		}
+		function closenewlive() {
+			$("#modal-newlive").modal("hide");
+			liveclose();
+		}
+
+		function selectfile(t) {
+			if (t.value == 2) {
+				document.getElementById("videofilediv").removeAttribute("hidden");
+				document.getElementById("videofilediv").style.display = "inline";
+			} else {
+				document.getElementById("videofilediv").style.display = "none";
+			}
+		}
+
+		function selectvideofile() {
+			try {
+				document.getElementById("livestreamform_topic").value = document.getElementById("videofile").files[0].name;
+			} catch (err) { }
+		}
+
+		function newlivestart() {
+			let title = document.getElementById("livestreamform_topic").value;
+			if (isEmpty(title)) {
+				alert("请填写直播主题");
+				return;
+			}
+			if (document.getElementById("livetypefile").checked) {
+				let file = document.getElementById("videofile");
+				if (file.files.length > 0) {
+					videoPlayStart(file.files[0]);
+				} else {
+					alert("请选择视频文件")
+					return
+				}
+			} else {
+				if (isEmpty(webtimVnode)) {
+					liveMediaStart();
+				} else {
+					alert("请先结束其他实时对话")
+					return
+				}
+			}
+			document.getElementById("videowindow1").style.display = "none";
+			document.getElementById("videowindow2").style.display = "inline";
+		}
+
+		let webtimVnode = null;
+
+		function livestart(playObject) {
+			let cover = screenshot(playObject);
+			if (cover.length < 10) {
+				cover = timNodeMap.get(myAccount).cover
+			}
+			document.getElementById("livestreamform_cover").value = cover;
+			document.getElementById("livestreamform_token").value = webtimToken;
+			document.getElementById("livestreamform_opera").value = "1";
+			let vdata = $("#newliveform").serialize();
+			httpPost("vroom", vdata, (data) => {
+				if (!isEmpty(data)) {
+					if (data == "0") {
+						alert("直播失败，请重试")
+					} else {
+						let jsonres = JSON.parse(data);
+						if (jsonres.ok) {
+							webtimVnode = jsonres.n;
+						} else {
+							alert("直播失败，请重试");
+						}
+					}
+				}
+			});
+		}
+
+		function newlivestop() {
+			document.getElementById("playvideowindow").innerHTML = "";
+			let vnode = webtimVnode
+			sleep(500).then(() => tc.PushBigDataStream(vnode, (new Uint8Array([0]))))
+			webtimVnode = null;
+			document.getElementById("livestreamform_opera").value = "2";
+			let vdata = $("#newliveform").serialize();
+			sleep(1000).then(() => httpPost("vroom", vdata))
+		}
+
+		function newlivecheck(vnode, node) {
+			document.getElementById("livestreamform_opera").value = "3";
+			document.getElementById("livestreamform_node").value = node;
+			document.getElementById("livestreamform_vnode").value = vnode;
+			let vdata = $("#newliveform").serialize();
+			httpPost("vroom", vdata, (data) => {
+				if (!isEmpty(data)) {
+					if (data != "1") {
+						endvideostreamdivshow()
+					} else {
+						tc.VirtualroomSubBinary(vnode)
+						bigDataStreamEvent.set(vnode, 1)
+					}
+				}
+			});
+		}
+
+		function endvideostreamdivshow() {
+			document.getElementById("videostreamdiv").innerHTML = "<h3>直播已经结束</h3>"
+		}
+
+		let videoplayer = null;
+		function videoPlayStart(file) {
+			let e = document.getElementById("playvideowindow");
+			let videoliveObject2 = document.createElement("video");
+			videoliveObject2.controls = true;
+			videoliveObject2.autoplay = true;
+			e.appendChild(videoliveObject2);
+			let init = false;
+			try {
+				videoplayer = new VideoPlayerRTC(videoliveObject2, file);
+				videoplayer.recorderHz = 500;
+			} catch (err) {
+				alert("can't playing local files");
+			}
+			try {
+				if (document.getElementById("fileloop").checked) {
+					videoliveObject2.loop = true;
+				}
+				videoliveObject2.addEventListener("canplaythrough", (e) => {
+					if (!init) {
+						videoplayer.Play();
+						videoplayer.sendStream = pushVideoplayerStream
+						init = true
+						livestart(videoliveObject2)
+						videoplayer.Pushstream(true)
+					}
+				})
+				videoliveObject2.addEventListener("ended", (e) => {
+					videoplayerStop();
+					document.getElementById("playvideowindow").innerHTML = "<h4>视频播放已经结束</h4>";
+				})
+			} catch (err) {
+				console.error(err)
+			}
+		}
+
+
+		function videoplayerStop() {
+			videoplayer.MediaRecorderStop();
+			newlivestop();
+		}
+
+
+		function pushVideoplayerStream(buffer) {
+			if (!isEmpty(webtimVnode)) {
+				sendLiveStream(buffer, webtimVnode)
+			}
+		}
+
+		const sendLiveStream = (buffer, vnode) => {
+			tc.PushBigDataStream(vnode, gzip((buffer)))
+		}
+
+		function livestop() {
+			if (!confirm("确定结束直播？")) {
+				return
+			}
+			liveclose();
+		}
+
+		function liveclose() {
+			document.getElementById("videowindow1").style.display = "inline";
+			document.getElementById("videowindow2").style.display = "none";
+			if (document.getElementById("livetypefile").checked) {
+				videoplayer.MediaRecorderStop();
+			} else {
+				livemediaStop();
+			}
+			newlivestop();
+		}
+
 
 	</script>
+
 
 	<script>
 		class timNode {
@@ -1007,27 +2373,28 @@
 				this.fnode = fnode;
 			}
 		}
-		var tc = new timClient(true, "192.168.2.11", 443);
-		var myAccount = "";
+
+		var tc = new timClient(true, window.location.hostname, 443);
+
 		var hight = 0;
 		var friendMap = new Map();
 		var timNodeMap = new Map();
 		var messageMap = new Map();
+		var midMap = new Map();
 		var newMesMap = new Map();
 		var alertMap = new Map();
 		var roomMap = new Map();
+		var videoroomMap = new Map();
 		var roomMemberMap = new Map();
-		var msgNodeMap = new Map();
+		var rosterBarMap = new Map();
 
 		//ack message from server 服务反馈的信息
 		tc.ackHandler = function (data) {
-			console.log(data);
 			let ta = new TimAck();
 			ta = JSON.parse(data);
 			switch (ta.timType) {
 				case STAT.TIMMESSAGE:
 					if (!ta.ok) { //not ok 表示信息发送失败(注意，信息发送成功是没有ack的，服务器会推送发送用户的信息回来，信息会带上时间与id)
-						console.log("send message failed>>", ta.error.code, ":", ta.error.info);
 						alert("发信失败：" + ta.error.info);
 					}
 					break;
@@ -1037,32 +2404,61 @@
 					}
 					break;
 				case STAT.TIMLOGOUT: // 强制下线
-					console.log("force to logout >>>", myAccount);
 					tc.Logout(); // 收到强制下线的指令后，主动退出登录
 					break;
 				case STAT.TIMAUTH:
 					if (ta.ok) { // 登录成功
 						myAccount = ta.n;
-						console.log("login successful,my node is :", myAccount);
 						tc.UserInfo([myAccount]);//拉取自己账号信息
 						tc.Roster();                                     //Pull the roster 拉取花名册
 						tc.UserRoom();                                   //pull the account of group 拉取群账号
 						// tc.BlockRoomList();                              //blocklist of user group 用户群黑名单
 						// tc.BlockRosterList();                            //blocklist of user 用户黑名单
 						tc.OfflineMsg() 								 //when login successful, get the offline message 登录成功后，拉取离线信息
+						$("#modal-login").modal("hide");
 					} else {
-						console.log("login failed:", ta.error.code, ":", ta.error.info);
 						tc.Logout();
 						console.log("login failed and logout");
 						if (ta.error.code == STAT.ERR_AUTH) {
 							alert("用户名密码错误");
 						} else if (ta.error.code == STAT.ERR_OVERENTRY) {
 							alert("同账号登录超过限制数");
+						} else if (ta.error.code == STAT.ERR_TOKEN) {
+							if (!isEmpty(tokenData)) {
+								loginBytoken(tokenData)
+							}
 						} else {
 							alert("登录失败");
 						}
 						initloginflag(false, "");
 					}
+					break;
+
+				case STAT.TIMREVOKEMESSAGE:
+					if (ta.ok) {
+						let tonode = ta.n;
+						let t = ta.t;
+						let mid = ta.t2;
+						let cid = 0;
+						if (t == 2) {
+							cid = chatid(myAccount, tonode);
+							let m = midMap.get(cid + "_" + mid);
+							if (!isEmpty(m)) {
+								m.isRevoke = true;
+							}
+						} else if (t == 3) {
+							cid = chatid(tonode, tonode);
+							let m = midMap.get(cid + "_" + mid);
+							if (!isEmpty(m)) {
+								m.isRevoke = true;
+							}
+						}
+						if (document.getElementById("accountId").value == tonode) {
+							showchat(cid)
+						}
+					}
+					break;
+				case STAT.TIMBURNMESSAGE:
 					break;
 				// 虚拟房间操作回馈信息
 				case STAT.TIMVROOM:
@@ -1081,10 +2477,14 @@
 								console.log("cancel auth vriturl room process >>", ta.t, " >>", ta.n);
 								break;
 							case STAT.VRITURLROOM_SUB: //订阅成功
-								console.log("sub vriturl room process >>", ta.t, " >>", ta.n);
+								if (bigDataStreamEvent.get(ta.n) == 1) {
+									subVnode = ta.n;
+									bigDataStreamEvent.set(ta.n, liveEvent)
+								} else if (bigDataStreamEvent.get(ta.n) == 2) {
+									bigDataStreamEvent.set(ta.n, recvfileEvent)
+								}
 								break;
 							case STAT.VRITURLROOM_SUBCANCEL: //取消订阅成功
-								console.log("sub cancel vriturl room process >>", ta.t, " >>", ta.n);
 								break;
 							default:
 								console.log("vriturl room process ok>>", ta.t, " >>", ta.n);
@@ -1096,50 +2496,59 @@
 				/*************************************************************/
 				case STAT.TIMBUSINESS: //业务操作回馈
 					if (ta.ok) {
-						console.log("business process ok:", ta);
 						switch (ta.t) {
+							case STAT.BUSINESS_MODIFYAUTH:
+								unmodifyPwd();
+								alert("修改密码成功");
+								break;
 							case STAT.BUSINESS_REMOVEROSTER: //删除好友成功
-								console.log("romove friend successful:", ta.n);
-								alert("你与" + ta.n + "已成功解除好友关系");
+								let n = timNodeMap.get(ta.n)
+								alert("你与[" + n.name + "]已成功解除好友关系");
+								timNodeMap.delete(ta.n)
 								friendMap.delete(ta.n)
-								msgNodeMap.delete(ta.n);
-								reSetMsgnodelist();
+								rosterBarMap.delete(ta.n);
+								showRosterBarList();
 								break;
 							case STAT.BUSINESS_BLOCKROSTER: //拉黑好友成功
-								console.log("block  successful:", ta.n);
+								console.log("block successful:", ta.n);
 								break;
 							case STAT.BUSINESS_NEWROOM: //新建群组成功
-								console.log("new group successful:", ta.n);
+								tc.RoomInfo([ta.n])
+								tc.RoomUsers(ta.n)
 								break;
 							case STAT.BUSINESS_ADDROOM: //
-								console.log("join group successful:", ta.n);
-								tc.UserRoom();
+								tc.RoomInfo([ta.n])
+								tc.RoomUsers(ta.n)
 								tc.StreamToRoom(ta.n, null, 1, 0);
-								alert("你已加入群：" + ta.n)
+								DoWhile(timNodeMap.get(ta.n), alert("你已加入群：" + timNodeMap.get(ta.n).name), 5)
 							case STAT.BUSINESS_PASSROOM: //申请加入群成功
-								console.log("new group successful:", ta.n);
+								tc.RoomInfo([ta.n])
+								tc.RoomUsers(ta.n)
 								break;
 							case STAT.BUSINESS_NOPASSROOM: //申请加入群不成功
-								console.log("reject  group successful:", ta.n);
+								console.log("reject group successful:", ta.n);
 								break;
 							case STAT.BUSINESS_PULLROOM: //拉人入群
-								console.log("new group successful:", ta.n);
+								tc.RoomInfo([ta.n])
+								tc.RoomUsers(ta.n)
 								break;
 							case STAT.BUSINESS_KICKROOM: //踢人出群
-								console.log("kick out of group successful:", ta.n);
 								groupmember(ta.n);
 								break;
 							case STAT.BUSINESS_BLOCKROOM:
 								console.log("block the group successful:", ta.n)
 								break;
 							case STAT.BUSINESS_LEAVEROOM: //退群
-								console.log("leave group successful:", ta.n);
-								alert("退群成功");
 								roomMap.delete(ta.n);
 								roomMemberMap.delete(ta.n)
-								msgNodeMap.delete(ta.n);
+								rosterBarMap.delete(ta.n);
+								if (videoroomMap.has(ta.n)) {
+									videoroomMap.delete(ta.n)
+									videoroomlist()
+								}
 								myroom();
-								reSetMsgnodelist();
+								showRosterBarList();
+								alert("退群成功");
 								break;
 							case STAT.BUSINESS_CANCELROOM: //注销群
 								console.log("cancel group successful:", ta.n);
@@ -1148,6 +2557,11 @@
 								console.log("business successful >>", ta);
 						}
 					} else {
+						switch (ta.t) {
+							case STAT.BUSINESS_MODIFYAUTH:
+								alert("修改密码失败");
+								break;
+						}
 						console.log("business process failed:", ta.error.code, ":", ta.error.info);
 					}
 					break;
@@ -1169,7 +2583,6 @@
 		tc.messageHandler = function (data) {
 			let tm = new TimMessage();
 			tm = JSON.parse(data);
-			console.log(tm);
 			parseMessage(tm, false);
 		};
 
@@ -1179,65 +2592,71 @@
 		tc.presenceHandler = function (data) {
 			let tp = new TimPresence()
 			tp = JSON.parse(data);
-			console.log(tp);
-			if (!isEmpty(tp.subStatus)) {
-				if (tp.subStatus == 1) {
-					tc.PresenceToUser(tp.fromTid.node, 0, "😄", 2, null, null);
-				}
-				if (tp.subStatus == 1 || tp.subStatus == 2) {
-					if (isEmpty(submap[tp.fromTid.node])) {
-						submap[tp.fromTid.node] = 0;
-					}
+			if (tp.subStatus == 1) {
+				tc.PresenceToUser(tp.fromTid.node, 0, userstatus, 2, null, null);
+			}
+			if (tp.subStatus == 1 || tp.subStatus == 2) {
+				if (isEmpty(submap[tp.fromTid.node])) {
+					submap[tp.fromTid.node] = 0;
 				}
 			}
+			if (tp.subStatus == 3) {
+				tc.UserInfo([tp.fromTid.node]);
+				return
+			}
+
 			if (tp.offline && (tp.fromTid.node == myAccount)) {
-				tc.BroadPresence(1, 0, "haha");
+				tc.BroadPresence(1, 0, userstatus);
 			}
 			if (tp.offline) {
-				friendstatus(tp.fromTid.node, false, "", false);
+				friendstatus(tp.fromTid.node, true, "");
 				if (videoPhoneAccount == tp.fromTid.node) {
 					alert("对方掉线了");
-					mediaclear();
+					videophoneStop();
 				}
 			} else {
-				friendstatus(tp.fromTid.node, true, tp.status, false);
+				friendstatus(tp.fromTid.node, false, tp.status);
 			}
-			console.log("presence>>>", tp);
 		};
 		tc.offlineMsgHandler = function (data) {
 			let tml = new TimMessageList();
 			tml = JSON.parse(data);
-			console.log(tml);
 			if (!isEmpty(tml) && !isEmpty(tml.messageList)) {
-				for (const tm of tml.messageList) {
-					sleep(1000).then(() => parseMessage(tm, false));
-				}
+				sleep(2500).then(() => {
+					addmsg(tml.messageList, false)
+				})
 			}
 		};
+
 		tc.offlinemsgEndHandler = function (data) {
-			console.log("offlinemsgEndHandler data>>>", data);
-			tc.BroadPresence(1, 0, "😄");//when finish offline message recive,subcript and broad the presence
+			tc.BroadPresence(1, 0, userstatus);//when finish offline message recive,subcript and broad the presence
 		};
+
 		tc.pullmessageHandler = function (data) {
 			let tml = new TimMessageList();
 			tml = JSON.parse(data);
 			if (!isEmpty(tml) && !isEmpty(tml.messageList)) {
-				for (let i = tml.messageList.length - 1; i >= 0; i--) {
-					sleep(1500).then(() => parseMessage(tml.messageList[i], true));
-				}
+				sleep(500).then(() => {
+					addmsg(tml.messageList, true)
+				})
 			}
 		};
 
-		tc.bigStringHandler = (data) => {
-			let idx = data.indexOf(STAT.SEQ_STR);
-			let node = data.substring(0, idx);
-			let datastr = data.substring(idx + 1, data.length);
-			console.log("bigStringHandler datastr>>>", datastr.length);
-			console.log(data.length);
-			if (node == videoPhoneAccount) {
-				let ua = StringToUint8Array(datastr)
-				console.log("bigStringHandler ua>>>", ua.length);
-				setvideo(ua)
+		function addmsg(msglist, ispull) {
+			let p = true;
+			for (const u of msglist) {
+				let v = timNodeMap.get(u.fromTid.node);
+				if (isEmpty(v)) {
+					tc.UserInfo([u.fromTid.node]);
+					p = false
+				}
+			}
+			if (!p) {
+				sleep(500).then(() => addmsg(msglist, ispull));
+				return
+			}
+			for (let i = msglist.length - 1; i >= 0; i--) {
+				parseMessage(msglist[i], ispull);
 			}
 		}
 
@@ -1256,7 +2675,26 @@
 				}
 				document.getElementById("readylink").innerText = "";
 				let databs = data.slice(idx + 1, data.length);
-				createVideoDom(storecount++, pako.ungzip(databs));
+				if (videophone) {
+					videophone.AddVideoUint8Array(ungzip(databs))
+				}
+			}
+		}
+
+
+		tc.bigBinaryStreamHandler = (data) => {
+			let idx = 0;
+			for (let i = 0; i < data.length; i++) {
+				if (data[i] == STAT.SEQ_BIN) {
+					idx = i;
+					break
+				}
+			}
+			let node = uint8ArrayToString(data.slice(0, idx));
+			let databs = data.slice(idx + 1, data.length);
+			let e = bigDataStreamEvent.get(node)
+			if (!isEmpty(e) && e != 1 && e != 2) {
+				e(databs, node)
 			}
 		}
 
@@ -1265,7 +2703,6 @@
 			tn = JSON.parse(data);
 			switch (tn.ntype) {
 				case STAT.NODEINFO_ROSTER: //花名册返回
-					console.log("my roster >>>", tn.nodelist);
 					if (!isEmpty(tn.nodelist)) {
 						tc.UserInfo(tn.nodelist); //获取用户详细资料
 						for (const item of tn.nodelist) {
@@ -1274,7 +2711,6 @@
 					}
 					break;
 				case STAT.NODEINFO_ROOM: //用户的群账号返回
-					console.log("my groups >>>", tn);
 					if (!isEmpty(tn.nodelist)) {
 						tn.nodelist.forEach((node) => {
 							roomMap.set(node, 1);
@@ -1284,7 +2720,6 @@
 					}
 					break;
 				case STAT.NODEINFO_ROOMMEMBER: //群成员账号返回
-					console.log("group member ack >>>", tn);
 					if (!isEmpty(tn.nodelist)) {
 						roomMemberMap.set(tn.node, tn.nodelist)
 						tc.UserInfo(tn.nodelist);
@@ -1292,44 +2727,42 @@
 					break;
 				case STAT.NODEINFO_USERINFO: //用户信息返回
 					for (const [k, v] of Object.entries(tn.usermap)) {
-						// console.log(k, ">>", v.name, " ", v.nickName, " ", v.brithday, " ", v.gender, " ", v.cover, " ", v.area, " ", v.photoTidAlbum);
-						// console.log(myAccount, "=", k);
 						if (myAccount == k) {
-							online(v.cover, v.name);
-							timNodeMap.set(k, new timNode(k, v.name, v.cover, k));
+							online(v.cover, replace(v.name));
+							timNodeMap.set(k, new timNode(k, replace(v.name), v.cover, k));
 						} else {
-							// console.log(">>>>>>>>>>>", k, v.name, v.cover);
-							timNodeMap.set(k, new timNode(k, v.name, v.cover, k));
-							addToNodelist(k, false);
+							timNodeMap.set(k, new timNode(k, replace(v.name), v.cover, k));
+							if (!isEmpty(rosterBarMap.get(k))) {
+								showRosterBarList();
+							} else {
+								addToNodelist(k, false);
+							}
 						}
 					}
 					break;
 				case STAT.NODEINFO_ROOMINFO: //群信息返回
-					console.log("groupinfo ack >>>")
 					for (const [k, v] of Object.entries(tn.roommap)) {
-						console.log(k, " >>", v.topic, " ", v.founder, " ", v.cover, " ", v.createtime, " ", v.label);
-						roomMap.set(k, new timNode(k, v.topic, v.cover, v.founder));
-						timNodeMap.set(k, new timNode(k, v.topic, v.cover, v.founder));
+						roomMap.set(k, new timNode(k, replace(v.topic), v.cover, v.founder));
+						timNodeMap.set(k, new timNode(k, replace(v.topic), v.cover, v.founder));
 						addToNodelist(k, true);
+						if (v.kind == 1) {
+							videoroomMap.set(k, new timNode(k, replace(v.topic), v.cover, v.founder));
+						}
 					}
 					break;
 				case STAT.NODEINFO_BLOCKROSTERLIST: //用户黑名单
-					console.log("block roster list ack >>>", tn.nodelist);
 					break;
 				case STAT.NODEINFO_BLOCKROOMLIST: //用户拉黑群的群账号
-					console.log("block room list ack >>>", tn.nodelist);
 					break;
 				case STAT.NODEINFO_BLOCKROOMMEMBERLIST: //群拉黑账号名单
-					console.log("block room member list ack >>>", tn.nodelist);
 					break;
 			}
 		};
 
 		function parseMessage(tm, isPull) {
-			// console.log(tm);
 			//message消息
 			if (tm.msType == 1) {
-				console.log("this is system message >>", " body>>>", tm);
+				console.log("this is system message >>", tm);
 			} else if (tm.msType == 2) {
 				// console.log("this is user to user message");
 			} else if (tm.msType == 3) {
@@ -1348,32 +2781,42 @@
 							initArrays(id);
 						}
 						if (tm.msType == 2) {
-							appendmsg(id, tm.fromTid.node, tm.toTid.node, false, unixnanoToDatatime(tm.timestamp), tm.dataString, 2, isPull);
+							appendmsg(id, tm.mid, tm.fromTid.node, tm.toTid.node, false, tm, isPull);
 						} else {
-							appendmsg(id, tm.fromTid.node, tm.roomTid.node, true, unixnanoToDatatime(tm.timestamp), tm.dataString, 2, isPull);
+							appendmsg(id, tm.mid, tm.fromTid.node, tm.roomTid.node, true, tm, isPull);
 						}
 						break;
 					case 2: //撤回消息
-						console.log("revokeMessage>>>", tm.mid);
+						let cid = 0;
+						let node = "";
+						if (tm.msType == 2) {
+							node = tm.fromTid.node
+							cid = chatid(node, tm.toTid.node);
+						} else if (tm.msType == 3) {
+							node = tm.roomTid.node;
+							cid = chatid(node, node);
+						}
+						let m = midMap.get(cid + "_" + tm.mid);
+						if (!isEmpty(m)) {
+							m.isRevoke = true;
+						}
+						if (document.getElementById("accountId").value == node) {
+							showchat(cid)
+						}
 						break;
 					case 3: //阅后即焚
-						console.log("burnMessage>>>", tm.mid);
 						break;
 					case 4: //业务消息
-						console.log("business message>>>", tm);
 						switch (tm.bnType) {
 							case STAT.BUSINESS_REMOVEROSTER:
-								console.log("remove roster>>>", tm);
 								friendMap.delete(tm.fromTid.node)
-								msgNodeMap.delete(tm.fromTid.node);
-								reSetMsgnodelist();
+								rosterBarMap.delete(tm.fromTid.node);
+								showRosterBarList();
 								break;
 							case STAT.BUSINESS_ADDROSTER:
-								console.log("add roster>>>", tm);
 								addfriendAlert(tm.fromTid.node, tm.dataString);
 								break;
 							case STAT.BUSINESS_FRIEND:
-								console.log("friend>>>", tm);
 								let faccount = "";
 								if (tm.fromTid.node != myAccount) {
 									faccount = tm.fromTid.node;
@@ -1386,34 +2829,43 @@
 								befriendAlert(faccount);
 								break;
 							case STAT.BUSINESS_ADDROOM:
-								console.log("BUSINESS_ADDROOM>>>", tm);
 								addroomAlert(tm.fromTid.node, tm.roomTid.node, tm.dataString);
 								break;
 							case STAT.BUSINESS_PASSROOM:
-								console.log("BUSINESS_PASSROOM>>>", tm);
 								tc.StreamToRoom(tm.roomTid.node, null, 1, 0);
-								tc.UserRoom();
-								alert("入群申请已经通过:" + tm.roomTid.node);
+								// tc.UserRoom();
+								tc.RoomInfo([tm.roomTid.node]);
+								tc.RoomUsers(tm.roomTid.node);
+								sleep(2000).then(() => {
+									if (roomMap.get(tm.roomTid.node)) {
+										alert("入群申请已经通过[" + roomMap.get(tm.roomTid.node).name + "]")
+									}
+								})
 								break
 							case STAT.BUSINESS_PULLROOM:
-								console.log("BUSINESS_PULLROOM>>>", tm);
-								break
+								tc.RoomInfo([tm.roomTid.node]);
+								tc.RoomUsers(tm.roomTid.node);
+								sleep(2000).then(() => {
+									if (roomMap.get(tm.roomTid.node)) {
+										alert("你已经被拉入群[" + roomMap.get(tm.roomTid.node).name + "]")
+									}
+								})
+								break;
 							case STAT.BUSINESS_KICKROOM:
-								console.log("被移除出群>>>", tm);
 								let r = roomMap.get(tm.roomTid.node);
 								if (!isEmpty(r)) {
 									alert("你已经被移除出群：" + r.name);
 									roomMap.delete(tm.roomTid.node);
+									videoroomMap.delete(tm.roomTid.node)
 									roomMemberMap.delete(tm.roomTid.node);
-									msgNodeMap.delete(tm.roomTid.node);
+									rosterBarMap.delete(tm.roomTid.node);
 									myroom();
-									reSetMsgnodelist();
+									showRosterBarList();
 								} else {
 									alert("你已经被移除出群：" + tm.roomTid.node);
 								}
 								break
 							case STAT.BUSINESS_NOPASSROOM:
-								console.log("BUSINESS_NOPASSROOM>>>", tm);
 								alert("入群申请没有通过:" + tm.roomTid.node);
 								break
 							default:
@@ -1421,7 +2873,6 @@
 						}
 						break;
 					case 5: //流数据
-						console.log("stream message from>>>", tm.fromTid.node);
 						//流数据转字节数组
 						if (tm.udshow == 1) {
 							tc.RoomUsers(tm.roomTid.node);
@@ -1429,12 +2880,6 @@
 							sleep(2000).then(() => tc.RoomUsers(tm.roomTid.node));
 						} else if (tm.udshow == 3) {
 							sleep(2000).then(() => tc.RoomUsers(tm.roomTid.node));
-							try {
-								let node = tm.dataString;
-								console.log(node);
-							} catch (err) {
-								console.error(err);
-							}
 						}
 
 						//视频电话处理
@@ -1442,7 +2887,7 @@
 							let n = timNodeMap.get(tm.fromTid.node);
 							let t = Date.now();
 							if (!isEmpty(n)) {
-								if (confirm("是否连接" + n.name + "的视频电话?")) {
+								if (confirm("确定连接[" + n.name + "]的视频电话?")) {
 									if (Date.now() - t > 30000) {
 										alert("视频连接已经超时");
 										return;
@@ -1460,20 +2905,18 @@
 								tc.StreamToUser(tm.fromTid.node, null, 0, 6);
 							}
 						} else if (tm.udtype == 3) {
-							console.log(tm.udtype, ">>>", videoPhoneAccount)
 							if (isEmpty(videoPhoneAccount)) {
 								videoPhoneAccount = tm.fromTid.node;
 								tc.StreamToUser(tm.fromTid.node, null, 0, 4);
 								timvideoshow()
-								mediaRecorderStart();
-								sleep(1000).then(() => pushstream(true))
+								videophoneStart();
+								sleep(1000).then(() => pushVideoPhoneStream())
 							} else {
 								tc.StreamToUser(tm.fromTid.node, null, 0, 5);
 							}
 						} else if (tm.udtype == 4) {
 							if (tm.fromTid.node == videoPhoneAccount) {
-								mediaon = true;
-								pushstream(true);
+								pushVideoPhoneStream();
 							}
 						} else if (tm.udtype == 5) {
 							if (tm.fromTid.node == videoPhoneAccount) {
@@ -1483,15 +2926,94 @@
 						} else if (tm.udtype == 6) {
 							if (tm.fromTid.node == videoPhoneAccount) {
 								videoPhoneAccount = "";
-								mediaon = false;
-								mediaclear()
+								if (!isEmpty(videophone)) {
+									videophoneStop()
+								}
 								alert("对方已经断开视频连接");
 							}
 						} else if (tm.udtype == 7) {
 							if (tm.fromTid.node == videoPhoneAccount) {
 								videoPhoneAccount = "";
-								mediaclear();
+								if (!isEmpty(videophone)) {
+									videophoneStop()
+								}
 								alert("对方已取消了电话连接");
+							}
+						} else if (tm.udtype == 11) {
+							let node = tm.fromTid.node;
+							if (!isEmpty(timNodeMap.get(node))) {
+								let name = timNodeMap.get(node).name;
+								let jf = JSON.parse(tm.dataString);
+								s = "[" + name + "] 发送文件：\n" + jf.name + "\n 文件大小：" + (jf.size / MB) + "M"
+								if (confirm(s, "\n是否接收")) {
+									recvfileMap.set(jf.vnode, new fileBean(jf.name, jf.size, tm.fromTid.node));
+									bigDataStreamEvent.set(jf.vnode, 2)
+									tc.VirtualroomSubBinary(jf.vnode)
+									showsendToast();
+									sleep(1000).then(() => tc.StreamToUser(node, jf.vnode, 0, 13))
+								} else {
+									tc.StreamToUser(node, jf.vnode, 0, 12);
+								}
+							}
+						} else if (tm.udtype == 12) {
+							alert("对方暂时无法接收文件")
+							sendfileMap.delete(tm.dataString)
+						} else if (tm.udtype == 13) {
+							sendfilestart(tm.dataString);
+						} else if (tm.udtype == 14) {
+							recvfileMap.delete(tm.dataString)
+							alert("对方取消了文件发送");
+						} else if (tm.udtype == 15) {
+							cancelsendfile(tm.dataString, false);
+							alert("对方取消了文件接收");
+						} else if (tm.udtype == 21) {
+							if (tm.roomTid.node == mutlivideostreamid.value) {
+								let vnode = tm.dataString;
+								storeVideoRoom(tm.fromTid.node, vnode)
+								bigDataStreamEvent.set(vnode, roomliveEvent)
+								if (!isEmpty(liveroomvideo)) {
+									tc.StreamToRoom(tm.roomTid.node, webtimVnode, 0, 22)
+								} else if (!isEmpty(liveroomAudio)) {
+									tc.StreamToRoom(tm.roomTid.node, webtimVnode, 0, 32)
+								}
+							}
+						} else if (tm.udtype == 22) {
+							if (tm.roomTid.node == mutlivideostreamid.value) {
+								let vnode = tm.dataString;
+								storeVideoRoom(tm.fromTid.node, vnode)
+								bigDataStreamEvent.set(vnode, roomliveEvent)
+							}
+						} else if (tm.udtype == 31) {
+							if (tm.roomTid.node == mutlivideostreamid.value) {
+								let vnode = tm.dataString;
+								storeAudioRoom(tm.fromTid.node, vnode)
+								bigDataStreamEvent.set(vnode, roomliveEvent)
+								if (!isEmpty(liveroomvideo)) {
+									tc.StreamToRoom(tm.roomTid.node, webtimVnode, 0, 22)
+								} else if (!isEmpty(liveroomAudio)) {
+									tc.StreamToRoom(tm.roomTid.node, webtimVnode, 0, 32)
+								}
+							}
+						} else if (tm.udtype == 32) {
+							if (tm.roomTid.node == mutlivideostreamid.value) {
+								let vnode = tm.dataString;
+								storeAudioRoom(tm.fromTid.node, vnode)
+								bigDataStreamEvent.set(vnode, roomliveEvent)
+							}
+						} else if (tm.udtype == 33) {
+							let mv = mulMediaroommap.get(tm.dataString);
+							if (mv) {
+								if (mv.unode == tm.fromTid.node) {
+									mv.close()
+									mulMediaroommap.delete(tm.dataString)
+								}
+							}
+						} else if (tm.udtype == 34) {
+							let mv = mulMediaroommap.get(tm.dataString);
+							if (mv) {
+								if (mv.unode == tm.fromTid.node) {
+									mv.notify();
+								}
 							}
 						}
 						break;
@@ -1508,18 +3030,18 @@
 
 		function online(icon, name) {
 			document.getElementById("icon").src = icon;
-			document.getElementById("icontitle").src = icon;
+			document.getElementById("loginicon").src = icon;
 			initloginflag(true, name,)
 		}
 
-		function failedSend(msg) {
-			var div = document.createElement('div');
-			div.innerHTML =
-				'<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
-				'<p class="mb-0 chat-time text-end">you, ' + datetime() +
-				'</p><p class="chat-right-msg text-light">' + msg + '</p></div></div></div>';
-			document.getElementById("containerId").appendChild(div);
-		}
+		// function failedSend(msg) {
+		// 	var div = document.createElement('div');
+		// 	div.innerHTML =
+		// 		'<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
+		// 		'<p class="mb-0 chat-time text-end">' + datetime() +
+		// 		'</p><p class="chat-right-msg text-light">' + msg + '</p></div></div></div>';
+		// 	document.getElementById("containerId").appendChild(div);
+		// }
 
 		function initArrays(cid) {
 			let arrays = [];
@@ -1532,77 +3054,107 @@
 			messageMap.set(cid, []);
 		}
 
-		function appendmsg(cid, fnode, rnode, isRoom, nanotime, msg, loop, isPull) {
+		async function appendmsg(cid, mid, fnode, rnode, isRoom, tm, isPull) {
 			let v = timNodeMap.get(fnode);
-			if (isEmpty(v) && loop > 0) {
-				sleep(1000).then(() => appendmsg(cid, fnode, rnode, isRoom, nanotime, msg, loop--, isPull));
-				return
-			}
-			let arrays = messageMap.get(cid);
-			if (fnode == myAccount) {
-				let s = '<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
-					'<p class="mb-0 chat-time text-end">you, ' + nanotime + '</p><p class="chat-right-msg">' +
-					msg + '</p></div></div></div>'
-				arrays.push(s);
-			} else {
-				let s = '<a href="javascript:;"><div class="chat-content-leftside"><div class="d-flex">' +
-					'<img src="' + v.cover + '" width="30" height="30" class="rounded-circle" alt=""><div class="flex-grow-1 ms-2">' +
-					'<p class="mb-0 chat-time"><B style="color:blue">' + v.name + "</B>," + nanotime +
-					'</p><p class="chat-left-msg">' + msg + '</p></div></div></div></a>';
-				arrays.push(s);
+			let idMap = midMap.get(cid + "_" + mid);
+			if (isEmpty(idMap)) {
+				let arrays = messageMap.get(cid);
+				arrays.push(cid + "_" + mid);
+				midMap.set(cid + "_" + mid, new Message(tm, isRoom, cid))
 			}
 			let tonode = document.getElementById("accountId").value;
 			let show = false;
 			let shownode = fnode;
+			let rn = fnode;
 			if (isRoom) {
 				if (cid == chatid(tonode, tonode)) {
 					show = true;
 				}
 				shownode = rnode;
+				rn = rnode;
 			} else {
+				if (rn == myAccount) {
+					rn = tm.toTid.node
+				}
 				if (cid == chatid(myAccount, tonode)) {
 					show = true;
 				}
 			}
+			let bar = rosterBarMap.get(rn);
+			if (!isEmpty(bar)) {
+				bar.timestamp = unixnanoToDatatime(tm.timestamp);
+				let t = ++initcount
+				sleep(200).then(() => initshowbar(t))
+			}
 			if (show) {
-				showchat(arrays);
-				tipshow(shownode, "", 3)
+				showchat(cid);
+				bar.newmsg = ""
 			} else if (!isPull) {
-				tipshow(shownode, "&#128308;有新信息", 3)
+				if (!isEmpty(bar)) {
+					bar.newmsg = "&#128308;有新信息"
+				}
 			}
 		}
 
-		function tipshow(account, msg, loop) {
-			let a = document.getElementById("news_" + account);
-			if (isEmpty(a) && loop > 0) {
-				sleep(500).then(() => tipshow(account, msg, loop--));
-				return
+		function initshowbar(v) {
+			if (v >= initcount) {
+				showRosterBarList()
 			}
-			a.innerHTML = msg;
 		}
 
-		function clear() {
+		// function tipshow(account, msg, loop) {
+		// 	let a = document.getElementById("news_" + account);
+		// 	if (isEmpty(a) && loop > 0) {
+		// 		sleep(500).then(() => tipshow(account, msg, loop--));
+		// 		return
+		// 	}
+		// 	a.innerHTML = msg;
+		// }
+
+		async function clear() {
 			alertMap.clear();
 			friendMap.clear();
 			timNodeMap.clear();
 			messageMap.clear();
 			newMesMap.clear();
-			msgNodeMap.clear();
+			midMap.clear();
+			rosterBarMap.clear();
 			roomMap.clear();
 			roomMemberMap.clear();
+			videoroomMap.clear();
+			recvfileMap.clear();
+			sendfileMap.clear();
+			mulMediaroommap.clear();
+			bigDataStreamEvent.clear();
 			document.getElementById("msgnodelist").innerHTML = "";
 			document.getElementById("containerId").innerHTML = "";
+			document.getElementById("accountId").innerHTML = "";
+			document.getElementById("iconuser").src = "/img/user.png";
+			document.getElementById("touser").innerHTML = "";
 		}
 
-		function showchat(arrays) {
-			document.getElementById("containerId").innerHTML = arrays.join('');
-			hight = hight + 200 * arrays.length;
-			document.getElementById("containerId").scrollTo(0, document.documentElement.scrollHeight + hight);
-			window.scrollTo(0, document.documentElement.scrollHeight);
+		function showchat(cid) {
+			let mids = messageMap.get(cid);
+			if (!isEmpty(mids)) {
+				let arrays = [];
+				for (const id of mids) {
+					const m = midMap.get(id);
+					if (!isEmpty(m)) {
+						arrays.push(m.tomsg());
+					}
+				}
+				document.getElementById("containerId").innerHTML = arrays.join('');
+				hight = hight + 200 * arrays.length;
+				document.getElementById("containerId").scrollTo(0, document.documentElement.scrollHeight + hight);
+				window.scrollTo(0, document.documentElement.scrollHeight);
+			} else {
+				document.getElementById("containerId").innerHTML = "";
+			}
+
 		}
 
 		function addToNodelist(account, isRoom) {
-			if (!isEmpty(msgNodeMap.get(account))) {
+			if (!isEmpty(rosterBarMap.get(account))) {
 				return
 			}
 			if (isEmpty(friendMap.get(account)) && isEmpty(roomMap.get(account))) {
@@ -1613,72 +3165,37 @@
 				sleep(1000).then(() => addToNodelist(account, isRoom));
 				return
 			}
-
-			var div = document.createElement('div');
-			var fs = '<a href="javascript:peer(\'' + account + '\',' + isRoom + ');" class="list-group-item">'
-				+ '<div class="d-flex">'
-				+ '<div  id="online_' + account + '">'
-				+ '<img src="' + v.cover + '" width="42" height="42" id="img_' + account + '" class="rounded-circle" alt="">'
-				+ '<img src="' + v.cover + '" width="42" height="42" id="2img_' + account + '" class="rounded-circle" alt="" hidden>'
-				+ '</div>'
-				+ '<div class="flex-grow-1 ms-2">'
-				+ '<h6 class="mb-0 chat-title" id="status_' + account + '"></h6>'
-				+ '<span class="mb-0 chat-msg" style="font-size: smaller;">' + v.name + ' <span id="news_' + account + '" style="color:red;font-weight: bolder;"></span></span>'
-				+ '</div>'
-				+ '<div class="chat-time">' + datetime() + '</div>'
-				+ '</div>'
-				+ '</a>';
-			div.id = "f" + account;
-			div.innerHTML = fs;
-			msgNodeMap.set(account, div);
-			document.getElementById("msgnodelist").appendChild(div);
-			friendstatus(account, false, "", isRoom);
+			rosterBarMap.set(account, new MessageBar(account, true, isRoom, ""))
+			showRosterBarList()
 			if (isRoom) {
-				tc.PullRoomMessage(account, 0, 100);
+				sleep(1500).then(() => tc.PullRoomMessage(account, 0, 100));
 			} else {
-				tc.PullUserMessage(account, 0, 50);
+				sleep(1000).then(() => tc.PullUserMessage(account, 0, 100));
 			}
 		}
 
-		function reSetMsgnodelist() {
+		async function showRosterBarList() {
 			document.getElementById("msgnodelist").innerHTML = ""
-			for (let v of msgNodeMap.values()) {
-				document.getElementById("msgnodelist").appendChild(v);
+			for (let v of rosterBarMap.values()) {
+				document.getElementById("msgnodelist").appendChild(v.tomsg());
 			}
 		}
 
-		function friendstatus(account, on, show, isRoom) {
-			let status = document.getElementById("status_" + account);
-			let online = document.getElementById("online_" + account);
-			if (isEmpty(status)) {
-				sleep(1000).then(() => friendstatus(account, on, show, isRoom));
+		function friendstatus(account, on, show) {
+			let u = rosterBarMap.get(account)
+			if (isEmpty(u)) {
+				sleep(1000).then(() => friendstatus(account, on, show))
 				return
 			}
-			if (isRoom) {
-				status.innerHTML = "<h6 style='font-size: smaller;font-weight: bolder;'>群组&#128246;</h6>";
-			} else {
-				if (on) {
-					online.setAttribute("class", "chat-user-online")
-					status.innerHTML = "<h6 style='font-size: smaller;color:chartreuse;font-weight: bolder;'>在线 " + show + "</h6>";
-					sleep(1000).then(() => {
-						document.getElementById("img_" + account).src = document.getElementById("2img_" + account).src;
-					})
-				} else {
-					online.setAttribute("class", "")
-					status.innerHTML = "<h6 style='font-size: smaller;color:gainsboro'>离线</h6>";
-					let im = document.getElementById("img_" + account);
-					try {
-						im.src = grayImage(im.src);
-					} catch (err) {
-						sleep(1000).then(() => { im.src = grayImage(im.src) })
-					}
-				}
-			}
+			u.offline = on;
+			u.show = show;
+			showRosterBarList();
 		}
 
 		function send() {
 			let msg = document.getElementById("msgid").value;
 			let node = document.getElementById("accountId").value;
+			showClose();
 			if (isEmpty(node)) {
 				alert("请先选择聊天对象");
 				return
@@ -1706,7 +3223,7 @@
 			}
 		})
 
-		$("#pwd").keydown(function () {
+		$("#password").keydown(function () {
 			if (event.keyCode == "13") {
 				login();
 			}
@@ -1715,49 +3232,96 @@
 		function initloginflag(_login, name) {
 			if (!_login) {
 				document.getElementById("loginflag").innerText = "未登录";
-				document.getElementById("usertitle").innerText = "未登录";
+				// document.getElementById("usertitle").innerText = "未登录";
 				document.getElementById("icon").src = "/img/user.png";
-				document.getElementById("icontitle").src = "/img/user.png";
+				document.getElementById("loginicon").src = "/img/user.png";
+				document.getElementById("logoutId").style.display = "none";
 			} else {
-				document.getElementById("loginflag").innerHTML = name + ' <span onclick="logout()"><button type="button" class="btn btn-primary">退出登录</button></span>'
-				document.getElementById("usertitle").innerText = "";
+				let status = '<select style="font-size:25px;border: none; outline: none;" class="bg-white">'
+					+ '<option value="&#128512;" >&#128512;开心</option>'
+					+ '<option value="&#128533;" >&#128533;发呆</option>'
+					+ '<option value="&#128548;" >&#128548;生气</option>'
+					+ '<option value="&#128557;" >&#128557;伤心</option>'
+					+ '<option value="&#128561;" >&#128561;心慌</option>'
+					+ '<option value="&#129319;" >&#129319;生病</option>'
+					+ '<option value="&#128554;" >&#128554;困</option>'
+					+ '<option value="&#9917;" >&#9917;运动</option>'
+					+ '<option value="&#12953;" >&#12953;秘密</option>'
+					+ '</select>';
+				document.getElementById("loginflag").innerHTML = name + ' <span onchange="status(this)"><B>[状态]</B>' + status + '</span>'
+				document.getElementById("logoutId").style.display = "inline";
+				// document.getElementById("usertitle").innerText = "";
 				document.getElementById("username").value = "";
-				document.getElementById("pwd").value = "";
+				document.getElementById("password").value = "";
+			}
+		}
+		function status(t) {
+			let s = t.querySelector("select").value
+			if (s) {
+				userstatus = s;
+				tc.BroadPresence(4, 0, s);
 			}
 		}
 
+
 		function logout() {
+			if (!confirm("确定退出登录")) {
+				return
+			}
 			initloginflag(false, "");
 			myAccount = null;
 			tc.Logout();
 			clear();
+			$("#modal-control").modal("hide");
+			modalLogin();
 		}
 
+		var webtimToken = null;
+		var tokenData = null;
+		var userstatus = "&#128512;"
 		function login() {
 			var username = document.getElementById("username").value;
-			var pwd = document.getElementById("pwd").value;
+			var pwd = document.getElementById("password").value;
 			if (username == "" || pwd == "") {
 				alert("用户名密码不能为空");
 				return
 			}
 			clear();
-			//登录
-			tc.Login(username, pwd, "tlnet.top", "web browser", 1);
-			hideSidebar();
+			let data = $("#loginform").serialize();
+			loginBytoken(data);
+		}
+
+		function loginBytoken(tdata) {
+			httpPost("token", tdata, (data) => {
+				if (!isEmpty(data)) {
+					let jsonres = JSON.parse(data);
+					if (jsonres.ok) {
+						tokenData = tdata;
+						webtimToken = jsonres.token;
+						tc.LoginByToken(webtimToken, "web", 1);
+						hideSidebar();
+					} else {
+						alert("登录失败");
+					}
+				}
+			});
 		}
 
 		function peer(account, isRoom) {
 			document.getElementById("accountId").value = account;
-			let id = chatid(account, myAccount);
+			let cid = chatid(account, myAccount);
 			if (isRoom) {
-				id = chatid(account, account);
+				cid = chatid(account, account);
 			}
-			let arrays = messageMap.get(id);
+			let arrays = messageMap.get(cid);
 			if (isEmpty(arrays)) {
-				initArrays(id);
+				initArrays(cid);
 			}
-			showchat(messageMap.get(id));
+			showchat(cid);
 			document.getElementById("news_" + account).innerText = "";
+			if (!isEmpty(rosterBarMap.get(account))) {
+				rosterBarMap.get(account).newmsg = ""
+			}
 			let v = timNodeMap.get(account);
 			document.getElementById("iconuser").src = v.cover;
 			if (isRoom) {
@@ -1772,241 +3336,98 @@
 		}
 
 	</script>
+
 	<script>
+		var livemedia = null;
+		async function liveMediaStart() {
+			try {
+				let e = document.getElementById("playvideowindow");
+				let videoliveObject = document.createElement("video");
+				videoliveObject.autoplay = true;
+				videoliveObject.muted = true;
+				e.appendChild(videoliveObject);
+				livemedia = new MediaRTC(videoliveObject, { video: video, audio: audio });
+				livemedia.recorderHz = 600;
+				livemedia.audioBitsPerSecond = 320000;
+				livemedia.videoBitsPerSecond = 500000;
+				await livemedia.MediaDevices();
+				livemedia.sendStream = pushLiveVideoStream
+				livemedia.Pushstream(true);
+				sleep(2000).then(() => livestart(videoliveObject))
+			} catch (err) {
+				alert("未获得麦克风或摄像头权限")
+			}
+		}
+
+		function livemediaStop() {
+			if (!isEmpty(livemedia)) {
+				livemedia.MediaRecorderStop();
+			}
+			livemedia = null;
+		}
+
+		function pushLiveVideoStream(buffer) {
+			if (!isEmpty(webtimVnode)) {
+				sendLiveStream(buffer, webtimVnode)
+			}
+		}
+	</script>
+
+
+	<script>
+		const sendVData = (buffer, tonode) => {
+			tc.BigDataBinary(tonode, gzip(buffer))
+		}
+
 		const myvideo = document.getElementById("myvideo");
-		const videodiv = document.getElementById("videodiv");
-		let storecount = 1;
 		let videoPhoneAccount = "";
-		let mediaRecorder;
-		let mediaon = true;
-		let pushseqt = 300;
-		let currentnum = 1;
-		let vedioOff = true;
-		let delnum = 1;
-		const constraints = { video: true, audio: true };
-		function mediaDevices() {
-			if (!isEmpty(navigator.mediaDevices) && navigator.mediaDevices.getUserMedia) {
-				console.log("navigator.mediaDevices")
-				navigator.mediaDevices.getUserMedia(constraints)
-					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
-			} else if (navigator.webkitGetUserMedia) {
-				console.log("webkitGetUserMedia")
-				navigator.webkitGetUserMedia(constraints)
-					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
-			} else if (navigator.mozGetUserMedia) {
-				console.log("navigator.mozGetUserMedia")
-				navigator.mozGetUserMedia(constraints)
-					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
-			} else if (navigator.getUserMedia) {
-				console.log("navigator.getUserMedia")
-				navigator.getUserMedia(constraints)
-					.then(stream => parseStream(stream)).catch(err => { console.error(`mediaDevices failed: ${err}`) });
-			} else {
-				alert("无法获取摄像头数据");
-			}
-		}
+		let videophone = null;
+		let media = null;
 
-		function parseStream(stream) {
-			myvideo.srcObject = stream;
-			let data = stream;
+		function videophoneStart() {
 			try {
-				data = myvideo.captureStream()
+				media = new MediaRTC(myvideo, { video: video, audio: audio });
+				media.recorderHz = 300;
+				media.audioBitsPerSecond = 320000;
+				media.videoBitsPerSecond = 500000;
+				media.MediaDevices();
+				media.Pushstream(true);
+				videophone = new VideoJoin(document.getElementById("videophone"));
+				videophone.modeRealtime = true;
+				// videophone.modeSpeedRateup = true;
+				videophone.style = "width: 250px;height: auto;";
 			} catch (err) {
-				data = stream;
+				alert(err)
 			}
-			mediaRecorder = new MediaRecorder(data, {
-				audioBitsPerSecond: 320000,
-				videoBitsPerSecond: 200000,
-			});
-			mediaRecorder.ondataavailable = event => {
-				if (!isEmpty(videoPhoneAccount)) {
-					event.data.arrayBuffer().then(buffer => {
-						sendVData(buffer, videoPhoneAccount)
-					})
-				}
-			};
-			mediaRecorder.onstop = () => {
-			};
 		}
 
-		function mediaRecorderStart() {
-			mediaon = true;
-			mediaDevices();
-		}
-
-		function mediaRecorderStop() {
-			try {
-				if (!isEmpty(videoPhoneAccount)) {
-					tc.StreamToUser(videoPhoneAccount, null, 0, 6);
-				}
-				videoPhoneAccount = "";
-				mediaon = false;
-				if (mediaRecorder.state == 'active') {
-					mediaRecorder.stop();
-				}
-				myvideo.srcObject.getTracks().forEach((track) => track.stop());
-			} catch (err) {
-				console.log(err);
+		function videophoneStop() {
+			if (!isEmpty(media)) {
+				media.MediaRecorderStop();
 			}
-			mediaclear();
-			myvideo.innerHTML = "";
-		}
-
-		function mediaclear() {
+			if (!isEmpty(videoPhoneAccount)) {
+				tc.StreamToUser(videoPhoneAccount, null, 0, 6);
+			}
+			if (!isEmpty(videophone)) {
+				videophone.Clear();
+			}
 			videoPhoneAccount = "";
-			currentnum = 1;
-			vedioOff = true;
-			storecount = 1;
-			delnum = 1;
-			videodiv.innerHTML = "";
+			media = null;
+			videophone = null;
 		}
 
-		function pushstream2() {
-			if (!mediaon && isEmpty(videoPhoneAccount)) {
-				return
-			}
-			if (on) {
-				if (isEmpty(mediaRecorder)) {
-					sleep(pushseqt).then(() => pushstream2(on))
-					return
-				}
-				try {
-					mediaRecorder.start();
-				} catch (err) {
-					console.error(err);
-				}
-				sleep(pushseqt).then(() => pushstream2(!on));
-			} else {
-				try {
-					mediaRecorder.stop();
-				} catch (err) {
-					console.error(err);
-				}
-				pushstream2(!on);
-			}
+		function pushVideoPhoneStream() {
+			media.sendStream = pushMediaRecorderStream
 		}
 
-		function pushstream(on) {
-			if (!mediaon && isEmpty(videoPhoneAccount)) {
-				return
+		function pushMediaRecorderStream(buffer) {
+			if (!isEmpty(videoPhoneAccount)) {
+				sendVData(buffer, videoPhoneAccount)
 			}
-			if (on) {
-				if (isEmpty(mediaRecorder)) {
-					sleep(pushseqt).then(() => pushstream(on))
-					return
-				}
-				try {
-					mediaRecorder.start();
-				} catch (err) {
-					console.error(err);
-				}
-				sleep(pushseqt).then(() => pushstream(!on));
-			} else {
-				try {
-					mediaRecorder.stop();
-				} catch (err) {
-					console.error(err);
-				}
-				pushstream(!on);
-			}
-		}
-
-
-		function sendVData(buffer, tonode) {
-			tc.BigDataBinary(tonode, pako.gzip(new Uint8Array(buffer)))
 		}
 
 	</script>
-	<script>
-		function createVideoDom(count, data) {
-			var video = document.createElement("video");
-			video.setAttribute("id", "video" + count);
-			video.setAttribute("style", "width: 250px;height: auto;display:none");
-			video.src = URL.createObjectURL(new Blob([data], { type: 'audio/ogg;video/webm' }));
-			video.setAttribute("preload", "metadata");
-			videodiv.appendChild(video);
-			if ((count - currentnum) > 4) {
-				let rate = 1 + 0.2 * (count - currentnum);
-				if (rate > 16) {
-					rate = 16;
-				}
-				video.playbackRate = rate;
-				console.log(video.playbackRate);
-			} else {
-				video.playbackRate = 1;
-			}
-			video.addEventListener("ended", function (e) {
-				// console.log("ended>>>>", count)
-				video.pause()
-				callvideo(count + 1);
-			});
-			// video.addEventListener("canplay", function (e) {
-			// });
-			// video.addEventListener("play", function (e) {
-			// 	// rmvideo(count - 1);
-			// 	// hide(count)
-			// });
-			video.addEventListener("error", function (e) {
-				console.log("error>>>>", count, " :", e)
-				if (video.style.display == "inline") {
-					callvideo(count + 1);
-				}
-			});
-			if (vedioOff) {
-				callvideo(count);
-			}
-		}
 
-		function rmvideo(count, isone) {
-			if (isone) {
-				let bf = document.getElementById("video" + count);
-				if (!isEmpty(bf)) {
-					videodiv.removeChild(bf);
-				}
-			} else if (count >= delnum) {
-				for (let i = delnum; i <= count; i++) {
-					let bf = document.getElementById("video" + i);
-					if (!isEmpty(bf)) {
-						videodiv.removeChild(bf);
-					}
-				}
-				delnum = count;
-			}
-		}
-
-		function callvideo(count) {
-			currentnum = count
-			if (!mediaon) {
-				return
-			}
-			vedioOff = false
-			let v = document.getElementById("video" + count)
-			if (!isEmpty(v)) {
-				mvplay(v, count);
-			} else {
-				console.log(count, " not found");
-				vedioOff = true
-			}
-		}
-
-		function mvplay(mv, count) {
-			let play = mv.play();
-			if (play) {
-				play.then(() => {
-					// console.log("play success >>", count)
-					mv.style.display = "inline";
-					rmvideo(count - 1, false);
-				}).catch(error => {
-					rmvideo(count, true);
-					console.log("play failed >>", count)
-					vedioOff = true
-				});
-			} else {
-				console.log("play not exist >>", count)
-				vedioOff = true
-			}
-		}
-	</script>
 	<script>
 		function addfriendAlert(account, msg) {
 			let s = '<div class="alert alert-info alert-dismissible fade show">'
@@ -2075,152 +3496,496 @@
 
 		function befriendAlert(account) {
 			let v = timNodeMap.get(account);
-			if (isEmpty(v)) {
-				sleep(1000).then(() => befriendAlert(account));
-			} else {
-				if (!isEmpty(v.name)) {
-					alert("与" + v.name + "成为好友")
+			DoWhile(timNodeMap.get(account), alert("与[" + timNodeMap.get(account).name + "]成为好友"), 10)
+		}
+
+	</script>
+	<script>
+		class Message {
+			tm = null;
+			isRevoke = false;
+			isroom = false
+			cid = 0;
+			constructor(timmessage, isroom, cid) {
+				this.tm = timmessage;
+				this.isroom = isroom;
+				this.cid = cid;
+			}
+			tomsg() {
+				let v = timNodeMap.get(this.tm.fromTid.node);
+				let s = ""
+				let msg = this.tm.dataString;
+				let nanotime = this.tm.timestamp;
+				let time = unixnanoToDatatime(nanotime)
+				let tonode = "";
+				let to = ""
+				if (this.tm.fromTid.node == myAccount) {
+					let revoke = '<a href="javascript:;" onclick="revokemessage(\'' + this.cid + '\',' + this.tm.mid + ')"><B>[撤回]</B></a>';
+					if (parseInt(nanotime / 1000000) <= (new Date().getTime() - 60 * 1000)) {
+						revoke = "";
+					}
+					if (this.isroom) {
+						tonode = this.tm.roomTid.node;
+					} else {
+						tonode = this.tm.toTid.node;
+					}
+					if (this.isRevoke) {
+						s = '<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
+							'<p class="mb-0 chat-time text-end">' + time + '</p><span class="chat-right-msg text-dark bg-light"><B>消息已撤回</B></span></div></div></div>';
+					} else {
+						s = '<div class="chat-content-rightside"><div class="d-flex ms-auto"><div class="flex-grow-1 me-2">' +
+							'<p class="mb-0 chat-time text-end">' + time + '</p><span class="chat-right-msg text-dark">' + revoke +
+							replace(msg) + '</span></div></div></div>';
+					}
 				} else {
-					alert("与" + account + "成为好友")
+					if (this.isroom) {
+						to = '<B style="color:blue">' + v.name + '</B>,'
+					}
+					if (this.isRevoke) {
+						s = '<div class="chat-content-leftside"><div class="d-flex">' +
+							'<img src="' + v.cover + '" width="30" height="30" class="rounded-circle" alt=""><div class="flex-grow-1 ms-2">' +
+							'<p class="mb-0 chat-time">' + to + time + '</p>' +
+							'<p class="chat-left-msg text-dark bg-light"><B>消息已被撤回</B></p></div></div></div>';
+					} else {
+						s = '<div class="chat-content-leftside"><div class="d-flex">' +
+							'<img src="' + v.cover + '" width="30" height="30" class="rounded-circle" alt=""><div class="flex-grow-1 ms-2">' +
+							'<p class="mb-0 chat-time">' + to + time + '</p>' +
+							'<p class="chat-left-msg text-dark">' + replace(msg) + '</p></div></div></div>';
+					}
 				}
+				return s;
+			}
+		}
+
+		function revokemessage(cid, mid) {
+			let m = midMap.get(cid + "_" + mid)
+			if (parseInt(m.tm.timestamp / 1000000) <= (new Date().getTime() - 60 * 1000)) {
+				showchat(cid);
+				alert("超过1分钟，无法撤回")
+				return
+			}
+			if (!confirm("确定撤回消息？")) {
+				return
+			}
+			if (m.isroom) {
+				tc.RevokeMessage(mid, null, m.tm.roomTid.node, null, 0, 0);
+			} else {
+				tc.RevokeMessage(mid, m.tm.toTid.node, null, null, 0, 0);
 			}
 		}
 
 	</script>
 	<script>
-		function isEmpty(obj) {
-			if (typeof obj == "undefined" || obj == null || obj == "") {
-				return true;
-			} else {
-				return false;
+		class MessageBar {
+			node = null;
+			offline = true;
+			show = "";
+			isroom = false;
+			timestamp = "";
+			newmsg = ""
+			constructor(node, offline, isroom, show) {
+				this.node = node;
+				this.offline = offline;
+				this.isroom = isroom;
+				this.show = show;
 			}
-		}
-
-		Date.prototype.Format = function (fmt) {
-			var o = {
-				"M+": this.getMonth() + 1,
-				"d+": this.getDate(),
-				"h+": this.getHours(),
-				"m+": this.getMinutes(),
-				"s+": this.getSeconds(),
-				"q+": Math.floor((this.getMonth() + 3) / 3),
-				"S": this.getMilliseconds()
-			};
-			if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-			for (var k in o)
-				if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) :
-					(("00" + o[k]).substr(("" + o[k]).length)));
-			return fmt;
-		}
-
-		function sleep(ms) {
-			return new Promise(function (resolve, reject) {
-				setTimeout(resolve, ms);
-			})
-		}
-
-		function datetime() {
-			return new Date().Format("yyyy-MM-dd hh:mm:ss")
-		}
-
-		function unixnanoToDatatime(v) {
-			let dt = new Date(v / 1000000);
-			return dt.Format("yyyy-MM-dd hh:mm:ss");
-		}
-
-		function usericon(name) {
-			const checksum = crc32(new TextEncoder().encode(name));
-			return "/img/" + checksum % 30 + ".jpg"
-		}
-
-		function uuid(s) {
-			return crc32(new TextEncoder().encode(s));
-		}
-
-		function chatid(from, to) {
-			let fid = crc32(new TextEncoder().encode(from));
-			let tid = crc32(new TextEncoder().encode(to));
-			if (fid < tid) {
-				let id = fid;
-				fid = tid;
-				tid = id;
-			}
-			return fid + "_" + tid
-		}
-
-		const table = [];
-		for (let i = 0; i < 256; i++) {
-			let c = i;
-			for (let j = 0; j < 8; j++) {
-				if ((c & 1) === 1) {
-					c = 0xEDB88320 ^ (c >>> 1);
+			tomsg() {
+				let u = timNodeMap.get(this.node);
+				let cover = u.cover;
+				if (this.offline && !this.isroom) {
+					cover = grayImage(cover)
+				}
+				let statusshow = ""
+				let onlineshow = ""
+				if (this.isroom) {
+					statusshow = "<h6 style='font-size: smaller;font-weight: bolder;'>群组&#128246;</h6>";
+				} else if (this.offline) {
+					statusshow = "<h6 style='font-size: smaller;color:gainsboro'>[离线请留言]</h6>"
 				} else {
-					c = c >>> 1;
+					onlineshow = "chat-user-online"
+					statusshow = "<h6 style='font-size: 18px;color:chartreuse;font-weight: bolder;'>在线 " + this.show + "</h6>";
 				}
+				var div = document.createElement('div');
+				let fs = '<a  onclick="peer(\'' + this.node + '\',' + this.isroom + ');" class="list-group-item">'
+					+ '<div class="d-flex" class="' + onlineshow + '">'
+					+ '<img src="' + cover + '" width="42" height="42"  class="rounded-circle" alt="">'
+					+ '<div class="flex-grow-1 ms-2">'
+					+ '<h6 class="mb-0 chat-title">' + statusshow + '</h6>'
+					+ '<span class="mb-0 chat-msg" style="font-size: smaller;">' + u.name + ' <span id="news_' + this.node + '" style="color:red;font-weight: bolder;">' + this.newmsg + '</span></span>'
+					+ '</div>'
+					+ '<div class="chat-time">' + this.timestamp + '</div>'
+					+ '</div>'
+					+ '</a>';
+				div.innerHTML = fs;
+				return div;
 			}
-			table[i] = c;
 		}
-		function crc32(data) {
-			let crc = 0xFFFFFFFF;
-			for (let i = 0; i < data.length; i++) {
-				crc = table[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
-			}
-			return (~crc >>> 0);
+	</script>
+	<script>
+		sleep(5).then(() => modalLogin());
+		var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+		var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+			return new bootstrap.Popover(popoverTriggerEl)
+		})
+	</script>
+	<script>
+		const em = ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆", "😉", "😊", "😋",
+			"😎", "😍", "😘", "🥰", "😗", "😙", "🥲", "😚", "🙂", "🤗", "🤩", "🤔",
+			"🫡", "🤨", "😐", "😑", "😶", "🫥", "😶‍🌫️", "🙄", "😏", "😣", "😥", "😮", "🤐",
+			"😯", "😪", "😫", "🥱", "😴", "😌", "😛", "😜", "😝", "🤤", "😒", "🫠", "🙃",
+			"🫤", "😔", "😓", "🤑", "😲", "☹️", "🙁", "😖", "😞", "💩", "👻", "👽", "🦎",
+			"🐊", "🐢", "🐍", "🐿️", "🐘", "🦐", "🦑", "🐙", "❤️", "💔", "❤️‍🔥", "❤️‍🩹", "💕",
+			"💞", "💌", "💢", "💥", "💤", "💦", "🤝", "👏", "👍", "👎", "👊", "✊", "✌",
+			"👌", "✋", "🙏", "☝", "👆", "👇", "👈", "👉", "🖕", "🤘", "🖐", "🤟", "🖖",
+			"🌹", "🌷", "🥀", "💐", "🍎", "🎂", "⚽️", "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣",
+			"6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
+		let emj = document.getElementById("emoji");
+		for (const e of em) {
+			emj.innerHTML = emj.innerHTML + '<a href="javascript:;" style="font-size: large;" onclick="addemoji(this)">' + e + '</a>'
+		}
+		const gcv = ["/img/001.jpg", "/img/002.jpg", "/img/003.jpg", "/img/004.jpg", "/img/005.jpg", "/img/006.jpg", "/img/007.jpg", "/img/008.jpg", "/img/009.jpg", "/img/010.jpg"]
+		let groupcoverlist = document.getElementById("groupcoverlist");
+		for (const e of gcv) {
+			groupcoverlist.innerHTML = groupcoverlist.innerHTML + '<img width="50px" height="50px" onclick="selectgcover(this)" src="' + e + '" />'
+		}
+		function selectgcover(t) {
+			document.getElementById("groupcover").src = t.getAttribute("src");
+			document.getElementById("groupcover2").value = t.getAttribute("src");
 		}
 
-		function httpPost(uri, data, func) {
-			let xmlHttp = new XMLHttpRequest();
-			xmlHttp.onreadystatechange = function () {
-				if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-					func(xmlHttp.responseText);
-				}
+		const vgcv = ["/img/101.jpg", "/img/102.jpg", "/img/103.jpg", "/img/104.jpg", "/img/105.jpg", "/img/106.jpg", "/img/107.jpg", "/img/108.jpg", "/img/109.jpg", "/img/110.jpg"]
+		let groupcoverlist_v = document.getElementById("groupcoverlist_v");
+		for (const e of vgcv) {
+			groupcoverlist_v.innerHTML = groupcoverlist_v.innerHTML + '<img width="50px" height="50px" onclick="selectvgcover(this)" src="' + e + '" />'
+		}
+		function selectvgcover(t) {
+			document.getElementById("groupcover_v").src = t.getAttribute("src");
+			document.getElementById("groupcover2_v").value = t.getAttribute("src");
+		}
+
+		const cv = ["/img/1.jpg", "/img/2.jpg", "/img/3.jpg", "/img/4.jpg", "/img/5.jpg", "/img/6.jpg", "/img/7.jpg", "/img/8.jpg"
+			, "/img/9.jpg", "/img/10.jpg", "/img/11.jpg", "/img/12.jpg", "/img/13.jpg", "/img/14.jpg", "/img/15.jpg", "/img/16.jpg", "/img/17.jpg"
+			, "/img/18.jpg", "/img/19.jpg", "/img/20.jpg", "/img/21.jpg", "/img/22.jpg", "/img/23.jpg", "/img/24.jpg", "/img/25.jpg", "/img/26.jpg"
+			, "/img/27.jpg", "/img/28.jpg", "/img/29.jpg", "/img/30.jpg", "/img/31.jpg", "/img/32.jpg", "/img/33.jpg", "/img/34.jpg", "/img/35.jpg"
+			, "/img/36.jpg", "/img/37.jpg", "/img/38.jpg", "/img/39.jpg", "/img/40.jpg", "/img/41.jpg", "/img/42.jpg", "/img/43.jpg", "/img/44.jpg", "/img/45.jpg"]
+		let headcoverlist = document.getElementById("headcoverlist");
+		let rheadcoverlist = document.getElementById("rheadcoverlist");
+		for (const e of cv) {
+			headcoverlist.innerHTML = headcoverlist.innerHTML + '<img width="40px" height="40px" onclick="selectcover(this)" src="' + e + '" />'
+			rheadcoverlist.innerHTML = rheadcoverlist.innerHTML + '<img width="40px" height="40px" onclick="selectrcover(this)" src="' + e + '" />'
+		}
+		function selectcover(t) {
+			document.getElementById("headcover").src = t.getAttribute("src");
+			document.getElementById("headcover2").value = t.getAttribute("src");
+			document.getElementById("coverinputs").value = "";
+		}
+		function selectrcover(t) {
+			document.getElementById("rheadcover").src = t.getAttribute("src");
+			document.getElementById("rheadcover2").value = t.getAttribute("src");
+		}
+		function selectCover(t) {
+			let f = document.getElementById("coverinputs")
+			if (f.files.length > 0) {
+				reads(f.files[0]);
 			}
-			xmlHttp.open("POST", "/" + uri, true);
-			xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-			if (isEmpty(data)) {
-				xmlHttp.send();
+		}
+		function reads(fil) {
+			let reader = new FileReader();
+			reader.readAsDataURL(fil);
+			reader.onload = function () {
+				document.getElementById("headcover").src = reader.result;
+			};
+		}
+		$(document).ready(function () {
+			$("#coverinputs").change(function () {
+				if (this.files.length > 0) {
+					reads(this.files[0]);
+				}
+			});
+		});
+	</script>
+	<script>
+		var bigDataStreamEvent = new Map();
+		var recvfileMap = new Map();
+		var sendfileMap = new Map();
+		const liveEvent = (data, node) => {
+			if (data.length < 1000) {
+				if (data.length == 1 && data[0] == 0) {
+					endvideostreamdivshow();
+				}
+				return
+			}
+			if (vjoin4videostream) {
+				vjoin4videostream.AddVideoUint8Array(ungzip(data))
+			}
+		}
+
+		const roomliveEvent = (data, node) => {
+			if (data.length < 1000) {
+				return
+			}
+			let m = mulMediaroommap.get(node)
+			if (!isEmpty(m)) {
+				m.addstream(data)
+			}
+		}
+
+		const recvfileEvent = (data, node) => {
+			if (data.length == 1 && data[0] == 0) {
+				let fn = recvfileMap.get(node)
+				if (!isEmpty(fn)) {
+					let t = mergeUint8Arrays(fn.body);
+					saveFile(t, fn.filename)
+					recvfileMap.delete(node);
+					showsendToast();
+					document.getElementById("sendfileshow").innerHTML = "<h6 style='font-size:smaller;'>[" + fn.filename + "]已经接收完毕</h6>"
+				}
 			} else {
-				xmlHttp.send(data);
-			}
-		}
-		function grayImage(src) {
-			var canvas = document.createElement('canvas');
-			var ctx = canvas.getContext('2d');
-			var imgObj = new Image();
-			imgObj.src = src;
-			canvas.width = imgObj.width;
-			canvas.height = imgObj.height;
-			ctx.drawImage(imgObj, 0, 0);
-			var imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			for (var y = 0; y < imgPixels.height; y++) {
-				for (var x = 0; x < imgPixels.width; x++) {
-					var i = (y * 4) * imgPixels.width + x * 4;
-					var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
-					imgPixels.data[i] = avg;
-					imgPixels.data[i + 1] = avg;
-					imgPixels.data[i + 2] = avg;
+				let fn = recvfileMap.get(node)
+				let bt = '<button class="btn btn-light" onclick="cancelrecvfile(\'' + node + '\')">取消接收</button>'
+				let rateid = document.getElementById("rateid")
+				if (rateid.innerHTML != bt) {
+					rateid.innerHTML = bt
+				}
+				if (!isEmpty(fn)) {
+					fn.add(ungzip(data))
+					let r = fn.getsize / fn.size;
+					document.getElementById("sendfileshow").innerHTML = "<h6 style='font-size:smaller;'>" + fn.filename + "已经接收:" + Math.floor(100 * r) + "%</h6>";
 				}
 			}
-			ctx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
-			return canvas.toDataURL();
 		}
 
-		function Uint8ArrayToString(ua) {
-			var dataString = "";
-			for (var i = 0; i < ua.length; i++) {
-				dataString += String.fromCharCode(ua[i]);
+		function cancelrecvfile(vnode) {
+			let fn = recvfileMap.get(vnode);
+			if (!isEmpty(fn)) {
+				recvfileMap.delete(vnode);
+				document.getElementById("sendfileshow").innerHTML = "";
+				document.getElementById("rateid").innerHTML = "";
+				tc.StreamToUser(fn.fnode, vnode, 0, 15);
 			}
-			return dataString
 		}
 
-		function StringToUint8Array(str) {
-			var arr = [];
-			for (var i = 0, j = str.length; i < j; ++i) {
-				arr.push(str.charCodeAt(i));
+		class fileBean {
+			filename = null;
+			size = null;
+			getsize = 0
+			body = [];
+			fnode = null;
+			constructor(fname, size, fnode) {
+				this.filename = fname;
+				this.size = size;
+				this.fnode = fnode;
 			}
-			var tmpUint8Array = new Uint8Array(arr);
-			return tmpUint8Array
+			add(data) {
+				this.getsize = this.getsize + data.length;
+				this.body.push(data);
+			}
 		}
+
+		class sendFileBean {
+			file = null;
+			tnode = null;
+			vnode = null;
+			constructor(file, vnode, tnode) {
+				this.file = file;
+				this.vnode = vnode;
+				this.tnode = tnode;
+			}
+		}
+	</script>
+
+	<script>
+		var mulMediaroommap = new Map()
+		const storeVideoRoom = (unode, vnode) => {
+			// let mutlivideostreamlist = document.getElementById("mutlivideostreamlist")
+			if (!mulMediaroommap.has(vnode)) {
+				let mv = new mulvideo(mutlivideostreamlist, vnode, unode)
+				mulMediaroommap.set(vnode, mv)
+				mv.open()
+			}
+		}
+		class mulvideo {
+			supervideodiv = null;
+			vjoin4videostream = null;
+			subVnode = null;
+			unode = null;
+			videoroomdiv = null;
+			w = 1
+			constructor(supervideodiv, subVnode, unode) {
+				this.supervideodiv = supervideodiv;
+				this.subVnode = subVnode;
+				this.unode = unode;
+			}
+			open() {
+				// let h6 = document.createElement("h6")
+				// h6.setAttribute("class", "card-header")
+				// h6.innerHTML = '&#127909;' + timNodeMap.get(this.unode).name
+				// this.videoroomdiv = document.createElement("div")
+				// this.videoroomdiv.setAttribute("class", "card d-flex col-6 col-sm-6 col-md-6 col-lg-3 col-xl-2 col-xxl-1");
+				// this.videoroomdiv.appendChild(h6);
+				this.videoroomdiv = createVideoroomDiv(timNodeMap.get(this.unode).name)
+				this.supervideodiv.appendChild(this.videoroomdiv);
+				this.vjoin4videostream = new VideoJoin(this.videoroomdiv);
+				this.vjoin4videostream.style = "max-width:250px;max-height: 250px;"
+				this.vjoin4videostream.modeRealtime = false;
+				this.vjoin4videostream.modeSpeedRateup = true;
+				tc.VirtualroomSubBinary(this.subVnode)
+				this.watch(0)
+			}
+			addstream(data) {
+				if (isEmpty(this.videoroomdiv)) {
+					this.open()
+				}
+				this.w++;
+				this.vjoin4videostream.AddVideoUint8Array(ungzip(data))
+			}
+			notify() {
+				if (isEmpty(this.videoroomdiv)) {
+					this.open()
+				}
+				this.w++;
+			}
+			close() {
+				try {
+					this.vjoin4videostream.Clear();
+					this.videoroomdiv.innerHTML = "";
+					this.supervideodiv.removeChild(this.videoroomdiv)
+					this.videoroomdiv = null;
+				} catch (err) { }
+			}
+			watch(a) {
+				if (this.w <= a) {
+					this.close()
+				} else {
+					a = this.w;
+					sleep(2000).then(() => this.watch(a + 1))
+				}
+			}
+		}
+
+		function createVideoroomDiv(name) {
+			let h6 = document.createElement("h6")
+			h6.setAttribute("class", "card-header")
+			h6.innerHTML = '&#127909;' + name
+			let videoroomdiv = document.createElement("div")
+			videoroomdiv.setAttribute("class", "card d-flex col-6 col-sm-6 col-md-6 col-lg-3 col-xl-2 col-xxl-1");
+			videoroomdiv.appendChild(h6);
+			return videoroomdiv
+		}
+
+		function createImgroomDiv(name, cover) {
+			let h6 = document.createElement("h6");
+			h6.setAttribute("class", "card-header");
+			h6.innerHTML = '&#128222;' + name
+			let imgdiv = document.createElement("div")
+			imgdiv.setAttribute("class", "card d-flex col-6 col-sm-6 col-md-6 col-lg-3 col-xl-2 col-xxl-1");
+			imgdiv.appendChild(h6);
+			let img = document.createElement("img");
+			img.src = cover
+			img.setAttribute("style", "width: 100%; height: auto;")
+			imgdiv.appendChild(img);
+			return imgdiv
+		}
+	</script>
+
+	<script>
+		const storeAudioRoom = (unode, vnode) => {
+			// let mutlivideostreamlist = document.getElementById("mutlivideostreamlist")
+			if (!mulMediaroommap.has(vnode)) {
+				let mv = new mulaudio(mutlivideostreamlist, vnode, unode)
+				mulMediaroommap.set(vnode, mv)
+				mv.open()
+			}
+		}
+		class mulaudio {
+			supervideodiv = null;
+			vjoin4audiostream = null;
+			subVnode = null;
+			unode = null;
+			imgdiv = null;
+			w = 1
+			constructor(supervideodiv, subVnode, unode) {
+				this.supervideodiv = supervideodiv;
+				this.subVnode = subVnode;
+				this.unode = unode;
+			}
+			open() {
+				// let h6 = document.createElement("h6");
+				// h6.setAttribute("class", "card-header");
+				// h6.innerHTML = '&#128222;' + timNodeMap.get(this.unode).name
+				// this.imgdiv = document.createElement("div")
+				// this.imgdiv.setAttribute("class", "card d-flex col-6 col-sm-6 col-md-6 col-lg-3 col-xl-2 col-xxl-1");
+				// this.imgdiv.appendChild(h6);
+				// let img = document.createElement("img");
+				// img.src = timNodeMap.get(this.unode).cover
+				// img.setAttribute("style", "width: 100%; height: auto;")
+				// this.imgdiv.appendChild(img);
+				this.imgdiv = createImgroomDiv(timNodeMap.get(this.unode).name, timNodeMap.get(this.unode).cover)
+				this.supervideodiv.appendChild(this.imgdiv);
+				this.vjoin4audiostream = new AudioJoin();
+				this.vjoin4audiostream.style = "max-width:250px;max-height: 250px;"
+				this.vjoin4audiostream.modeRealtime = false;
+				this.vjoin4audiostream.modeSpeedRateup = true;
+				tc.VirtualroomSubBinary(this.subVnode)
+				this.watch(0)
+			}
+			addstream(data) {
+				if (isEmpty(this.imgdiv)) {
+					this.open()
+				}
+				this.w++;
+				this.vjoin4audiostream.AddAudioUint8Array(ungzip(data))
+			}
+			close() {
+				try {
+					this.vjoin4audiostream.Clear();
+					this.imgdiv.innerHTML = "";
+					this.supervideodiv.removeChild(this.imgdiv)
+					this.imgdiv = null;
+				} catch (err) { }
+			}
+			notify() {
+				if (isEmpty(this.imgdiv)) {
+					this.open()
+				}
+				this.w++;
+			}
+			watch(a) {
+				if (this.w <= a) {
+					this.close()
+				} else {
+					a = this.w;
+					sleep(2000).then(() => this.watch(a + 1))
+				}
+			}
+		}
+
+		class notify {
+			count = 0
+			constructor() { }
+			send(account, vnode) {
+				let c = ++this.count
+				this.watch(c, account, vnode)
+			}
+			watch(c, account, vnode) {
+				if (c < this.count) {
+					return
+				} else {
+					tc.StreamToRoom(account, vnode, 0, 34)
+					sleep(800).then(() => this.watch(c, account, vnode))
+				}
+			}
+			stop() {
+				++this.count
+			}
+		}
+		var notifyroom = new notify()
+	</script>
+
+	<script>
+		document.getElementById('updateSelfcover').addEventListener('click', function () {
+			document.getElementById('coverinputs').click();
+		});
 	</script>
 </body>
 
