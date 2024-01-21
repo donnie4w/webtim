@@ -134,18 +134,18 @@ function httpPostBinary(uri, data, func) {
 
 function grayImage(src) {
     try {
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        var imgObj = new Image();
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        let imgObj = new Image();
         imgObj.src = src;
         canvas.width = imgObj.width;
         canvas.height = imgObj.height;
         ctx.drawImage(imgObj, 0, 0);
-        var imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        for (var y = 0; y < imgPixels.height; y++) {
-            for (var x = 0; x < imgPixels.width; x++) {
-                var i = (y * 4) * imgPixels.width + x * 4;
-                var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
+        let imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        for (let y = 0; y < imgPixels.height; y++) {
+            for (let x = 0; x < imgPixels.width; x++) {
+                let i = (y * 4) * imgPixels.width + x * 4;
+                let avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
                 imgPixels.data[i] = avg;
                 imgPixels.data[i + 1] = avg;
                 imgPixels.data[i + 2] = avg;
@@ -241,9 +241,90 @@ function DoWhile(conditionfunc, dofunc, loopcount) {
     if (loopcount <= 0) {
         return
     }
-    if (conditionfunc) {
-        dofunc
+    if (conditionfunc()) {
+        dofunc()
     } else {
         sleep(300).then(() => DoWhile(conditionfunc, dofunc, loopcount - 1))
     }
+}
+
+
+class SortedSet {
+    constructor(comparator = (a, b) => a - b) {
+        this.set = [];
+        this.comparator = comparator;
+    }
+
+    add(value) {
+        let index = this.lowerBound(value);
+        if (index < this.set.length && this.comparator(this.set[index], value) === 0) {
+            return;
+        }
+        this.set.splice(index, 0, value);
+        return this;
+    }
+    lowerBound(value) {
+        let left = 0;
+        let right = this.set.length;
+        while (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            if (this.comparator(this.set[mid], value) < 0) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+    remove(value) {
+        const index = this.indexOf(value);
+        if (index !== -1) {
+            this.set.splice(index, 1);
+        }
+        return this;
+    }
+    contains(value) {
+        return this.indexOf(value) !== -1;
+    }
+    size() {
+        return this.set.length;
+    }
+    isEmpty() {
+        return this.set.length === 0;
+    }
+    toArray() {
+        return [...this.set];
+    }
+    clear() {
+        this.set = [];
+    }
+    indexOf(value) {
+        for (let i = 0; i < this.set.length; i++) {
+            if (this.comparator(this.set[i], value) === 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+function throttle(func, wait) {
+    let previous = 0;
+    const context = this;
+    return function (...args) {
+        const now = Date.now();
+        if (now - previous > wait) {
+            func.apply(context, args);
+            previous = now;
+        }
+    };
 }

@@ -3,7 +3,10 @@
     "timModifyUserInfoUrl": "http://127.0.0.1:8001/timModifyUserInfo",
     "timNewRoom": "http://127.0.0.1:8001/timNewRoom",
     "timModifyRoomInfo": "http://127.0.0.1:8001/timModifyRoomInfo",
-    "tldbAddr": "127.0.0.1:7000",
+    "timToken": "http://127.0.0.1:8001/timToken",
+    "timVroom": "http://127.0.0.1:8001/timVroom",
+
+    "tldbAddr": "127.0.0.1:5837",
     "tldbAuth": "mycli=123",
     "tldbTls": false,
     "timadminUsername": "admin",

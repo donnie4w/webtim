@@ -1065,7 +1065,7 @@ a {
 }
 
 .chat-sidebar {
-	width: 340px;
+	width: 320px;
 	height: 100%;
 	position: absolute;
 	background: #fff;
@@ -1123,14 +1123,14 @@ a {
 }
 
 .chat-content {
-	margin-left: 340px;
+	margin-left: 320px;
 	padding: 85px 15px 15px 15px
 }
 
 .chat-header {
 	position: absolute;
 	height: 70px;
-	left: 340px;
+	left: 320px;
 	right: 0;
 	top: 0;
 	padding: 15px;
@@ -1143,7 +1143,7 @@ a {
 .chat-footer {
 	position: absolute;
 	height: 70px;
-	left: 340px;
+	left: 320px;
 	right: 0;
 	bottom: 0;
 	padding: 15px;
@@ -1195,7 +1195,7 @@ a {
 
 .chat-list {
 	position: relative;
-	height: 300px
+	height: 500px
 }
 
 .chat-list .list-group-item {
@@ -1840,7 +1840,7 @@ a {
 
 .chart-container1 {
 	position: relative;
-	height: 340px
+	height: 320px
 }
 
 .gmaps,
@@ -2386,7 +2386,7 @@ input.search-control-2::placeholder {
 		top: 0;
 		right: 0;
 		bottom: 0;
-		left: 340px;
+		left: 320px;
 		background: #000;
 		opacity: .5;
 		z-index: 11;

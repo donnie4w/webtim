@@ -797,8 +797,10 @@
 						<div class="flex-grow-1 ms-2">
 							<p class="mb-0" id="loginflag">未登录</p>
 						</div>
+						<div onclick="hideSidebar()">
+							<div class="chat-toggle-btn">&lt;</div>
+						</div>
 					</div>
-					<div class="mb-3"></div>
 				</div>
 				<div class="chat-sidebar-content">
 					<div class="tab-content" id="pills-tabContent">
@@ -806,29 +808,20 @@
 							<div class="chat-list ps ps--active-y">
 								<div class="list-group list-group-flush" id="msgnodelist">
 								</div>
-								<div class="ps__rail-x" style="left: 0px; bottom: -232px;">
-									<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;">
-									</div>
-								</div>
-								<div class="ps__rail-y" style="top: 232px; height: 300px; right: 0px;">
-									<div class="ps__thumb-y" tabindex="0" style="top: 131px; height: 168px;">
-									</div>
-								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="chat-footer" id="chat" onclick="hideSidebar()">
+				<!-- <div class="chat-footer" id="chat" onclick="hideSidebar()">
 					<div class="chat-toggle-btn">&lt;</div>
-				</div>
+				</div> -->
 			</div>
-			<div class="chat-header d-flex align-items-center">
-				<div class="chat-toggle-btn">&gt;</div>
+			<div class="chat-header d-flex align-items-center ">
+				<div>
+					<div class="chat-toggle-btn">&gt;</div>
+				</div>
 				<div class="input-group mb-2">
 					<h6 onclick="hideSidebar()"></h6>
-					<!-- <img src="/img/user.png" id="iconuser" width="60" height="60"
-							class="rounded-circle">
-						<span class="input-group-text text-primary bg-white" id="touser" style="border: none;"></span> -->
 					<input hidden type="text" class="form-control" placeholder="账号" id="accountId" />
 				</div>
 				<div>
@@ -857,6 +850,28 @@
 			<div class="chat-content ps ps--active-y" id="containerId">
 			</div>
 
+			<div class="modal fade" id="lastItemModal" tabindex="-1" aria-labelledby="lastItemModalLabel"
+				aria-hidden="true" style="display: none;">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content" style="background-color:rgba(0, 0, 0, 0);border: none;">
+						<div class="modal-body  d-flex justify-content-center align-items-center">
+							已经是最后一条数据
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="dataLoadingModal" tabindex="-1" aria-labelledby="dataLoadingModalLabel"
+				aria-hidden="true" style="display: none;">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content" style="background-color:rgba(0, 0, 0, 0);border: none;">
+						<div class="modal-body d-flex justify-content-center align-items-center">
+							<div class="spinner-border text-primary" role="status">
+								<span class="visually-hidden"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div style="position: absolute; bottom: 15%;right: 10%;max-width: 300px;">
 				<div id="attachtoast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 					<div class="toast-header">
@@ -1059,7 +1074,6 @@
 
 		$(function () {
 			$("#modal-btn-webtimuser").click(function () {
-				$("#modal-webtimuser").modal("show");
 				webtimuserlist()
 			});
 		});
@@ -1276,7 +1290,7 @@
 								if (mutlivideostreamlist.children.length > 0) {
 									let firstdiv = mutlivideostreamlist.querySelector(':scope > div:first-child')
 									if (firstdiv) {
-										mutlivideostreamlist.replaceChild(vs,firstdiv)
+										mutlivideostreamlist.replaceChild(vs, firstdiv)
 									}
 								} else {
 									mutlivideostreamlist.appendChild(vs);
@@ -1291,9 +1305,6 @@
 				});
 			}
 		}
-
-
-
 
 		var liveroomvideo = null;
 		async function liveroommediaStart(videoliveObject) {
@@ -1321,8 +1332,6 @@
 				alert("未获得麦克风或摄像头权限")
 			}
 		}
-
-
 
 		function liveroommediaStop() {
 			if (!isEmpty(liveroomvideo)) {
@@ -1352,7 +1361,7 @@
 			roomAudiostart(account)
 		}
 		async function roomAudiostart(account) {
-			if (isEmpty(mutlivideostreamid.value)) {				
+			if (isEmpty(mutlivideostreamid.value)) {
 				document.getElementById("userinfo_token").value = webtimToken;
 				let vdata = $("#userinfo_form").serialize();
 				httpPost("vregister", vdata, (data) => {
@@ -1821,7 +1830,9 @@
 			});
 		}
 
-		function webtimuserlist() {
+		async function webtimuserlist() {
+			$("#modal-webtimuser").modal("show");
+
 			httpPost("userslist", null, (data) => {
 				if (!isEmpty(data)) {
 					let accountlist = document.getElementById("accountlist");
@@ -2013,7 +2024,7 @@
 
 		function sendTimvideo(account) {
 			if (isEmpty(account)) {
-				account = document.getElementById("accountId").value
+				account = accountId.value
 				if (isEmpty(account)) {
 					alert("未选择好友")
 					return
@@ -2064,7 +2075,7 @@
 		}
 		function sendfilemod(account) {
 			if (isEmpty(account)) {
-				account = document.getElementById("accountId").value
+				account = accountId.value
 				if (isEmpty(account)) {
 					alert("未选择好友")
 					return
@@ -2374,9 +2385,15 @@
 			}
 		}
 
-		var tc = new timClient(true, window.location.hostname, 443);
+		let tls = true;
+		let port = 443;
+		if (window.location.protocol === 'http:') {
+			tls = false;
+			port = 5081;
+		}
 
-		var hight = 0;
+		var tc = new timClient(tls, window.location.hostname, port);
+
 		var friendMap = new Map();
 		var timNodeMap = new Map();
 		var messageMap = new Map();
@@ -2411,10 +2428,10 @@
 						myAccount = ta.n;
 						tc.UserInfo([myAccount]);//拉取自己账号信息
 						tc.Roster();                                     //Pull the roster 拉取花名册
-						tc.UserRoom();                                   //pull the account of group 拉取群账号
-						// tc.BlockRoomList();                              //blocklist of user group 用户群黑名单
-						// tc.BlockRosterList();                            //blocklist of user 用户黑名单
-						tc.OfflineMsg() 								 //when login successful, get the offline message 登录成功后，拉取离线信息
+						sleep(1000).then(() => tc.UserRoom());           //pull the account of group 拉取群账号
+						// tc.BlockRoomList();                           //blocklist of user group 用户群黑名单
+						// tc.BlockRosterList();                         //blocklist of user 用户黑名单
+						tc.OfflineMsg();								 //when login successful, get the offline message 登录成功后，拉取离线信息
 						$("#modal-login").modal("hide");
 					} else {
 						tc.Logout();
@@ -2439,22 +2456,22 @@
 						let tonode = ta.n;
 						let t = ta.t;
 						let mid = ta.t2;
-						let cid = 0;
+						let cid = null;
 						if (t == 2) {
-							cid = chatid(myAccount, tonode);
-							let m = midMap.get(cid + "_" + mid);
-							if (!isEmpty(m)) {
-								m.isRevoke = true;
+							cid = chatid(myAccount, tonode)
+							let m = messageMap.get(cid)
+							if (m.get(mid)) {
+								m.get(mid).isRevoke = true;
 							}
 						} else if (t == 3) {
-							cid = chatid(tonode, tonode);
-							let m = midMap.get(cid + "_" + mid);
-							if (!isEmpty(m)) {
-								m.isRevoke = true;
+							cid = chatid(tonode, tonode)
+							let m = messageMap.get(cid)
+							if (m.get(mid)) {
+								m.get(mid).isRevoke = true;
 							}
 						}
-						if (document.getElementById("accountId").value == tonode) {
-							showchat(cid)
+						if (accountId.value == tonode) {
+							showchat(cid, false)
 						}
 					}
 					break;
@@ -2520,7 +2537,13 @@
 								tc.RoomInfo([ta.n])
 								tc.RoomUsers(ta.n)
 								tc.StreamToRoom(ta.n, null, 1, 0);
-								DoWhile(timNodeMap.get(ta.n), alert("你已加入群：" + timNodeMap.get(ta.n).name), 5)
+								let alertfunc = () => {
+									alert("你已加入群：" + timNodeMap.get(ta.n).name)
+								}
+								let conditionfunc = () => {
+									return timNodeMap.get(ta.n)
+								}
+								DoWhile(conditionfunc, alertfunc, 5)
 							case STAT.BUSINESS_PASSROOM: //申请加入群成功
 								tc.RoomInfo([ta.n])
 								tc.RoomUsers(ta.n)
@@ -2618,11 +2641,12 @@
 				friendstatus(tp.fromTid.node, false, tp.status);
 			}
 		};
+
 		tc.offlineMsgHandler = function (data) {
 			let tml = new TimMessageList();
 			tml = JSON.parse(data);
 			if (!isEmpty(tml) && !isEmpty(tml.messageList)) {
-				sleep(2500).then(() => {
+				sleep(1000).then(() => {
 					addmsg(tml.messageList, false)
 				})
 			}
@@ -2785,6 +2809,9 @@
 						} else {
 							appendmsg(id, tm.mid, tm.fromTid.node, tm.roomTid.node, true, tm, isPull);
 						}
+						if (isPageHidden()) {
+							flashTitle("新消息");
+						}
 						break;
 					case 2: //撤回消息
 						let cid = 0;
@@ -2796,12 +2823,15 @@
 							node = tm.roomTid.node;
 							cid = chatid(node, node);
 						}
-						let m = midMap.get(cid + "_" + tm.mid);
-						if (!isEmpty(m)) {
-							m.isRevoke = true;
+						let mm = messageMap.get(cid);
+						if (mm) {
+							let m = mm.get(tm.mid);
+							if (m) {
+								m.isRevoke = true;
+							}
 						}
-						if (document.getElementById("accountId").value == node) {
-							showchat(cid)
+						if (accountId.value == node) {
+							showchat(cid, false)
 						}
 						break;
 					case 3: //阅后即焚
@@ -3051,18 +3081,14 @@
 				+ '<div class="ps__rail-y" style="top: 0px; height: 520px; right: 0px;">'
 				+ '<div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 235px;"></div>'
 				+ '</div>')
-			messageMap.set(cid, []);
+			messageMap.set(cid, new MessageWare(cid))
 		}
 
 		async function appendmsg(cid, mid, fnode, rnode, isRoom, tm, isPull) {
 			let v = timNodeMap.get(fnode);
-			let idMap = midMap.get(cid + "_" + mid);
-			if (isEmpty(idMap)) {
-				let arrays = messageMap.get(cid);
-				arrays.push(cid + "_" + mid);
-				midMap.set(cid + "_" + mid, new Message(tm, isRoom, cid))
-			}
-			let tonode = document.getElementById("accountId").value;
+			let mm = messageMap.get(cid)
+			mm.addMessage(new Message(tm, isRoom, cid))
+			let tonode = accountId.value;
 			let show = false;
 			let shownode = fnode;
 			let rn = fnode;
@@ -3083,33 +3109,30 @@
 			let bar = rosterBarMap.get(rn);
 			if (!isEmpty(bar)) {
 				bar.timestamp = unixnanoToDatatime(tm.timestamp);
-				let t = ++initcount
-				sleep(200).then(() => initshowbar(t))
+				bar.updatetime(bar.timestamp)
 			}
 			if (show) {
-				showchat(cid);
-				bar.newmsg = ""
+				showchat(cid, false);
+				if (!isEmpty(bar)) {
+					bar.updatestat("")
+				}
 			} else if (!isPull) {
 				if (!isEmpty(bar)) {
-					bar.newmsg = "&#128308;有新信息"
+					bar.updatestat("&#128308;有新消息")
 				}
 			}
 		}
 
 		function initshowbar(v) {
-			if (v >= initcount) {
+			if (initcount > 0) {
 				showRosterBarList()
+				initcount = 0;
 			}
 		}
 
-		// function tipshow(account, msg, loop) {
-		// 	let a = document.getElementById("news_" + account);
-		// 	if (isEmpty(a) && loop > 0) {
-		// 		sleep(500).then(() => tipshow(account, msg, loop--));
-		// 		return
-		// 	}
-		// 	a.innerHTML = msg;
-		// }
+		let containerId = document.getElementById("containerId")
+		let msgnodelist = document.getElementById("msgnodelist")
+		let accountId = document.getElementById("accountId")
 
 		async function clear() {
 			alertMap.clear();
@@ -3117,7 +3140,6 @@
 			timNodeMap.clear();
 			messageMap.clear();
 			newMesMap.clear();
-			midMap.clear();
 			rosterBarMap.clear();
 			roomMap.clear();
 			roomMemberMap.clear();
@@ -3126,31 +3148,124 @@
 			sendfileMap.clear();
 			mulMediaroommap.clear();
 			bigDataStreamEvent.clear();
-			document.getElementById("msgnodelist").innerHTML = "";
-			document.getElementById("containerId").innerHTML = "";
-			document.getElementById("accountId").innerHTML = "";
+			msgnodelist.innerHTML = "";
+			containerId.innerHTML = "";
+			accountId.innerHTML = "";
 			document.getElementById("iconuser").src = "/img/user.png";
 			document.getElementById("touser").innerHTML = "";
 		}
 
-		function showchat(cid) {
-			let mids = messageMap.get(cid);
-			if (!isEmpty(mids)) {
+		async function showchat(cid, bm) {
+			let mm = messageMap.get(cid);
+			if (!isEmpty(mm)) {
 				let arrays = [];
-				for (const id of mids) {
-					const m = midMap.get(id);
-					if (!isEmpty(m)) {
-						arrays.push(m.tomsg());
-					}
+				for (const m of mm.toArray()) {
+					let s = await m.tomsg()
+					arrays.push(s);
 				}
-				document.getElementById("containerId").innerHTML = arrays.join('');
-				hight = hight + 200 * arrays.length;
-				document.getElementById("containerId").scrollTo(0, document.documentElement.scrollHeight + hight);
-				window.scrollTo(0, document.documentElement.scrollHeight);
+				containerId.innerHTML = arrays.join('');
+				let scrollHeight = containerId.scrollHeight;
+				let scrollTop = containerId.scrollTop;
+				if (bm) {
+					containerId.scrollTo(0, scrollHeight);
+				} else if (scrollTop <= 100) {
+					containerId.scrollTo(0, 0);
+				} else {
+					containerId.scrollTo(0, scrollHeight);
+				}
+				hideDataLoading()
 			} else {
-				document.getElementById("containerId").innerHTML = "";
+				containerId.innerHTML = "";
 			}
+		}
 
+		listen()
+		function listen() {
+			['touchmove', 'touchstart', 'touchend', 'touchcancel'].forEach(eventName => {
+				msgnodelist.addEventListener(eventName, function (event) {
+					if (event.changedTouches && event.type === 'touchmove') {
+						if (isScrolling) {
+							event.preventDefault();
+							let currentY = event.touches[0].screenY;
+							let deltaY = currentY - startY2;
+							msgnodelist.scrollTop += deltaY;
+							startY2 = currentY;
+						}
+					} else if (event.changedTouches && event.type === 'touchstart') {
+						startY2 = event.touches[0].screenY;
+						isScrolling = true;
+					} else if (event.changedTouches && (event.type === 'touchend' || event.type === 'touchcancel')) {
+						isScrolling = false;
+					}
+				})
+			})
+			let isScrolling = false;
+			let accountIdisTop = false;
+			let startY = 0;
+			let startY2 = 0;
+			['scroll', 'wheel', 'touchmove', 'touchstart'].forEach(eventName => {
+				containerId.addEventListener(eventName, function (event) {
+					if (event.wheelDelta) {
+						event.preventDefault();
+						var isScrollingUp = event.wheelDelta > 0;
+					} else if (event.changedTouches && event.type === 'touchmove') {
+						event.preventDefault();
+						const touch = event.touches[0];
+						let currentY = touch.clientY;
+						let deltaY = currentY - startY;
+						if ((currentY - startY) > 0) {
+							isScrollingUp = true
+						}
+					} else if (event.changedTouches && event.type === 'touchstart') {
+						startY = event.touches[0].clientY;
+					} else if (event.target && event.type === 'scroll') {
+						event.preventDefault();
+						accountIdisTop = event.target.scrollTop === 0;
+					}
+					if (isScrollingUp) {
+						if (accountIdisTop) {
+							pull();
+						}
+					}
+				});
+			});
+		}
+		const pull = debounce(pullHandler, 200);
+		function pullHandler() {
+			let account = accountId.value;
+			if (friendMap.has(account)) {
+				let mm = messageMap.get(chatid(account, myAccount))
+				if (mm && mm.size() >= 10 && !mm.end()) {
+					tc.PullUserMessage(account, mm.minMid, 5)
+					showDataLoading()
+				} else if (mm.end()) {
+					alertTop()
+				}
+			} else if (roomMap.has(account)) {
+				let mm = messageMap.get(chatid(account, account))
+				if (mm && mm.size() >= 10 && !mm.end()) {
+					tc.PullRoomMessage(account, mm.minMid, 5)
+					showDataLoading()
+				} else if (mm.end()) {
+					alertTop()
+				}
+			}
+		}
+
+		const modal = new bootstrap.Modal(document.getElementById('dataLoadingModal'), { backdrop: false });
+		const lastItemModal = new bootstrap.Modal(document.getElementById('lastItemModal'), { backdrop: false });
+		function showDataLoading() {
+			modal.show();
+			sleep(5000).then(() => hideDataLoading())
+		}
+
+		function hideDataLoading() {
+			modal.hide();
+		}
+
+		function alertTop() {
+			lastItemModal.show();
+			sleep(1000).then(() => lastItemModal.hide())
 		}
 
 		function addToNodelist(account, isRoom) {
@@ -3168,16 +3283,17 @@
 			rosterBarMap.set(account, new MessageBar(account, true, isRoom, ""))
 			showRosterBarList()
 			if (isRoom) {
-				sleep(1500).then(() => tc.PullRoomMessage(account, 0, 100));
+				tc.PullRoomMessage(account, 0, 10)
 			} else {
-				sleep(1000).then(() => tc.PullUserMessage(account, 0, 100));
+				tc.PullUserMessage(account, 0, 10)
 			}
 		}
 
 		async function showRosterBarList() {
-			document.getElementById("msgnodelist").innerHTML = ""
+			let msgnodelist = document.getElementById("msgnodelist")
+			msgnodelist.innerHTML = ""
 			for (let v of rosterBarMap.values()) {
-				document.getElementById("msgnodelist").appendChild(v.tomsg());
+				msgnodelist.appendChild(v.tomsg());
 			}
 		}
 
@@ -3194,7 +3310,7 @@
 
 		function send() {
 			let msg = document.getElementById("msgid").value;
-			let node = document.getElementById("accountId").value;
+			let node = accountId.value;
 			showClose();
 			if (isEmpty(node)) {
 				alert("请先选择聊天对象");
@@ -3232,7 +3348,6 @@
 		function initloginflag(_login, name) {
 			if (!_login) {
 				document.getElementById("loginflag").innerText = "未登录";
-				// document.getElementById("usertitle").innerText = "未登录";
 				document.getElementById("icon").src = "/img/user.png";
 				document.getElementById("loginicon").src = "/img/user.png";
 				document.getElementById("logoutId").style.display = "none";
@@ -3248,7 +3363,7 @@
 					+ '<option value="&#9917;" >&#9917;运动</option>'
 					+ '<option value="&#12953;" >&#12953;秘密</option>'
 					+ '</select>';
-				document.getElementById("loginflag").innerHTML = name + ' <span onchange="status(this)"><B>[状态]</B>' + status + '</span>'
+				document.getElementById("loginflag").innerHTML = name + ' <span onchange="status(this)">' + status + '</span>'
 				document.getElementById("logoutId").style.display = "inline";
 				// document.getElementById("usertitle").innerText = "";
 				document.getElementById("username").value = "";
@@ -3308,7 +3423,7 @@
 		}
 
 		function peer(account, isRoom) {
-			document.getElementById("accountId").value = account;
+			accountId.value = account;
 			let cid = chatid(account, myAccount);
 			if (isRoom) {
 				cid = chatid(account, account);
@@ -3317,10 +3432,9 @@
 			if (isEmpty(arrays)) {
 				initArrays(cid);
 			}
-			showchat(cid);
-			document.getElementById("news_" + account).innerText = "";
+			showchat(cid, true);
 			if (!isEmpty(rosterBarMap.get(account))) {
-				rosterBarMap.get(account).newmsg = ""
+				rosterBarMap.get(account).updatestat("")
 			}
 			let v = timNodeMap.get(account);
 			document.getElementById("iconuser").src = v.cover;
@@ -3496,7 +3610,13 @@
 
 		function befriendAlert(account) {
 			let v = timNodeMap.get(account);
-			DoWhile(timNodeMap.get(account), alert("与[" + timNodeMap.get(account).name + "]成为好友"), 10)
+			let alertfunc = () => {
+				alert("与[" + timNodeMap.get(account).name + "]成为好友")
+			}
+			let conditionfunc = () => {
+				return timNodeMap.get(account)
+			}
+			DoWhile(conditionfunc, alertfunc, 10)
 		}
 
 	</script>
@@ -3506,13 +3626,20 @@
 			isRevoke = false;
 			isroom = false
 			cid = 0;
+			mid = 0;
 			constructor(timmessage, isroom, cid) {
 				this.tm = timmessage;
 				this.isroom = isroom;
 				this.cid = cid;
+				this.mid = timmessage.mid;
 			}
-			tomsg() {
+			async tomsg() {
 				let v = timNodeMap.get(this.tm.fromTid.node);
+				if (isEmpty(v)) {
+					let pause = (ms) => { return new Promise(resolve => setTimeout(resolve, ms)) }
+					await pause(300)
+					return await this.tomsg()
+				}
 				let s = ""
 				let msg = this.tm.dataString;
 				let nanotime = this.tm.timestamp;
@@ -3558,9 +3685,9 @@
 		}
 
 		function revokemessage(cid, mid) {
-			let m = midMap.get(cid + "_" + mid)
+			let m = messageMap.get(cid).get(mid);
 			if (parseInt(m.tm.timestamp / 1000000) <= (new Date().getTime() - 60 * 1000)) {
-				showchat(cid);
+				showchat(cid, false);
 				alert("超过1分钟，无法撤回")
 				return
 			}
@@ -3574,6 +3701,43 @@
 			}
 		}
 
+
+		class MessageWare {
+			minMid = 0;
+			cid = 0;
+			mset = new SortedSet((a, b) => a.mid - b.mid)
+			midmap = new Map();
+			endnum = 0;
+			constructor(cid) {
+				this.cid = cid;
+				this.minMid = 0;
+			}
+			addMessage(msg) {
+				if (msg.mid === this.minMid) {
+					this.endnum++;
+				}
+				if (this.minMid == 0 || this.minMid > msg.mid) {
+					this.minMid = msg.mid
+				}
+				if (!this.midmap.has(msg.mid) && msg.mid === this.minMid) {
+					this.endnum = 0
+				}
+				this.mset.add(msg);
+				this.midmap.set(msg.mid, msg)
+			}
+			toArray() {
+				return this.mset.toArray();
+			}
+			get(mid) {
+				return this.midmap.get(mid)
+			}
+			size() {
+				return this.midmap.size
+			}
+			end() {
+				return this.endnum > 3
+			}
+		}
 	</script>
 	<script>
 		class MessageBar {
@@ -3582,7 +3746,7 @@
 			show = "";
 			isroom = false;
 			timestamp = "";
-			newmsg = ""
+			stat = ""
 			constructor(node, offline, isroom, show) {
 				this.node = node;
 				this.offline = offline;
@@ -3611,13 +3775,31 @@
 					+ '<img src="' + cover + '" width="42" height="42"  class="rounded-circle" alt="">'
 					+ '<div class="flex-grow-1 ms-2">'
 					+ '<h6 class="mb-0 chat-title">' + statusshow + '</h6>'
-					+ '<span class="mb-0 chat-msg" style="font-size: smaller;">' + u.name + ' <span id="news_' + this.node + '" style="color:red;font-weight: bolder;">' + this.newmsg + '</span></span>'
+					+ '<span class="mb-0 chat-msg" style="font-size: smaller;">' + u.name + '</span>'
 					+ '</div>'
-					+ '<div class="chat-time">' + this.timestamp + '</div>'
+					+ '<div class="chat-time"><div id="bartime_' + this.node + '">' + this.timestamp + '</div><div id="stat_' + this.node + '">' + this.stat + '</div></div>'
 					+ '</div>'
 					+ '</a>';
 				div.innerHTML = fs;
 				return div;
+			}
+
+			updatetime(timestamp) {
+				let bt = document.getElementById("bartime_" + this.node);
+				this.timestamp = timestamp;
+				if (!isEmpty(bt)) {
+					bt.innerHTML = timestamp;
+				} else {
+					console.log(this)
+				}
+			}
+
+			updatestat(statshow) {
+				let stat = document.getElementById("stat_" + this.node)
+				this.stat = statshow;
+				if (!isEmpty(stat)) {
+					stat.innerHTML = statshow
+				}
 			}
 		}
 	</script>
@@ -3797,7 +3979,6 @@
 	<script>
 		var mulMediaroommap = new Map()
 		const storeVideoRoom = (unode, vnode) => {
-			// let mutlivideostreamlist = document.getElementById("mutlivideostreamlist")
 			if (!mulMediaroommap.has(vnode)) {
 				let mv = new mulvideo(mutlivideostreamlist, vnode, unode)
 				mulMediaroommap.set(vnode, mv)
@@ -3817,12 +3998,6 @@
 				this.unode = unode;
 			}
 			open() {
-				// let h6 = document.createElement("h6")
-				// h6.setAttribute("class", "card-header")
-				// h6.innerHTML = '&#127909;' + timNodeMap.get(this.unode).name
-				// this.videoroomdiv = document.createElement("div")
-				// this.videoroomdiv.setAttribute("class", "card d-flex col-6 col-sm-6 col-md-6 col-lg-3 col-xl-2 col-xxl-1");
-				// this.videoroomdiv.appendChild(h6);
 				this.videoroomdiv = createVideoroomDiv(timNodeMap.get(this.unode).name)
 				this.supervideodiv.appendChild(this.videoroomdiv);
 				this.vjoin4videostream = new VideoJoin(this.videoroomdiv);
@@ -3890,7 +4065,6 @@
 
 	<script>
 		const storeAudioRoom = (unode, vnode) => {
-			// let mutlivideostreamlist = document.getElementById("mutlivideostreamlist")
 			if (!mulMediaroommap.has(vnode)) {
 				let mv = new mulaudio(mutlivideostreamlist, vnode, unode)
 				mulMediaroommap.set(vnode, mv)
@@ -3910,16 +4084,6 @@
 				this.unode = unode;
 			}
 			open() {
-				// let h6 = document.createElement("h6");
-				// h6.setAttribute("class", "card-header");
-				// h6.innerHTML = '&#128222;' + timNodeMap.get(this.unode).name
-				// this.imgdiv = document.createElement("div")
-				// this.imgdiv.setAttribute("class", "card d-flex col-6 col-sm-6 col-md-6 col-lg-3 col-xl-2 col-xxl-1");
-				// this.imgdiv.appendChild(h6);
-				// let img = document.createElement("img");
-				// img.src = timNodeMap.get(this.unode).cover
-				// img.setAttribute("style", "width: 100%; height: auto;")
-				// this.imgdiv.appendChild(img);
 				this.imgdiv = createImgroomDiv(timNodeMap.get(this.unode).name, timNodeMap.get(this.unode).cover)
 				this.supervideodiv.appendChild(this.imgdiv);
 				this.vjoin4audiostream = new AudioJoin();
@@ -3986,6 +4150,46 @@
 		document.getElementById('updateSelfcover').addEventListener('click', function () {
 			document.getElementById('coverinputs').click();
 		});
+		function isPageHidden() {
+			if (typeof document.hidden !== "undefined") {
+				return document.hidden
+			} else {
+				switch (document.visibilityState) {
+					case 'visible':
+						return false
+					case 'hidden':
+						return true;
+					case 'prerender':
+						return false
+					case 'unloaded':
+						return true;
+				}
+			}
+			return false;
+		}
+		var flashTitleIng = false;
+		function flashTitle(message) {
+			if (flashTitleIng) {
+				return
+			}
+			let faviconLink = document.querySelector('link[rel="shortcut icon"], link[rel="icon"]');
+			let faviconLinkHref = faviconLink.href;
+			let originalTitle = "webtim";
+			_flashTitle(message, originalTitle, faviconLinkHref, faviconLink)
+		}
+
+		function _flashTitle(message, originalTitle, faviconLinkHref, faviconLink) {
+			if (!isPageHidden()) {
+				flashTitleIng = false
+				document.title = originalTitle;
+				faviconLink.href = faviconLinkHref;
+				return
+			}
+			flashTitleIng = true
+			document.title = document.title === originalTitle ? message : originalTitle;
+			faviconLink.href = faviconLink.href === faviconLinkHref ? "/img/icon.png" : faviconLinkHref
+			sleep(10).then(() => _flashTitle(message, originalTitle, faviconLinkHref, faviconLink))
+		}
 	</script>
 </body>
 
