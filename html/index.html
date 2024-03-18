@@ -123,6 +123,7 @@
 						</div>
 						<div class="text-center">
 							<a href="javascript:;" onclick="technologyshow()">webtim技术说明</a>
+							<p>Copyright © 2023 webtim.cn <a href="https://beian.miit.gov.cn" target="_blank">粤ICP备2023007197号</a></p>
 						</div>
 					</div>
 				</div>
@@ -937,11 +938,12 @@
 			deviceId: "",
 		}
 		const video = {
-			// width: { min: 250, ideal: 400, max: 720 },
-			// width: { min: 250, ideal: 400, max: 720 },
 			facingMode: "user",
 			deviceId: "",
 			resizeMode: false,
+			// width: { min: 50, ideal: 300, max: 500 }, // 想要的理想宽度
+			// height: {min: 50, ideal: 300, max: 500 }, // 想要的理想高度
+			// frameRate: { ideal: 30 } // 想要的理想帧率
 		}
 	</script>
 	<script>
@@ -1149,8 +1151,7 @@
 		}
 
 		function livefullscreen() {
-			let e = document.getElementById("playvideowindow");
-			fullscreen(e);
+			fullscreen(playvideowindow);
 		}
 
 	</script>
@@ -1309,13 +1310,14 @@
 		var liveroomvideo = null;
 		async function liveroommediaStart(videoliveObject) {
 			try {
+				videoliveObject.innerHTML = '<source src="video.mp4" type="video/mp4"><source src="video.webm" type="video/webm">'
 				liveroomvideo = new MediaRTC(videoliveObject, { video: video, audio: audio });
-				liveroomvideo.recorderHz = 600;
-				liveroomvideo.audioBitsPerSecond = 320000;
-				liveroomvideo.videoBitsPerSecond = 500000;
+				// liveroomvideo.recorderHz = 600;
+				// liveroomvideo.audioBitsPerSecond = 320000;
+				// liveroomvideo.videoBitsPerSecond = 100000;
 				await liveroomvideo.MediaDevices();
 				liveroomvideo.sendStream = pushLiveVideoStream
-				liveroomvideo.Pushstream(true);
+				liveroomvideo.Pushstream();
 				modalmutlivideoclose()
 				mutlivideostreamshow();
 				let account = mutlivideostreamid.value
@@ -2266,7 +2268,7 @@
 		}
 
 		function newlivestop() {
-			document.getElementById("playvideowindow").innerHTML = "";
+			playvideowindow.innerHTML = "";
 			let vnode = webtimVnode
 			sleep(500).then(() => tc.PushBigDataStream(vnode, (new Uint8Array([0]))))
 			webtimVnode = null;
@@ -2297,41 +2299,49 @@
 		}
 
 		let videoplayer = null;
-		function videoPlayStart(file) {
-			let e = document.getElementById("playvideowindow");
+		let playvideowindow = document.getElementById("playvideowindow");
+		async function videoPlayStart(file) {
+			let videoliveObject = document.createElement("video");
 			let videoliveObject2 = document.createElement("video");
 			videoliveObject2.controls = true;
 			videoliveObject2.autoplay = true;
-			e.appendChild(videoliveObject2);
+			videoliveObject2.innerHTML = '<source src="video.mp4" type="video/mp4"><source src="video.webm" type="video/webm">'
+			loadvideoFile(videoliveObject2, file, async (v) => {
+				videoplayerLoad(v)
+			})
+		}
+
+		function videoplayerLoad(newv) {
+			playvideowindow.appendChild(newv);
 			let init = false;
 			try {
-				videoplayer = new VideoPlayerRTC(videoliveObject2, file);
-				videoplayer.recorderHz = 500;
+				videoplayer = new VideoPlayerRTC(newv);
+				// videoplayer.recorderHz = 500;
+				// videoplayer.videoBitsPerSecond = 100000;
 			} catch (err) {
 				alert("can't playing local files");
 			}
 			try {
 				if (document.getElementById("fileloop").checked) {
-					videoliveObject2.loop = true;
+					newv.loop = true;
 				}
-				videoliveObject2.addEventListener("canplaythrough", (e) => {
+				newv.addEventListener("canplaythrough", (e) => {
 					if (!init) {
 						videoplayer.Play();
 						videoplayer.sendStream = pushVideoplayerStream
 						init = true
-						livestart(videoliveObject2)
+						livestart(newv)
 						videoplayer.Pushstream(true)
 					}
 				})
-				videoliveObject2.addEventListener("ended", (e) => {
+				newv.addEventListener("ended", (e) => {
 					videoplayerStop();
-					document.getElementById("playvideowindow").innerHTML = "<h4>视频播放已经结束</h4>";
+					playvideowindow.innerHTML = "<h4>视频播放已经结束</h4>";
 				})
 			} catch (err) {
 				console.error(err)
 			}
 		}
-
 
 		function videoplayerStop() {
 			videoplayer.MediaRecorderStop();
@@ -2380,7 +2390,7 @@
 			constructor(node, name, cover, fnode) {
 				this.node = node;
 				this.name = name;
-				this.cover = cover;
+				this.cover = cover+"?mode/2/w/120";
 				this.fnode = fnode;
 			}
 		}
@@ -3455,18 +3465,18 @@
 		var livemedia = null;
 		async function liveMediaStart() {
 			try {
-				let e = document.getElementById("playvideowindow");
 				let videoliveObject = document.createElement("video");
 				videoliveObject.autoplay = true;
 				videoliveObject.muted = true;
-				e.appendChild(videoliveObject);
+				playvideowindow.appendChild(videoliveObject);
+				videoliveObject.innerHTML = '<source src="video.mp4" type="video/mp4"><source src="video.webm" type="video/webm">'
 				livemedia = new MediaRTC(videoliveObject, { video: video, audio: audio });
-				livemedia.recorderHz = 600;
-				livemedia.audioBitsPerSecond = 320000;
-				livemedia.videoBitsPerSecond = 500000;
+				// livemedia.recorderHz = 600;
+				// livemedia.audioBitsPerSecond = 320000;
+				// livemedia.videoBitsPerSecond = 100000;
 				await livemedia.MediaDevices();
 				livemedia.sendStream = pushLiveVideoStream
-				livemedia.Pushstream(true);
+				livemedia.Pushstream();
 				sleep(2000).then(() => livestart(videoliveObject))
 			} catch (err) {
 				alert("未获得麦克风或摄像头权限")
@@ -3500,12 +3510,13 @@
 
 		function videophoneStart() {
 			try {
+				myvideo.innerHTML = '<source src="video.mp4" type="video/mp4"><source src="video.webm" type="video/webm">'
 				media = new MediaRTC(myvideo, { video: video, audio: audio });
-				media.recorderHz = 300;
-				media.audioBitsPerSecond = 320000;
-				media.videoBitsPerSecond = 500000;
+				// media.recorderHz = 300;
+				// media.audioBitsPerSecond = 320000;
+				// media.videoBitsPerSecond = 100000;
 				media.MediaDevices();
-				media.Pushstream(true);
+				media.Pushstream();
 				videophone = new VideoJoin(document.getElementById("videophone"));
 				videophone.modeRealtime = true;
 				// videophone.modeSpeedRateup = true;
@@ -3757,7 +3768,7 @@
 				let u = timNodeMap.get(this.node);
 				let cover = u.cover;
 				if (this.offline && !this.isroom) {
-					cover = grayImage(cover)
+					cover = cover+"/g/1"
 				}
 				let statusshow = ""
 				let onlineshow = ""
@@ -4000,6 +4011,8 @@
 			open() {
 				this.videoroomdiv = createVideoroomDiv(timNodeMap.get(this.unode).name)
 				this.supervideodiv.appendChild(this.videoroomdiv);
+				// let newv = document.createElement("video");
+				// this.videoroomdiv.appendChild(newv)
 				this.vjoin4videostream = new VideoJoin(this.videoroomdiv);
 				this.vjoin4videostream.style = "max-width:250px;max-height: 250px;"
 				this.vjoin4videostream.modeRealtime = false;
