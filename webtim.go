@@ -309,6 +309,11 @@ func token(hc *tlnet.HttpContext) {
 					tk := fmt.Sprint(*ta.T)
 					sessionUserMap.Put(*ta.N, tk)
 					sessionMap.Put(tk, newUserBean(*ta.N))
+
+					if activeMap.Has(*ta.N) {
+						detect(*ta.N)
+					}
+
 					hc.ResponseString(`{"ok":true,"token":` + tk + `}`)
 					return
 				} else {
@@ -430,7 +435,7 @@ func main() {
 	if conf.NotifyListen != "" {
 		go AdminStart(conf.NotifyListen)
 	}
-	go detect()
+	go detectTicker()
 	Start(fmt.Sprint(":", conf.Listen))
 }
 
@@ -507,7 +512,7 @@ func parseconf(c string) (err error) {
 	return
 }
 
-func detect() {
+func detectTicker() {
 	ticker := time.NewTicker(1 * time.Minute)
 	type tk struct {
 		Nodes []string `json:"nodes"`
@@ -526,17 +531,24 @@ func detect() {
 					if length > 1000 {
 						for i := 0; i < length; i += 1000 {
 							if i+1000 < length {
-								gohttputil.HttpPostParam(util.JsonEncode(&tk{Nodes: nodes[i : i+1000]}), true, conf.TimDetectUrl, timadminauth, nil)
+								detect(nodes[i : i+1000]...)
 							} else {
-								gohttputil.HttpPostParam(util.JsonEncode(&tk{Nodes: nodes[i:length]}), true, conf.TimDetectUrl, timadminauth, nil)
+								detect(nodes[i:length]...)
 								break
 							}
 						}
 					} else {
-						gohttputil.HttpPostParam(util.JsonEncode(&tk{Nodes: nodes}), true, conf.TimDetectUrl, timadminauth, nil)
+						detect(nodes...)
 					}
 				}
 			}()
 		}
 	}
+}
+
+func detect(nodes ...string) {
+	type tk struct {
+		Nodes []string `json:"nodes"`
+	}
+	gohttputil.HttpPostParam(util.JsonEncode(&tk{Nodes: nodes}), true, conf.TimDetectUrl, timadminauth, nil)
 }
