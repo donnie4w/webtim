@@ -60,29 +60,77 @@
 		<div class="container" id="toastshow"></div>
 		<div class="col-lg-12 card p-lg-1 rounded-0">
 			<div>
-				&nbsp;<img src="/img/user.png" id="loginicon" width="30" height="30" onclick="modaltimselfshow()"
-					class="rounded-circle" alt="">
+				<!-- &nbsp;<a href="JavaScript:;" onclick="modaltimselfshow()"><img src="/img/user.png" id="loginicon"
+						width="30" height="30" class="rounded-circle" alt=""></a> -->
 				<button type="button" class="btn btn-light mt-1" id="modal-btn-control" data-bs-toggle="popover"
 					data-bs-trigger="hover" data-bs-content="控制面板" data-bs-placement="bottom"
-					style="font-size: 20px;">&#128187;</button>
-				<button type="button" class="btn btn-light mt-1" id="modal-btn-group" data-bs-toggle="popover"
-					data-bs-trigger="hover" data-bs-content="我的群" data-bs-placement="bottom"
-					style="font-size: 20px;">&#128246;</button>
-				<button type="button" class="btn btn-light mt-1" id="modal-btn-webtimuser" data-bs-toggle="popover"
-					data-bs-trigger="hover" data-bs-content="加好友" data-bs-placement="bottom"
-					style="font-size: 20px;">&#10133;</button>
-				<button type="button" class="btn btn-light mt-1" id="modal-btn-timgroup" data-bs-toggle="popover"
-					data-bs-trigger="hover" data-bs-content="群组" data-bs-placement="bottom"
-					style="font-size: 20px;">&#128101;</button>
+					style="font-size: 20px;"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+						fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+						<path
+							d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+						<path
+							d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+					</svg></button>
+
 				<button type="button" class="btn btn-light mt-1" onclick="timmyfriendshow()" data-bs-toggle="popover"
-					data-bs-trigger="hover" data-bs-content="我的好友" data-bs-placement="bottom"
-					style="font-size: 20px;">&#128100;</button>
+					data-bs-trigger="hover" data-bs-content="我的好友" data-bs-placement="bottom" style="font-size: 20px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+						class="bi bi-person-fill" viewBox="0 0 16 16">
+						<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+					</svg>
+				</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-group" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="我的群" data-bs-placement="bottom" style="font-size: 20px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+						class="bi bi-people-fill" viewBox="0 0 16 16">
+						<path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+						<path fill-rule="evenodd"
+							d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z" />
+						<path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
+					</svg>
+				</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-webtimuser" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="加好友" data-bs-placement="bottom" style="font-size: 20px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+						class="bi bi-plus-lg" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+					</svg>
+				</button>
+				<button type="button" class="btn btn-light mt-1" id="modal-btn-timgroup" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="加入群" data-bs-placement="bottom" style="font-size: 20px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+						class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+						<path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+						<path fill-rule="evenodd"
+							d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+					</svg>
+				</button>
+
 				<button type="button" class="btn btn-light mt-1" id="modal-btn-timlivestream" data-bs-toggle="popover"
-					data-bs-trigger="hover" data-bs-content="直播间" data-bs-placement="bottom"
-					style="font-size: 20px;">&#127910;</button>
+					data-bs-trigger="hover" data-bs-content="直播间" data-bs-placement="bottom" style="font-size: 20px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+						class="bi bi-play-circle" viewBox="0 0 16 16">
+						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+						<path
+							d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+					</svg>
+				</button>
 				<button type="button" class="btn btn-light mt-1" id="modal-btn-timliveroomstream"
 					data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="多人实时对话" data-bs-placement="bottom"
-					style="font-size: 20px;">&#127760;</button>
+					style="font-size: 20px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+						class="bi bi-camera-reels-fill" viewBox="0 0 16 16">
+						<path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+						<path d="M9 6a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+						<path
+							d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7z" />
+					</svg>
+
+				</button>
+				<button type="button" class="btn btn-light mt-1" onclick="broadcastshow()" data-bs-toggle="popover"
+					data-bs-trigger="hover" data-bs-content="系统通知" data-bs-placement="bottom"
+					style="font-size: 20px;">&#128266;</button>
 			</div>
 		</div>
 	</div>
@@ -123,7 +171,8 @@
 						</div>
 						<div class="text-center">
 							<a href="javascript:;" onclick="technologyshow()">webtim技术说明</a>
-							<p>Copyright © 2023 webtim.cn <a href="https://beian.miit.gov.cn" target="_blank">粤ICP备2023007197号</a></p>
+							<p>Copyright © 2023 webtim.cn <a href="https://beian.miit.gov.cn"
+									target="_blank">粤ICP备2023007197号</a></p>
 						</div>
 					</div>
 				</div>
@@ -147,7 +196,7 @@
 					<button type="button" class="btn btn-light mt-1" id="modal-btn-register">&#127381;注册新账户</button>
 					<button type="button" class="btn btn-light mt-1" onclick="timmyfriendshow()">&#128100;我的好友</button>
 					<button type="button" class="btn btn-light mt-1"
-						onclick="modalmutlivideoshow()">&#127760;多人实时对话</button>
+						onclick="modalmutlivideoshow()">&#128101;多人实时对话</button>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal"
@@ -173,6 +222,29 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal"
 						onclick="technologyclose();">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="modal-broadcast">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="broadcastclose();">关闭</button>
+					<h4 class="modal-title">系统通知</h4>
+				</div>
+				<div class="modal-body  bg-white">
+					<div class="col-lg-12" style="height: calc(100vh - 4rem);">
+						<iframe src="https://tlnet.top/blogs/modal_webtimbroadcast"
+							style="width: 100%;height: 100%;"></iframe>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="broadcastclose();">关闭</button>
 				</div>
 			</div>
 		</div>
@@ -485,7 +557,7 @@
 								<form class="row g-3" id="newgroupform">
 									<div class="col-12">
 										<div class="input-group input-group-lg"> <span
-												class="input-group-text bg-transparent">&#128246;</span>
+												class="input-group-text bg-transparent">&#128101;</span>
 											<input type="text" id="newgrouptoken" name="token" hidden />
 											<input type="text" class="form-control border-start-0" name="topic"
 												placeholder="群主题" id="grouptopic" />
@@ -792,9 +864,11 @@
 			<div class="chat-sidebar">
 				<div class="chat-sidebar-header">
 					<div class="d-flex align-items-center">
-						<div class="chat-user-online" onclick="hideSidebar()">
-							<img src="/img/user.png" id="icon" width="45" height="45" class="rounded-circle" alt="">
-						</div>
+						<a href="javaSrcipt:;" onclick="modaltimselfshow()">
+							<div class="chat-user-online">
+								<img src="/img/user.png" id="icon" width="45" height="45" class="rounded-circle" alt="">
+							</div>
+						</a>
 						<div class="flex-grow-1 ms-2">
 							<p class="mb-0" id="loginflag">未登录</p>
 						</div>
@@ -1000,6 +1074,15 @@
 		function technologyclose() {
 			$("#modal-technology").modal("hide");
 		}
+
+		function broadcastshow() {
+			$("#modal-broadcast").modal("show");
+		}
+
+		function broadcastclose() {
+			$("#modal-broadcast").modal("hide");
+		}
+
 
 		$(function () {
 			$("#modal-btn-group").click(function () {
@@ -1883,7 +1966,7 @@
 				})
 				groupmemberlist.innerHTML = arrs.join("");
 			}
-			document.getElementById("roomid").innerHTML = "<h5>&#128246;" + n.name + "</h5>"
+			document.getElementById("roomid").innerHTML = "<h5>&#128101;" + n.name + "</h5>"
 			$("#modal-groupmember").modal("show");
 		}
 
@@ -2390,7 +2473,7 @@
 			constructor(node, name, cover, fnode) {
 				this.node = node;
 				this.name = name;
-				this.cover = cover+"?mode/2/w/120";
+				this.cover = cover + "?mode/2/w/120";
 				this.fnode = fnode;
 			}
 		}
@@ -3070,7 +3153,7 @@
 
 		function online(icon, name) {
 			document.getElementById("icon").src = icon;
-			document.getElementById("loginicon").src = icon;
+			// document.getElementById("loginicon").src = icon;
 			initloginflag(true, name,)
 		}
 
@@ -3359,7 +3442,7 @@
 			if (!_login) {
 				document.getElementById("loginflag").innerText = "未登录";
 				document.getElementById("icon").src = "/img/user.png";
-				document.getElementById("loginicon").src = "/img/user.png";
+				// document.getElementById("loginicon").src = "/img/user.png";
 				document.getElementById("logoutId").style.display = "none";
 			} else {
 				let status = '<select style="font-size:25px;border: none; outline: none;" class="bg-white">'
@@ -3449,7 +3532,7 @@
 			let v = timNodeMap.get(account);
 			document.getElementById("iconuser").src = v.cover;
 			if (isRoom) {
-				document.getElementById("touser").innerHTML = "&#128246; " + v.name;
+				document.getElementById("touser").innerHTML = "&#128101; " + v.name;
 			} else {
 				document.getElementById("touser").innerHTML = " " + v.name;
 			}
@@ -3768,12 +3851,12 @@
 				let u = timNodeMap.get(this.node);
 				let cover = u.cover;
 				if (this.offline && !this.isroom) {
-					cover = cover+"/g/1"
+					cover = cover + "/g/1"
 				}
 				let statusshow = ""
 				let onlineshow = ""
 				if (this.isroom) {
-					statusshow = "<h6 style='font-size: smaller;font-weight: bolder;'>群组&#128246;</h6>";
+					statusshow = "<h6 style='font-size: smaller;font-weight: bolder;'>群组&#128101;</h6>";
 				} else if (this.offline) {
 					statusshow = "<h6 style='font-size: smaller;color:gainsboro'>[离线请留言]</h6>"
 				} else {
