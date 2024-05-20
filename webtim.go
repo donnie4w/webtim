@@ -12,7 +12,6 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	htmlTpl "html/template"
 	"io"
 	"net/http"
 	"net/http/httputil"
@@ -63,25 +62,25 @@ func AdminStart(addr string) {
 }
 
 func Start(addr string) {
-	tlnet := tlnet.NewTlnet()
-	tlnet.HandleStaticWithFilter("/", "./html", notFoundFilter(), nil)
-	tlnet.POST("/register", register)
-	tlnet.POST("/token", token)
-	tlnet.POST("/vroom", vroom)
-	tlnet.POST("/vregister", vregister)
-	tlnet.POST("/livelist", livelist)
-	tlnet.POST("/userslist", userslist)
-	tlnet.POST("/modifyuserinfo", modifyuserinfo)
-	tlnet.POST("/upcover", upcover)
-	tlnet.POST("/newroom", newgroup)
-	tlnet.POST("/roomlist", roomlist)
+	tl := tlnet.NewTlnet()
+	tl.HandleStaticWithFilter("/", "./html", notFoundFilter(), nil)
+	tl.POST("/register", register)
+	tl.POST("/token", token)
+	tl.POST("/vroom", vroom)
+	tl.POST("/vregister", vregister)
+	tl.POST("/livelist", livelist)
+	tl.POST("/userslist", userslist)
+	tl.POST("/modifyuserinfo", modifyuserinfo)
+	tl.POST("/upcover", upcover)
+	tl.POST("/newroom", newgroup)
+	tl.POST("/roomlist", roomlist)
 
-	tlnet.Handle("/img/", wfsAccessFunc)
-	tlnet.Handle("/static/", wfsAccessFunc)
-	tlnet.Handle("/webtim/", wfsAccessFunc)
+	tl.Handle("/img/", wfsAccessFunc)
+	tl.Handle("/static/", wfsAccessFunc)
+	tl.Handle("/webtim/", wfsAccessFunc)
 
 	logging.Info("webtim start [", addr, "]")
-	if err := tlnet.HttpStart(addr); err != nil {
+	if err := tl.HttpStart(addr); err != nil {
 		logging.Error("webtim start failed:", err)
 	}
 }
@@ -383,7 +382,7 @@ func modifyuserinfo(hc *tlnet.HttpContext) {
 		hc.ResponseString(`{"ok":true}`)
 		return
 	}
-	hc.ResponseString(`{"ok":false"}`)
+	hc.ResponseString(`{"ok":false}`)
 }
 
 func userslist(hc *tlnet.HttpContext) {
@@ -448,14 +447,6 @@ func initwfs() (err error) {
 	return
 }
 
-func htmlTplByPath(path string, data any, hc *tlnet.HttpContext) {
-	if tp, err := htmlTpl.ParseFiles(path); err == nil {
-		tp.Execute(hc.Writer(), data)
-	} else {
-		logging.Error(err)
-	}
-}
-
 type liveVideo struct {
 	Topic    string
 	Node     string
@@ -514,9 +505,6 @@ func parseconf(c string) (err error) {
 
 func detectTicker() {
 	ticker := time.NewTicker(1 * time.Minute)
-	type tk struct {
-		Nodes []string `json:"nodes"`
-	}
 	for {
 		select {
 		case <-ticker.C:
